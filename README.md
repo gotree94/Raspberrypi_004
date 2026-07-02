@@ -1,2 +1,2 @@
-# -Raspberrypi_004
+# 라즈베리파이와 파이토치로 만드는 인공지능 자동차
  Raspberrypi_004
