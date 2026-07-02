@@ -177,6 +177,26 @@ ping -4 rp4-nwkim.local
 python ip_scanner3.py
 ```
 
+```
+# DNS/mDNS 캐시 삭제
+ipconfig /flushdns
+
+# ARP 캐시 전체 삭제
+arp -d *
+
+# 또는 netsh로 삭제
+netsh interface ip delete arpcache
+```
+
+```
+# SD 카드 교체 후 캐시 문제 해결
+python ip_scanner5.py --flush
+
+# 가장 빠른 방법 (nmap 설치 시)
+python ip_scanner5.py --flush --arp-scan
+```
+
+
 <img width="993" height="851" alt="086" src="https://github.com/user-attachments/assets/ee8c50be-2384-43ee-b16c-48bf48f731ae" />
 
 
