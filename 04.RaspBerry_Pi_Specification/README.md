@@ -58,10 +58,9 @@ Raspberry Pi 4 Model B는 2019년 6월 출시되었으며, 이전 모델 대비 
 
 ![](Rasspberypi4_arch.png)
 
-<img width="656" height="492" alt="rsap4_003" src="https://github.com/user-attachments/assets/145e8f95-e801-4e1f-83ee-8eb9ca0d4836" />
-<br>
-<img width="389" height="307" alt="rsap4_004" src="https://github.com/user-attachments/assets/04184073-be45-47c3-9712-039ec0a4e3ef" />
-<br>
+| | |
+|:----------------:|:----------------:|
+| ![](Rasspberypi4_1.png) | ![](Rasspberypi4_2.png) | 
 
 ```
 
