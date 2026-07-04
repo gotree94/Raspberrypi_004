@@ -251,6 +251,46 @@ Device 'wlan0' successfully activated with '14f96b41-98c8-448d-9bb8-bc476b1f4f3e
 sudo nmcli device wifi connect [와이파이 이름] password [와이파이 비밀번호]
 ```
 
+---
+# SSH 설정
+
+* Raspberry Pi OS는 부팅 파티션에 ssh 라는 빈 파일(확장자 없음)을 넣으면 부팅 시 SSH가 활성화됩니다.
+
+1. SD 카드를 PC에 연결
+2. boot(또는 bootfs) 파티션에 빈 ssh 파일 생성
+3. SD 카드를 Pi에 다시 넣고 부팅
+
+* 추가로 wpa_supplicant.conf 파일을 같은 파티션에 만들어두면 Wi-Fi 설정도 사전에 구성할 수 있습니다.
+
+```
+country=KR
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+
+network={
+    ssid="와이파이SSID"
+    psk="비밀번호"
+}
+```
+
+* HDMI로 연결된 화면에서 직접 Pi를 조작하는 상황이므로:
+
+1. 터미널 열기: Ctrl+Alt+F2 ~ F6 로 가상 터미널(TTY)로 전환
+   * TTY1: Ctrl+Alt+F1 (또는 F7, F8 — 데스크톱 GUI)
+2. 로그인 (기본 계정: pi / raspberry)
+3. SSH 활성화:
+```
+sudo systemctl enable ssh
+sudo systemctl start ssh
+```
+
+* 또는 (구형 이미지)
+```
+sudo raspi-config
+```
+→ 3 Interface Options → I2 SSH → Yes
+
+4. GUI 데스크톱 환경이라면 터미널 에뮬레이터(LXTerminal 등)를 마우스로 실행해도 동일하게 systemctl 명령어로 SSH를 켤 수 있습니다.
 
 
 
