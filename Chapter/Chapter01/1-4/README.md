@@ -34,6 +34,7 @@ python -m venv --system-site-packages venv
 
 * [AI_CAR] 폴터 아래 [venv] 폴더가 생성되었고 파이썬 가상환경이 설치됩니다.
 
+<br>
 
 ## 3. 가상환경 구성
 
