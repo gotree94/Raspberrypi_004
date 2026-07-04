@@ -41,6 +41,16 @@ python -m venv --system-site-packages venv
 ## 4. 가상환경 구성
 
 
+## 5. Thonny 파이썬 IDE
+
+파이썬을 사용하기 위해서 Thonny 파이썬 IDE를 사용합니다.
+
+
+
+
+## 6. jupyter notebook
+
+
 
 
 
