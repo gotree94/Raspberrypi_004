@@ -54,12 +54,9 @@ Raspberry Pi 4 Model B는 2019년 6월 출시되었으며, 이전 모델 대비 
 ---
 # Raspberry Pi 4 Arch
 
-![](Broadcom-BCM2711B0.png)
-
-![](Rasspberypi4_arch.png)
-
 | | |
 |:----------------:|:----------------:|
+| ![](Broadcom-BCM2711B0.png) | ![](Rasspberypi4_arch.png) | 
 | ![](Rasspberypi4_1.png) | ![](Rasspberypi4_2.png) | 
 
 ```
