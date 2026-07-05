@@ -127,14 +127,15 @@ cd ~/pi-monitor
 npm install
 node server.js
 ```
-![](001.png)
 
----
+<img width="1254" height="1115" alt="126" src="https://github.com/user-attachments/assets/eff722b9-d426-4f94-b941-4f707435b8f0" />
+
 ---
 
 ## 2. 네트워크 설정
 
-### 🌐 네트워크 포트 번호 완전 정리
+
+# 🌐 네트워크 포트 번호 완전 정리
 
 > TCP/IP 네트워크에서 사용되는 포트 번호(Port Number)의 분류, 예약 포트, 등록 포트, 사용자 포트를 체계적으로 정리한 레퍼런스입니다.
 
@@ -583,9 +584,8 @@ nmap -sV 192.168.1.100        # 서비스 버전 포함
 - [Wikipedia — List of TCP and UDP port numbers](https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers)
 
 ---
----
 
-## 3. IP 주소 / 인터페이스 확인
+### IP 주소 / 인터페이스 확인
 
 ```bash
 # IP 주소 확인
