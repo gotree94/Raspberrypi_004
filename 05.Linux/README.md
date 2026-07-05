@@ -393,10 +393,18 @@ tail -c 200 file.txt        # 마지막 200바이트 출력
 파일의 줄 수, 단어 수, 바이트 수를 계산합니다.
 
 ```bash
-wc file.txt                 # 줄, 단어, 바이트 수 출력
-wc -l file.txt              # 줄 수만 출력
-wc -w file.txt              # 단어 수만 출력
-wc -c file.txt              # 바이트 수만 출력
+# 예제 파일 준비
+cat > file.txt << 'EOF'
+Hello Linux World
+This is a test file
+Linux is awesome
+EOF
+
+# 실행 및 결과
+wc file.txt                 # 3  12  58 file.txt (줄 단어 바이트)
+wc -l file.txt              # 3 file.txt
+wc -w file.txt              # 12 file.txt
+wc -c file.txt              # 58 file.txt
 wc -l *.c                   # 여러 소스 파일 줄 수 합산
 ```
 
@@ -407,7 +415,30 @@ wc -l *.c                   # 여러 소스 파일 줄 수 합산
 두 파일 간의 차이점을 표시합니다.
 
 ```bash
-diff file1.txt file2.txt        # 두 파일 비교
+# 예제 파일 준비
+cat > file1.txt << 'EOF'
+apple
+banana
+cherry
+EOF
+
+cat > file2.txt << 'EOF'
+apple
+blueberry
+cherry
+date
+EOF
+
+# 실행 및 결과
+diff file1.txt file2.txt
+# 출력:
+# 2c2
+# < banana
+# ---
+# > blueberry
+# 4a5
+# > date
+
 diff -u file1.txt file2.txt     # unified 형식 출력 (패치 파일 생성에 유용)
 diff -r dir1/ dir2/             # 디렉토리 재귀 비교
 diff -i file1.txt file2.txt     # 대소문자 무시
@@ -421,12 +452,29 @@ diff --color file1.txt file2.txt # 색상으로 차이 표시
 텍스트 파일의 내용을 정렬합니다.
 
 ```bash
-sort file.txt               # 알파벳 순 정렬
-sort -r file.txt            # 역순 정렬
-sort -n numbers.txt         # 숫자 기준 정렬
-sort -k 2 file.txt          # 2번째 필드 기준 정렬
-sort -u file.txt            # 중복 제거 후 정렬
-sort -t: -k3 -n /etc/passwd # 구분자 지정 후 정렬
+# 예제 파일 준비
+cat > file.txt << 'EOF'
+banana
+apple
+cherry
+banana
+date
+apple
+EOF
+
+cat > numbers.txt << 'EOF'
+10
+2
+33
+5
+111
+EOF
+
+# 실행 및 결과
+sort file.txt               # 알파벳 순 정렬: apple apple banana banana cherry date
+sort -r file.txt            # 역순 정렬: date cherry banana banana apple apple
+sort -n numbers.txt         # 숫자 기준 정렬: 2 5 10 33 111
+sort -u file.txt            # 중복 제거 후 정렬: apple banana cherry date
 ```
 
 ---
@@ -436,10 +484,22 @@ sort -t: -k3 -n /etc/passwd # 구분자 지정 후 정렬
 정렬된 파일에서 중복 행을 제거하거나 카운트합니다.
 
 ```bash
-sort file.txt | uniq            # 중복 제거 (sort 먼저!)
-sort file.txt | uniq -c         # 각 행의 중복 횟수 출력
-sort file.txt | uniq -d         # 중복된 행만 출력
-sort file.txt | uniq -u         # 고유한 행만 출력
+# 예제 파일 준비 (정렬 전)
+cat > file.txt << 'EOF'
+apple
+banana
+banana
+cherry
+cherry
+cherry
+date
+EOF
+
+# 실행 및 결과 (sort와 파이프로 연결하여 사용)
+sort file.txt | uniq            # apple banana cherry date (중복 제거)
+sort file.txt | uniq -c         # 1 apple, 2 banana, 3 cherry, 1 date (중복 횟수)
+sort file.txt | uniq -d         # banana cherry (중복된 행만)
+sort file.txt | uniq -u         # apple date (고유한 행만, 한 번만 등장)
 ```
 
 ---
@@ -449,10 +509,23 @@ sort file.txt | uniq -u         # 고유한 행만 출력
 각 행에서 특정 필드나 문자를 추출합니다.
 
 ```bash
+# 예제 파일 준비
+cat > data.csv << 'EOF'
+name,age,city
+Alice,30,Seoul
+Bob,25,Busan
+Charlie,35,Incheon
+EOF
+
+# 실행 및 결과
+cut -d, -f1 data.csv            # name  Alice  Bob  Charlie (1번째 열)
+cut -d, -f2 data.csv            # age  30  25  35 (2번째 열)
+cut -d, -f1,3 data.csv          # name,city  Alice,Seoul  Bob,Busan  Charlie,Incheon
+cut -c1-4 data.csv              # name  Alic  Bob,  Char (앞 4글자)
+
+# /etc/passwd 예제 (시스템)
 cut -d: -f1 /etc/passwd         # ':' 구분자로 1번째 필드 추출 (사용자명)
 cut -d: -f1,3 /etc/passwd       # 1번째, 3번째 필드 추출
-cut -c1-10 file.txt             # 1~10번째 문자 추출
-cut -d, -f2 data.csv            # CSV 파일 2번째 열 추출
 ```
 
 ---
@@ -482,13 +555,25 @@ grep -A 3 -B 3 "error" log.txt      # 앞뒤 3줄 함께 출력
 강력한 패턴 매칭 및 텍스트 처리 도구입니다.
 
 ```bash
-awk '{print $1}' file.txt               # 1번째 필드 출력
-awk -F: '{print $1, $3}' /etc/passwd    # 구분자 지정, 여러 필드 출력
-awk '{sum += $1} END {print sum}' f.txt # 합계 계산
-awk 'NR==5' file.txt                    # 5번째 행만 출력
-awk 'NR>=3 && NR<=7' file.txt           # 3~7번째 행 출력
-awk '{if ($3 > 100) print $0}' f.txt    # 조건부 출력
-awk '{print NR, $0}' file.txt           # 행 번호 추가
+# 예제 파일 준비
+cat > score.txt << 'EOF'
+Alice 90 85 88
+Bob 75 92 80
+Charlie 88 70 95
+Diana 95 90 92
+EOF
+
+# 실행 및 결과
+awk '{print $1}' score.txt              # Alice Bob Charlie Diana (1번째 필드)
+awk '{print $1, $2}' score.txt          # Alice 90  Bob 75  Charlie 88  Diana 95
+awk '{sum += $2} END {print sum}' score.txt  # 348 (2열 합계)
+awk '{sum += $2; count++} END {print sum/count}' score.txt  # 87 (2열 평균)
+awk 'NR==3' score.txt                   # Charlie 88 70 95 (3번째 행만)
+awk '{if ($3 > 80) print $1, $3}' score.txt  # Alice 85  Bob 92  Diana 90
+
+# 구분자 지정 예제
+awk -F: '{print $1, $3}' /etc/passwd    # ':' 구분자로 1,3번째 필드 출력
+awk '{print NR, $0}' score.txt          # 행 번호 추가 출력
 ```
 
 ---
