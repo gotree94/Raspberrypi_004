@@ -368,6 +368,17 @@ echo "dtparam=i2c_arm=on" | sudo tee -a /boot/firmware/config.txt
 sudo reboot
 ```
 
+```
+# 1. I2C 버스에 어떤 장치가 있는지 스캔
+i2cdetect -y 1
+
+# 2. 출력 예시 (0x48이 표시되어야 함):
+#      0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+# 00:          -- -- -- -- -- -- -- -- -- -- -- -- --
+# 10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+# ...
+# 40: -- -- -- -- -- -- -- -- 48 -- -- -- -- -- -- --
+```
 
 ```python
 import smbus2
