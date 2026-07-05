@@ -160,21 +160,66 @@ finally:
 ```python
 import serial
 import time
+import myservo
+from gpiozero import DigitalOutputDevice, PWMOutputDevice
 
 bleSerial = serial.Serial("/dev/ttyAMA0", baudate=115200, timeout=0.1)
-leds = LEDBoard(26, 16, 20, 21)
+
+PWMA = PWMOutputDevice(18)
+AIN1 = DigitalOutputDevice(22)
+AIN2 = DigitalOutputDevice(27)
+
+PWMB = PWMOutputDevice(23)
+BIN1 = DigitalOutputDevice(25)
+BIN2 = DigitalOutputDevice(24)
+
+def motor_go(speed):
+      AIN1.value = 0
+      AIN2.value = 1
+      PWMA.value = speed
+      BIN1.value = 0
+      BIN2.value = 1
+      PWMB.value = speed
+
+def motor_back(speed):
+      AIN1.value = 1
+      AIN2.value = 0
+      PWMA.value = speed
+      BIN1.value = 1
+      BIN2.value = 0
+      PWMB.value = speed
+
+def motor_stop():
+      AIN1.value = 0
+      AIN2.value = 1
+      PWMA.value = 0.0
+      BIN1.value = 0
+      BIN2.value = 1
+      PWMB.value = 0.0
+
+pca9685 = myservo.PCA9685()
+servo_channel = 0
+LEFT_ANGLE =45
+RIGHT_ANGLE =135
+CENTER_ANGLE =90
+speedSet=0.5
 
 try:
+  pca9685.set_servo_angle(servo_channel, CENTER_ANGLE)
   while True:
     if bleSerial.in_wating >0:
         data = bleSerial.readline().decoder().strip().upper()
         if "LEFT"in data:
+          pca9685.set_servo_angle(servo_channel, LEFT_ANGLE)
           print("ok left")
         elif "RIGHT"in data:
+          pca9685.set_servo_angle(servo_channel, RIGHT_ANGLE)
           print("ok right")
         elif "GO"in data:
+          pca9685.set_servo_angle(servo_channel, CENTER_ANGLE)
           print("ok go")
         elif "BACK"in data:
+          pca9685.set_servo_angle(servo_channel, CENTER_ANGLE)
           print("ok back")
         elif "STOP"in data:
           print("ok stop")
@@ -183,5 +228,37 @@ try:
 except KeyboardInterrupt:
   pass
 finally:
+  motor_stop()
+  pca9685.set_servo_angle(servo_channel, CENTER_ANGLE)
   bleSerial.close()
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
