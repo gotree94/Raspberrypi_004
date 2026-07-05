@@ -4,7 +4,7 @@
 * GPIO 출력 신호를 활용하여 단순한 알림음부터 주파수를 조절한 멜로디 출력까지 실습합니다.
 * 이를 통해 PWM(펄스못 변조)의 개념을 익히고, 다양한 하드웨어 제어에 적용할 수 있는 능력을 기릅니다.
 
-# 1. 부저 출력
+# 1. 부저 출력 하기
 
 * 3_3_1.py
 
@@ -28,3 +28,28 @@ try :
 except KeyboardInterrupt:
   print("code end")
 ```
+
+# 2. 긴급음 출력하기
+
+* 3_3_2.py
+
+```python
+from gpiozero import Button
+import time
+
+buzzer = PWMOutputDevice(12)
+
+try :
+    while True:
+      for f = in range(600,1500,20):
+        buzzer.frequency = f
+        buzzer.value = 0.5
+      for f = in range(1500,600,-20):
+    buzzer.frequency = f
+    buzzer.value = 0.5
+    time.sleep(0.005)
+
+except KeyboardInterrupt:
+  print("code end")
+```
+
