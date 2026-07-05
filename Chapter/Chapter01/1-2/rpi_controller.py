@@ -402,7 +402,13 @@ class ControllerGUI:
         self.root = tk.Tk()
         mode_label = "Binary" if self.ctrl.mode == 'efficient' else "ASCII"
         self.root.title(f"RPi Controller — STM32F103 시뮬레이터 검증 도구 ({mode_label})")
-        self.root.geometry("1050x780")
+        sw = self.root.winfo_screenwidth()
+        sh = self.root.winfo_screenheight()
+        w, h = 1050, 920
+        if sh < h + 80:
+            h = sh - 80
+        self.root.geometry(f"{w}x{h}")
+        self.root.minsize(950, 600)
         self.root.configure(bg=self.COLORS['bg'])
 
         style = ttk.Style()

@@ -361,7 +361,13 @@ class SimulatorGUI:
 
         self.root = tk.Tk()
         self.root.title("NUCLEO STM32F103 차량 시뮬레이터 — Serial")
-        self.root.geometry("1000x750")
+        sw = self.root.winfo_screenwidth()
+        sh = self.root.winfo_screenheight()
+        w, h = 1000, 950
+        if sh < h + 80:
+            h = sh - 80
+        self.root.geometry(f"{w}x{h}")
+        self.root.minsize(900, 600)
         self.root.configure(bg=self.COLORS['bg'])
 
         style = ttk.Style()
