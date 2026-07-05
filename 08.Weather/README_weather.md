@@ -44,6 +44,8 @@ project24/
 ```bash
 # 패키지 설치
 pip install requests
+또는
+sudo apt install python3-requests
 
 # 실행
 python weather_display_openmeteo.py
