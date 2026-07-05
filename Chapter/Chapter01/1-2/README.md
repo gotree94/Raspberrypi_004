@@ -22,12 +22,13 @@
 
 ### ③ ST-LINK / V2-1 영역 (중앙 상단 블록 diagram)
    * NUCLEO 보드의 상단부는 내장형 디버거/프로그래머인 ST-LINK 영역입니다.
-      * MCU에서 보낸 UART2 신호는 ST-LINK 칩 내부의 가상 컴포트(Internal Virtual COM Port) 회로를 거치면서 USB 프로토콜 데이터로 변환됩니다.
+      * MCU에서 보낸 UART2 신호는 ST-LINK 칩 내부의 가상 컴포트(Internal Virtual COM Port) 회로를 거치면서 <br> USB 프로토콜 데이터로 변환됩니다.
       * 동시에 USB 라인으로부터 전원(Power)을 받아 MCU 측으로 분배하는 역할도 수행합니다.
 
 ### ④ STM32F103 MCU 및 내부 내부 연결 (좌측)
    * UART2 설정: STM32F103 칩의 PA2(UART2 TX) 핀을 통해 시리얼 데이터가 출력됩니다.
-      * 보드 내부 라우팅: 이 내부 데이터 라인은 외부 핀으로만 나가는 것이 아니라, NUCLEO 보드 상단에 위치한 ST-LINK 가상 시리얼 변환기(ST-LINK Virtual Serial Converter) 칩으로 직접 연결됩니다.
+      * 보드 내부 라우팅: 이 내부 데이터 라인은 외부 핀으로만 나가는 것이 아니라, <br>
+      NUCLEO 보드 상단에 위치한 ST-LINK 가상 시리얼 변환기(ST-LINK Virtual Serial Converter) 칩으로 직접 연결됩니다.
 
 ---
 
