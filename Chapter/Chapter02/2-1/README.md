@@ -12,6 +12,51 @@ ls /dev/video*
 v4l2-ctl --list-devices
 ```
 
+```
+gotree94@rp4ros-nwk:~ $ pip install opencv-python
+error: externally-managed-environment
+
+× This environment is externally managed
+╰─> To install Python packages system-wide, try apt install
+    python3-xyz, where xyz is the package you are trying to
+    install.
+
+    If you wish to install a non-Debian-packaged Python package,
+    create a virtual environment using python3 -m venv path/to/venv.
+    Then use path/to/venv/bin/python and path/to/venv/bin/pip. Make
+    sure you have python3-full installed.
+
+    For more information visit http://rptl.io/venv
+
+note: If you believe this is a mistake, please contact your Python installation or OS distribution provider. You can override this, at the risk of breaking your Python installation or OS, by passing --break-system-packages.
+hint: See PEP 668 for the detailed specification.
+```
+
+* 의미: Debian Bookworm/Trixie부터 시스템 파이썬 패키지를 pip으로 설치하면 OS 패키지 관리자(apt)와 충돌하는 걸 막기 위해 이 에러가 발생합니다.
+
+* 해결 방법 3가지:
+1. (권장) apt로 설치 — 시스템 패키지와 충돌 없음
+
+```
+sudo apt install python3-opencv
+```
+
+2. (권장) venv 가상환경 사용 — 프로젝트마다 독립 환경
+
+```
+python3 -m venv myenv
+source myenv/bin/activate
+pip install opencv-python
+```
+
+3. 강제 설치 (--break-system-packages) — 시스템 패키지 깨질 위험 있음
+
+```
+pip install opencv-python --break-system-packages로 넘어간다면,
+```
+향후 apt upgrade할 때 OpenCV 관련 의존성 충돌이 날 수 있습니다. 가상환경(venv) 또는 apt 추천합니다.
+
+
 > 라즈베리파이 전용 카메라(CSI)는 `picamera2` 패키지 사용
 
 ---
