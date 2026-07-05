@@ -70,7 +70,7 @@ except KeyboardInterrupt:
   print("code end")
 ```
 
-### 3. InputDevice 사용해서 GPIO 상태 확인하기 
+### 3. 이벤트 기반의 콜백 함수를 이용하여 버튼을 누르면 한번만 동작하기
 
 * 이벤트 기반의 콜백 함수를 이용하여 버튼을 누르면 한번만 동작하도록 코드를 작성.
 
