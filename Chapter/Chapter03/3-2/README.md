@@ -80,30 +80,25 @@ except KeyboardInterrupt:
 from gpiozero import Button
 import time
 
-SW1 = Button(5, pull_up=False, bounce_time=0.05)
-SW2 = Button(6, pull_up=False, bounce_time=0.05)
-SW3 = Button(13, pull_up=False, bounce_time=0.05)
-SW4 = Button(19, pull_up=False, bounce_time=0.05)
+SW1 = InputDevice(5, pull_up=False)
+SW2 = InputDevice(6, pull_up=False)
+SW3 = InputDevice(13, pull_up=False)
+SW4 = InputDevice(19, pull_up=False)
 
-def sw1_pressed():
-   print("Button 1 pressed")
+try :
+    while True:
+      if SW1.is_active == True:
+            print("sw1")
 
-def sw2_pressed():
-   print("Button 2 pressed")
+      if SW2.is_active == True:
+            print("sw2")
 
-def sw3_pressed():
-   print("Button 3 pressed")
+      if SW3.is_active == True:
+            print("sw3")
 
-def sw4_pressed():
-   print("Button 4 pressed")
+      if SW4.is_active == True:
+            print("sw4")
 
-SW1.when.pressed = sw1_pressed
-SW2.when.pressed = sw2_pressed
-SW3.when.pressed = sw3_pressed
-SW4.when.pressed = sw4_pressed
-
-try:
-   while True:
       time.sleep(0.5)
 
 except KeyboardInterrupt:
