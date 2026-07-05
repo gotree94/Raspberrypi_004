@@ -41,7 +41,7 @@ try :
       BIN1.value = 0
       BIN2.value = 1
       PWMB.value = 0.5
-      print("0.3")
+      print("0.5")
       time.sleep(2.0)
 
       AIN1.value = 0
