@@ -333,6 +333,128 @@ Linux Kernel
 
 ---
 
+## Raspberry Pi Imager v2.0.3 — 라즈베리파이4 설치 가능 OS 총망라
+
+> Raspberry Pi Imager v2.0.3은 라즈베리파이 재단 공식 SD 카드 라이팅 도구입니다.  
+> 아래 목록은 Imager에서 Raspberry Pi 4를 선택했을 때 표시되는 모든 OS를 **카테고리별**로 정리한 것입니다.  
+> (✅ = Imager에 기본 등록, 🔗 = 수동 다운로드 필요)
+
+### 1. 🥇 공식 / 범용 OS
+
+| OS 이름 | 아키텍처 | 특징 |
+|---------|---------|------|
+| **Raspberry Pi OS (64-bit)** | arm64 | Debian Trixie 기반, Raspbian 후신, GPIO/카메라/터치스크린 완벽 지원 |
+| **Raspberry Pi OS Full (64-bit)** | arm64 | 데스크톱 + LibreOffice, Minecraft, VSCode 등 추천 앱 포함 |
+| **Raspberry Pi OS Lite (64-bit)** | arm64 | 데스크톱 없음, 서버/IoT/헤드리스 용도 |
+| **Ubuntu Desktop 24.04 LTS** | arm64 | Canonical 공식, 5년 지원, ROS/서버 애플리케이션에 강점 |
+| **Ubuntu Server 24.04 LTS** | arm64 | CLI 전용, 클러스터/클라우드/엣지 컴퓨팅 |
+| **Debian 12 (Bookworm)** | arm64 | 순수 Debian, RPi OS보다 가볍고 보수적 |
+| **Debian 11 (Bullseye)** | armhf/arm64 | 레거시 안정 버전 |
+| **Fedora 40+** | aarch64 | 최신 커널/소프트웨어, KDE/GNOME 선택 가능 |
+| **Manjaro ARM** | aarch64 | Arch 기반, GUI 설치, AUR 접근 가능 |
+| **Arch Linux ARM** | aarch64 | 롤링 릴리즈, 최소 설치, DIY 지향 |
+| **openSUSE Tumbleweed** | aarch64 | 롤링 릴리즈, YaST 설정 도구 |
+| **openSUSE Leap** | aarch64 | 고정 릴리즈, 안정성 중심 |
+| **Kali Linux** | arm64 | 600+ 보안/해킹 도구 내장, 침투 테스트 표준 |
+| **Alpine Linux** | aarch64 | 5MB 초경량, musl libc, Docker 최적화 |
+| **Armbian** | arm64 | Debian/Ubuntu 기반, SBC 최적화, 커널 업데이트 용이 |
+| **FreeBSD** | aarch64 | Linux 계열 아님 (BSD 계열), ZFS, 네트워크 성능 우수 |
+| **RISC OS** | arm | ARM 네이티브, 1987년부터 이어진 고유 OS, 경량 GUI |
+
+### 2. 🎮 게이밍 / 레트로 게임
+
+| OS 이름 | 에뮬레이터 | 특징 |
+|---------|-----------|------|
+| **RetroPie** | RetroArch + 50+ 코어 | 레트로 게이밍의 표준, ES (EmulationStation) 프론트엔드 |
+| **Recalbox** | RetroArch 기반 | 설치 즉시 사용 가능, 아동 친화 UI, 클라우드 세이브 |
+| **Batocera** | RetroArch 기반 | USB 부팅 가능, PC/Pi/기타 SBC 지원, 선별된 ROM 세트 |
+| **Lakka** | RetroArch 기반 | 최소주의, 게임기 UI (XMB), 저사양 기기 최적화 |
+| **Box86/Box64 + Wine** | x86 에뮬레이션 | RPi4에서 PC 게임 실행 (실험적, 성능 제한적) |
+
+### 3. 🏠 스마트 홈 / 홈 오토메이션
+
+| OS 이름 | 특징 |
+|---------|------|
+| **Home Assistant OS** | 스마트 홈 허브 전용, 2000+ 통합 지원, Zigbee/Z-Wave, Lovelace UI |
+| **Homebridge** | Apple HomeKit 호환 브리지, 비-HomeKit 기기를 HomeKit에 연결 |
+| **openHAB** | 오픈소스 홈 오토메이션, Eclipse IoT 기반, 400+ 애드온 |
+| **evcc** | 전기차 충전 관리, PV(태양광) 연동, Wallbox 제어 |
+| **Gladys Assistant** | 프라이버시 중심 스마트 홈, 로컬 AI, 음성 제어 |
+
+### 4. 🎬 미디어 센터
+
+| OS 이름 | 플레이어 | 특징 |
+|---------|---------|------|
+| **LibreELEC** | Kodi | 미디어 센터 전용, 초경량, 단일 용도 최적화 |
+| **OSMC** | Kodi + Vero | Debian 기반, Kodi + 범용 Linux 기능 동시 사용, Pi에서 Vero처럼 동작 |
+| **Plex Media Server** | Plex | 미디어 스트리밍 서버, 클라이언트-서버 모델, 메타데이터 관리 |
+
+### 5. 📺 디지털 사이니지
+
+| OS 이름 | 특징 |
+|---------|------|
+| **Screenly OSE** | 웹 기반 디지털 사이니지, Python + Flask, REST API, CMS 불필요 |
+| **piSignage** | 상업용 디지털 사이니지, 원격 관리, 예약/재생목록 지원 |
+| **Yodeck** | 클라우드 관리, 무료 플랜 (1대), 터치/QR/센서 연동 |
+
+### 6. 🖨️ 3D 프린팅 / CNC
+
+| OS 이름 | 특징 |
+|---------|------|
+| **OctoPi** | Raspberry Pi OS + OctoPrint, 3D 프린터 원격 모니터링/제어, 웹캠 스트리밍 |
+| **MainsailOS** | Klipper 기반 3D 프린터 펌웨어 + 웹 UI, Fluidd/Mainsail 선택 가능 |
+
+### 7. 📡 네트워크 / 서버
+
+| OS 이름 | 특징 |
+|---------|------|
+| **Pi-hole** | 네트워크 전체 광고 차단 DNS 서버, 경량, 플러그 앤 플레이 |
+| **OpenWrt** | 라우터/AP 펌웨어, NAT/QoS/VPN/방화벽, RPi4를 라우터로 변환 |
+| **DietPi** | 초경량 Debian 최적화, 사전 구성 소프트웨어 목록 제공 (Nextcloud, Pi-hole 등) |
+| **OMV (OpenMediaVault)** | NAS 전용 OS, Debian 기반, RAID/ZFS/Docker, SMB/NFS/FTP |
+
+### 8. 🧪 교육 / 개발
+
+| OS 이름 | 특징 |
+|---------|------|
+| **Raspberry Pi Desktop (x86)** | PC/VM용 RPi OS, RPi 환경을 일반 PC에서 테스트 |
+| **Scratch Desktop** | MIT Scratch 3, 교육용 블록 코딩 환경 |
+| **Python IDE / Thonny** | Python 학습/개발 통합 환경 |
+| **Android (LineageOS / KonstaKANG)** | 안드로이드 13/14 기반, RPi4에서 안드로이드 앱 실행, 터치스크린 지원 |
+
+### 9. 🛠️ 유틸리티 / 기타
+
+| OS 이름 | 특징 |
+|---------|------|
+| **Raspberry Pi Diagnostics** | RPi4 하드웨어 진단 도구 (메모리/CPU/스토리지 테스트) |
+| **Raspberry Pi OS + Connect** | RPi OS + Raspberry Pi Connect 사전 통합, 원격 접속 즉시 사용 |
+| **TLXOS** | Thin Client 전용, VDI/Citrix/VMware Horizon 연결 |
+| **Ultramarine Linux** | Fedora 기반, 사용자 친화, Pantheon/Budgie 데스크톱 |
+| **Bass OS** | 개발자 중심, 사전 설정된 개발 도구 모음 |
+| **Apertis** | 임베디드/자동차용, OTA 업데이트, Debian 기반 |
+
+---
+
+## Raspberry Pi Imager 사용 팁
+
+```bash
+# 설치 방법 (Raspberry Pi OS / Ubuntu / Debian)
+sudo apt update
+sudo apt install rpi-imager
+
+# 실행
+rpi-imager
+```
+
+> **Imager v2.0 주요 변경사항**
+> - 마법사(Wizard) 기반 단계별 UI (Device → OS → Storage)
+> - SSH, Wi-Fi, 호스트명, 로케일을 라이팅 전에 사전 설정 가능
+> - Raspberry Pi Connect 통합 (원격 접속)
+> - 접근성 향상 (키보드 네비게이션, 스크린 리더)
+> - 디바이스별 OS 필터링 지원 (Pi 4 선택 시 호환 OS만 표시)
+
+---
+
 ## 참고 자료
 
 - [DistroWatch](https://distrowatch.com/) — 배포판 인기 순위 및 정보
@@ -340,6 +462,8 @@ Linux Kernel
 - [Debian Releases](https://www.debian.org/releases/) — Debian 공식 릴리즈 정보
 - [Red Hat Documentation](https://access.redhat.com/documentation/) — RHEL 공식 문서
 - [Linux Foundation](https://www.linuxfoundation.org/) — Linux 재단 공식 사이트
+- [Raspberry Pi Software](https://www.raspberrypi.com/software/) — Imager 다운로드 및 OS 공식 페이지
+- [Raspberry Pi Imager GitHub](https://github.com/raspberrypi/rpi-imager) — 오픈소스 저장소
 
 ---
 
@@ -349,4 +473,4 @@ Linux Kernel
 
 ---
 
-*마지막 업데이트: 2025년*
+*마지막 업데이트: 2026년 7월*
