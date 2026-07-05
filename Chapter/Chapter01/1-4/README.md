@@ -121,5 +121,16 @@ nano ~/.config/Thonny/configuration.json
 ## pip install
 
 ```
+# 현재 위치 그대로 venv pip 사용
+./pip install torch opencv-python ultralytics
+
+# 또는 venv 활성화 후
+cd ~/AI_CAR
+source venv/bin/activate
+pip install torch opencv-python ultralytics
+```
+
+
+```
 pip install torch opencv-python ultralystic
 ```
