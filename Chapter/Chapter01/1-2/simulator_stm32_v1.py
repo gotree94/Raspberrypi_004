@@ -21,7 +21,6 @@ import argparse
 import glob
 import os
 import socket  # COM 포트 스캔 fallback 용
-import struct
 
 
 # ============================================================
@@ -55,71 +54,6 @@ def scan_serial_ports():
                 if os.path.exists(path):
                     ports.append({'device': path, 'description': path})
     return ports
-
-
-# ============================================================
-# BinaryProtocol — 효율적 바이너리 패킷 인코딩/디코딩
-# ============================================================
-class BinaryProtocol:
-    ACTUATOR_IDS = {
-        'WHEEL1': 1, 'WHEEL2': 2, 'WHEEL3': 3, 'WHEEL4': 4,
-        'SERVO1': 5, 'SERVO2': 6, 'CLCD': 7,
-        'LED_G': 8, 'LED_B': 9,
-        'LED_RGB_R': 10, 'LED_RGB_G': 11, 'LED_RGB_B': 12,
-        'BUZZER': 13, 'LASER': 14, 'IR_TX': 15,
-    }
-    ID_TO_KEY = {v: k for k, v in ACTUATOR_IDS.items()}
-    S_SIZE = 37
-
-    @staticmethod
-    def encode_status(engine):
-        with engine.lock:
-            lat = engine.gps_center_lat + engine.gps_radius * math.cos(engine.gps_theta)
-            lng = engine.gps_center_lng + engine.gps_radius * math.sin(engine.gps_theta)
-            data = bytearray(BinaryProtocol.S_SIZE)
-            data[0] = ord('S')
-            struct.pack_into('<H', data, 1, int(engine.sensors['CDS']['val']))
-            struct.pack_into('<H', data, 3, int(engine.sensors['HALL']['val']))
-            struct.pack_into('<H', data, 5, int(engine.sensors['TEMP']['val'] * 10))
-            struct.pack_into('<H', data, 7, int(engine.sensors['HUMI_T']['val']))
-            struct.pack_into('<H', data, 9, int(engine.sensors['HUMI_H']['val']))
-            data[11] = int(engine.sensors['ROT']['val'])
-            struct.pack_into('<H', data, 12, int(engine.sensors['US_DIST']['val']))
-            struct.pack_into('<H', data, 14, int(engine.joy['x']))
-            struct.pack_into('<H', data, 16, int(engine.joy['y']))
-            data[18] = int(engine.sensors['IR_RX']['val'])
-            struct.pack_into('<i', data, 19, int(lat * 10000))
-            struct.pack_into('<i', data, 23, int(lng * 10000))
-            struct.pack_into('<H', data, 27, int(engine.fuel))
-            struct.pack_into('<h', data, 29, int(engine.acc_x))
-            struct.pack_into('<h', data, 31, int(engine.acc_y))
-            struct.pack_into('<h', data, 33, int(engine.acc_z))
-            struct.pack_into('<H', data, 35, int(engine.rpm))
-        return bytes(data)
-
-    @staticmethod
-    def decode_command(cmd_data):
-        if len(cmd_data) < 2 or cmd_data[0] != ord('C'):
-            return None
-        id_ = cmd_data[1]
-        key = BinaryProtocol.ID_TO_KEY.get(id_)
-        if key is None:
-            return [('?', '0')]
-        if key == 'CLCD':
-            text = cmd_data[2:34].split(b'\x00')[0].decode('utf-8', errors='ignore')
-            return [(key, text)]
-        if len(cmd_data) < 4:
-            return None
-        val = str(struct.unpack_from('<H', cmd_data, 2)[0])
-        return [(key, val)]
-
-    @staticmethod
-    def encode_response(resp_str):
-        if resp_str.startswith('R,OK'):
-            return bytes([ord('R'), 0])
-        err_msg = resp_str.split('=', 1)[1] if '=' in resp_str else resp_str[3:]
-        err_bytes = err_msg.encode('utf-8')[:12]
-        return bytes([ord('R'), 1]) + err_bytes.ljust(12, b'\x00')
 
 
 # ============================================================
@@ -330,11 +264,10 @@ class SimulatorEngine:
 # Communication Handler (Serial 전용)
 # ============================================================
 class CommsHandler:
-    def __init__(self, engine, serial_port=None, baud=115200, mode='ascii'):
+    def __init__(self, engine, serial_port=None, baud=115200):
         self.engine = engine
         self.serial_port = serial_port
         self.baud = baud
-        self.mode = mode
         self.running = True
         self.ser = None
         self.tx_count = 0
@@ -366,13 +299,27 @@ class CommsHandler:
             import serial
             self.ser = serial.Serial(self.serial_port, self.baud, timeout=1)
             if self.callback:
-                self.callback('log', f"시리얼 열림: {self.serial_port} @ {self.baud}bps ({self.mode})")
-            if self.mode == 'efficient':
-                self._run_efficient()
-            else:
-                self._run_ascii()
-            if self.ser and self.ser.is_open:
-                self.ser.close()
+                self.callback('log', f"시리얼 열림: {self.serial_port} @ {self.baud}bps")
+            buf = ''
+            while self.running:
+                try:
+                    data = self.ser.read(1024)
+                    if data:
+                        buf += data.decode('utf-8', errors='ignore')
+                        while '\n' in buf:
+                            line, buf = buf.split('\n', 1)
+                            resp = self.engine.process_command(line)
+                            if resp:
+                                self.ser.write((resp + '\n').encode())
+                                self.tx_count += 1
+                                if self.callback:
+                                    self.callback('rx_cmd', line)
+                                    self.callback('tx_resp', resp)
+                    else:
+                        time.sleep(0.01)
+                except serial.SerialException:
+                    time.sleep(0.5)
+            self.ser.close()
         except ImportError:
             if self.callback:
                 self.callback('log', "❌ pyserial 미설치: pip install pyserial")
@@ -380,78 +327,10 @@ class CommsHandler:
             if self.callback:
                 self.callback('log', f"❌ 시리얼 오류: {e}")
 
-    def _run_ascii(self):
-        buf = ''
-        while self.running:
-            try:
-                data = self.ser.read(1024)
-                if data:
-                    buf += data.decode('utf-8', errors='ignore')
-                    while '\n' in buf:
-                        line, buf = buf.split('\n', 1)
-                        resp = self.engine.process_command(line)
-                        if resp:
-                            self.ser.write((resp + '\n').encode())
-                            self.tx_count += 1
-                            if self.callback:
-                                self.callback('rx_cmd', line)
-                                self.callback('tx_resp', resp)
-                else:
-                    time.sleep(0.01)
-            except serial.SerialException:
-                time.sleep(0.5)
-
-    def _run_efficient(self):
-        while self.running:
-            try:
-                header = self.ser.read(1)
-                if not header:
-                    time.sleep(0.01)
-                    continue
-                if header[0] == ord('C'):
-                    id_byte = self.ser.read(1)
-                    if not id_byte:
-                        continue
-                    if id_byte[0] == 7:
-                        payload = self.ser.read(32)
-                        if len(payload) < 32:
-                            continue
-                        cmd_data = bytes([ord('C'), 7]) + payload
-                    else:
-                        val_bytes = self.ser.read(2)
-                        if len(val_bytes) < 2:
-                            continue
-                        cmd_data = bytes([ord('C'), id_byte[0]]) + val_bytes
-                    pairs = BinaryProtocol.decode_command(cmd_data)
-                    if pairs and pairs[0][0] != '?':
-                        key, val = pairs[0]
-                        cmd_line = f"C,{key}={val}"
-                        resp = self.engine.process_command(cmd_line)
-                        if resp:
-                            self.ser.write(BinaryProtocol.encode_response(resp))
-                            self.tx_count += 1
-                            if self.callback:
-                                self.callback('rx_cmd', cmd_line)
-                                self.callback('tx_resp', resp)
-                    else:
-                        self.ser.write(BinaryProtocol.encode_response("R,ERR=Unknown key"))
-                        if self.callback:
-                            self.callback('log', f"[BIN] unknown ID: {id_byte[0]}")
-                elif header[0] == ord('R'):
-                    self.ser.read(1)
-                    if self.callback:
-                        self.callback('log', "[BIN] unexpected R")
-            except serial.SerialException:
-                time.sleep(0.5)
-
     def send_status(self, line):
         if self.ser and self.ser.is_open:
             try:
-                if self.mode == 'efficient':
-                    payload = BinaryProtocol.encode_status(self.engine)
-                else:
-                    payload = (line + '\n').encode()
-                self.ser.write(payload)
+                self.ser.write((line + '\n').encode())
                 self.tx_count += 1
                 if self.callback:
                     self.callback('tx_status', line)
@@ -481,8 +360,7 @@ class SimulatorGUI:
         self._connected = False
 
         self.root = tk.Tk()
-        mode_label = "Binary" if self.comms.mode == 'efficient' else "ASCII"
-        self.root.title(f"NUCLEO STM32F103 차량 시뮬레이터 — {mode_label}")
+        self.root.title("NUCLEO STM32F103 차량 시뮬레이터 — Serial")
         self.root.geometry("1000x750")
         self.root.configure(bg=self.COLORS['bg'])
 
@@ -968,19 +846,17 @@ def main():
     parser.add_argument('--serial-port', default=None, help='시리얼 포트 (예: COM3, /dev/ttyACM0)')
     parser.add_argument('--baud', type=int, default=115200, help='보드레이트 (기본: 115200)')
     parser.add_argument('--headless', action='store_true', help='GUI 없이 실행')
-    parser.add_argument('--efficient', action='store_true', help='효율적 바이너리 프로토콜 사용')
     args = parser.parse_args()
 
-    mode = 'efficient' if args.efficient else 'ascii'
     engine = SimulatorEngine()
-    comms = CommsHandler(engine, serial_port=args.serial_port, baud=args.baud, mode=mode)
+    comms = CommsHandler(engine, serial_port=args.serial_port, baud=args.baud)
 
     if args.headless:
         if not args.serial_port:
             print("headless 모드에서는 --serial-port 가 필요합니다")
             sys.exit(1)
         comms.start()
-        print(f"[Headless] STM32F103 시뮬레이터 실행 중 ({mode})")
+        print(f"[Headless] STM32F103 시뮬레이터 실행 중")
         print(f"  시리얼 포트: {args.serial_port} @ {args.baud}bps")
         try:
             while True:

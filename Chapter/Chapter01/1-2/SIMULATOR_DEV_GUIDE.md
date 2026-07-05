@@ -916,11 +916,12 @@ python simulator_stm32.py
 
 ---
 
-## Stage 12 — RPi Controller: 연결 + 데이터 수신
+## Stage 12 — RPi Controller: 백엔드 클래스
 
 ### 목표
 - `RPiController` 클래스: 시리얼 포트 연결, 읽기 스레드, S 패킷 파싱
-- 포트 선택 UI (console), `connect()`, `disconnect()`
+- CLI `--auto-test` 모드 유지 (GUI 없이 터미널에서 자동 테스트 실행 가능)
+- 콜백 인터페이스: `on_status`, `on_log`, `on_response` — GUI에서 연결
 
 ### 구현 상세
 
@@ -935,172 +936,118 @@ class RPiController:
         self.lock = threading.Lock()
         self.latest = {}
         self.packet_count = 0
-        self.error_count = 0
         self.log_buffer = []
+        self.max_log = 200
+
+        self.on_status = None    # callback(data_dict)
+        self.on_log = None       # callback(msg_str)
+        self.on_response = None  # callback(line_str)
 
     def connect(self, port=None):
-        if port:
-            self.serial_port = port
-        try:
-            import serial
-            self.ser = serial.Serial(self.serial_port, self.baud, timeout=1)
-            self._read_thread = threading.Thread(target=self._read_loop, daemon=True)
-            self._read_thread.start()
-            return True
-        except Exception as e:
-            print(f"[ERROR] 연결 실패: {e}")
-            return False
+        # 시리얼 열기 + _read_loop 스레드 시작
 
     def _read_loop(self):
-        buf = ''
-        while self.running and self.ser and self.ser.is_open:
-            try:
-                data = self.ser.read(1024)
-                if not data:
-                    time.sleep(0.01)
-                    continue
-                buf += data.decode('utf-8', errors='ignore')
-                while '\n' in buf:
-                    line, buf = buf.split('\n', 1)
-                    self._process_line(line.strip())
-            except:
-                time.sleep(0.1)
-
-    def _process_line(self, line):
-        if not line:
-            return
-        with self.lock:
-            self.packet_count += 1
-        if line.startswith('S,'):
-            parts = line[2:].split(',')
-            data = {}
-            for p in parts:
-                if '=' in p:
-                    k, v = p.split('=', 1)
-                    data[k] = v
-            with self.lock:
-                self.latest = data
-        elif line.startswith('R,'):
-            self.add_log(f"[RX] {line}")
+        # S 패킷 파싱 → self.latest + on_status 콜백
+        # R 응답 → self.log_buffer + on_log 콜백
 
     def send_cmd(self, cmd_str):
-        full = cmd_str if cmd_str.startswith('C,') else f"C,{cmd_str}"
-        self.ser.write((full + '\n').encode())
-        self.add_log(f"[TX] {full}")
+        # C, 접두사 자동 추가 후 송신
+
+    def auto_test(self, progress_cb=None, done_cb=None):
+        # progress_cb(msg, ok): 테스트 진행상황 콜백
+        # done_cb(passed, failed, results): 완료 콜백
+        # 콜백 없으면 print()로 CLI 출력
 ```
 
-### 포트 선택 (main)
-
-```python
-def main():
-    port = args.serial_port
-    if not port:
-        ports = scan_serial_ports()
-        if not ports:
-            print("사용 가능한 COM 포트가 없습니다")
-            return
-        for i, p in enumerate(ports):
-            print(f"  [{i}] {p}")
-        sel = int(input("선택: "))
-        port = ports[sel].split(' ')[0]
-
-    ctrl = RPiController(serial_port=port, baud=115200)
-    ctrl.connect()
-    time.sleep(0.5)
-    # 이후 run_interactive() 또는 auto_test()
-```
-
-### 검증
-```
-# 터미널 1: python simulator_stm32.py            # COM3 (가상)
-# 터미널 2: python rpi_controller.py --serial-port COM4
-# → "[TX]" 없이 S 패킷 10Hz 수신 확인
-# → log_buffer에 최근 50개 로그 유지 확인
-```
+**핵심 설계**: `RPiController`는 GUI를 전혀 몰라도 됨.
+`on_*` 콜백을 통해 상태 변화를 외부로 알리고,
+`ControllerGUI`가 이 콜백을 tkinter 안전하게(`root.after`) 처리.
 
 ---
 
-## Stage 13 — RPi Controller: 인터랙티브 모드
+## Stage 13 — RPi Controller: GUI (ControllerGUI)
 
 ### 목표
-- 실시간 센서 데이터 표시 (clear + print, 0.3초 갱신)
-- HELP 화면
-- 사용자 명령 입력 → `C,` 접두사 자동 추가 + 전송
-- `q`/`quit`/`exit` → 종료
+전체 tkinter GUI 구현 (~500줄):
 
-### 구현 상세
+```
+┌──────────────────────────────────────────────────────────────┐
+│ COM 포트: [COM3 ▼] [🔄] [연결]  ⛔ 연결 끊김                 │
+├───────────────────────┬──────────────────────────────────────┤
+│  센서 데이터 (실시간)  │  명령 전송                          │
+│  CDS 조도      : 450  │  ┌──────────────────┐ [전송]        │
+│  HALL 홀센서   : 320  │  │ ex: WHEEL1=500   │               │
+│  TEMP 온도     : 25.3 │  └──────────────────┘               │
+│  ...                  │  [▶ 자동 테스트 실행 (26개)]          │
+│  RPM 엔진회전수: 550  │  ─────────────────────               │
+│                       │  WHEEL1 ════════○═══ 500             │
+│                       │  WHEEL2 ═════○═══════ 300            │
+│                       │  SERVO1 ════════○═══ 500 → 90°      │
+│                       │  CLCD: [Hello World!] [전송]         │
+│                       │  ┌───────────────────────────┐      │
+│                       │  │ Hello World!              │      │
+│                       │  └───────────────────────────┘      │
+│                       │  [BUZZER OFF] [LASER OFF]             │
+│                       │  IR TX: 1 2 3 4 5 6 7 8 9           │
+├───────────────────────┴──────────────────────────────────────┤
+│ 시리얼 로그:                                                  │
+│ [TX] C,WHEEL1=500                                           │
+│ [RX] R,OK                                                   │
+├──────────────────────────────────────────────────────────────┤
+│ COM3 | 115200bps | 수신: 1542 패킷                           │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### 주요 특징
+
+| 컴포넌트 | 구현 내용 |
+|----------|-----------|
+| **연결 바** | COM port 콤보 + 새로고침 + 연결/종료 버튼 + 상태 레이블 |
+| **센서 패널** | 17개 Label, 10Hz(100ms) `root.after`로 갱신, `ctrl.latest`에서 읽음 |
+| **명령 전송** | Entry + Enter/버튼 → `ctrl.send_cmd()` |
+| **자동 테스트** | 버튼 → 백그라운드 스레드에서 `ctrl.auto_test()` 실행, 진행상황 Text에 표시 |
+| **스케일** | WHEEL1~4, SERVO1~2, LED_G/B, LED_RGB_R/G/B — `trace_add`로 명령 즉시 전송 |
+| **CLCD** | Entry + 전송 + 2행 디스플레이 |
+| **BUZZER/LASER** | 토글 버튼, 상태 변수 유지 |
+| **IR TX** | 1~9 버튼 그리드 |
+| **로그** | ScrolledText, `on_log` 콜백으로 실시간 출력 |
+| **스크롤** | 우측 제어판이 길어지므로 Canvas + Scrollbar + MouseWheel 바인딩 |
+
+### auto_test() 콜백 구조
 
 ```python
-def run_interactive(self):
-    self._print_help()
-    time.sleep(1)
-
-    disp_thread = threading.Thread(target=self._display_loop, daemon=True)
-    disp_thread.start()
-
-    try:
-        while self.running:
-            raw = input().strip()
-            if not raw:
-                continue
-            cmd = raw.lower()
-            if cmd in ('q', 'quit', 'exit'):
-                break
-            elif cmd == 'help':
-                self._print_help()
-            elif cmd == 'test':
-                self.auto_test()
-                input("Enter 키를 누르면 계속...")
-            elif cmd in ('cls', 'clear'):
-                os.system('cls' if sys.platform == 'win32' else 'clear')
-            else:
-                self.send_cmd(raw)
-    except (EOFError, KeyboardInterrupt):
-        pass
-    self.disconnect()
-
-def _display_loop(self):
-    while self.running:
-        self._render_display()
-        time.sleep(0.3)
-
-def _render_display(self):
-    os.system('cls' if sys.platform == 'win32' else 'clear')
-    with self.lock:
-        data = dict(self.latest)
-        pkt = self.packet_count
-        logs = list(self.log_buffer)
-
-    print(f" RPi Controller — STM32F103")
-    print(f" {self.serial_port} @ {self.baud}bps | 수신: {pkt} 패킷")
-    print("─" * 58)
-
-    if data:
-        print(f"  CDS={data.get('CDS','---')}  HALL={data.get('HALL','---')}  ...")
+# RPiController.auto_test() 내부:
+for cmd, desc in tests:
+    progress_cb(f"[TEST] {desc} ({cmd})... ", None)  # 진행 메시지
+    self.send_cmd(cmd)
+    time.sleep(0.3)
+    # 응답 검색...
+    if found:
+        progress_cb("", True)   # PASS
+        passed += 1
     else:
-        print("  센서 데이터 대기 중...")
+        progress_cb("", False)  # FAIL
+        failed += 1
 
-    print("─" * 58)
-    print("  로그:")
-    for log in logs[-6:]:
-        print(f"    {log}")
-    print("─" * 58)
-    print("  명령=WHEEL1=500  test=자동테스트  help=도움말  q=종료")
+done_cb(passed, failed, results)  # 최종 결과
 ```
+
+GUI의 `_test_progress()`가 `root.after(0, ...)`로 UI 스레드에 위임.
 
 ### 검증
 ```
-# 터미널 1: python simulator_stm32.py            # COM3 (가상)
-# 터미널 2: python rpi_controller.py --serial-port COM4
-# → 디스플레이에 센서 17개 값 실시간 갱신
-# → "WHEEL1=500" 입력 → 로그에 [TX] C,WHEEL1=500 표시
-# → "help" → 도움말 출력
-# → "q" → 종료
+python rpi_controller.py
+# → GUI 창 표시 (시뮬레이터와 동일한 다크 테마)
+# → COM 포트 드롭다운에 포트 목록
+# → 연결 전: 센서는 "---", 로그는 비어있음
+# → 연결 후: 10Hz 센서 값 갱신, 로그 표시
+# → 스케일 드래그 → 로그에 [TX] C,WHEEL1=xxx 표시
+# → "▶ 자동 테스트 실행" → 진행 로그 + 결과 메시지박스
 ```
 
 ---
 
-## Stage 14 — RPi Controller: 자동 테스트 스위트
+## Stage 14 — RPi Controller: 자동 테스트 스위트 (GUI + CLI)
 
 ### 목표
 26개 테스트 항목을 순차 실행하여 각 명령의 응답(R,OK / R,ERR)을 검증.
@@ -1227,7 +1174,7 @@ python rpi_controller.py --serial-port /tmp/ttyV1 --auto-test
 ### 최종 검증 체크리스트
 
 - [ ] Stage 1~11: `simulator_stm32.py` 전체 876줄 문법 통과
-- [ ] Stage 12~14: `rpi_controller.py` 전체 428줄 문법 통과
+- [ ] Stage 12~14: `rpi_controller.py` 전체 ~650줄 문법 통과
 - [ ] 10Hz S 패킷 수신: `tail -f` 또는 컨트롤러로 10초간 100±5 패킷 확인
 - [ ] 26개 자동 테스트: 26/26 통과
   - 22개 정상 명령 → R,OK
@@ -1260,14 +1207,15 @@ python rpi_controller.py --serial-port /tmp/ttyV1 --auto-test
 1-2/
 ├── ICD_SIMULATOR.md          # 385줄 — 통신 명세 + 전체 설명
 ├── SIMULATOR_DEV_GUIDE.md    # ← 본 문서
-├── simulator_stm32.py        # 876줄 — STM32F103 차량 시뮬레이터
+├── simulator_stm32.py        # 876줄 — STM32F103 차량 시뮬레이터 (GUI)
 │                             #   SimulatorEngine     (1~6)
 │                             #   CommsHandler        (1~7)
 │                             #   SimulatorGUI        (8~11)
 │                             #   main()              (1, 7)
-├── rpi_controller.py         # 428줄 — RPi 컨트롤러 검증 도구
-│                             #   RPiController       (12~14)
-│                             #   main()              (12)
+├── rpi_controller.py         # ~650줄 — RPi 컨트롤러 검증 도구 (GUI)
+│                             #   RPiController       (12, 14)
+│                             #   ControllerGUI       (13)
+│                             #   main()              (12, 14)
 ├── README.md                 # 기존 하드웨어 조립 문서
 └── 1-2-F*.png                # 기존 이미지
 ```
