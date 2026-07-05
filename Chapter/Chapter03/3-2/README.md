@@ -97,10 +97,10 @@ def sw3_pressed():
 def sw4_pressed():
     print("Button 4 predded")
 
-SW1.when_pressed = sW1_pressed
-SW2.when_pressed = sW2_pressed
-SW3.when_pressed = sW3_pressed
-SW4.when_pressed = sW4_pressed
+SW1.when_pressed = sw1_pressed
+SW2.when_pressed = sw2_pressed
+SW3.when_pressed = sw3_pressed
+SW4.when_pressed = sw4_pressed
 
       time.sleep(0.5)
 
