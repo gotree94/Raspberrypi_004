@@ -28,7 +28,7 @@ try :
       sw2_value = SW2.is_pressed
       sw3_value = SW3.is_pressed
       sw4_value = SW4.is_pressed
-      print("1:",sw1_value,"2:",sw2_value,"3:",sw3_value,"3:",sw4_value)
+      print("1:",sw1_value,"2:",sw2_value,"3:",sw3_value,"4:",sw4_value)
       time.sleep(0.5)
 
 except KeyboardInterrupt:
@@ -86,26 +86,28 @@ SW3 = Button(13, pull_up=False, bounce_time=0.05)
 SW4 = Button(19, pull_up=False, bounce_time=0.05)
 
 def sw1_pressed():
-    print("Button 1 predded")
+    print("Button 1 pressed")
 
 def sw2_pressed():
-    print("Button 2 predded")
+    print("Button 2 pressed")
 
 def sw3_pressed():
-    print("Button 3 predded")
+    print("Button 3 pressed")
 
 def sw4_pressed():
-    print("Button 4 predded")
+    print("Button 4 pressed")
 
 SW1.when_pressed = sw1_pressed
 SW2.when_pressed = sw2_pressed
 SW3.when_pressed = sw3_pressed
 SW4.when_pressed = sw4_pressed
 
-      time.sleep(0.5)
+try:
+    while True:
+        time.sleep(0.5)
 
 except KeyboardInterrupt:
-  print("code end")
+    print("code end")
 ```
 
 
@@ -114,10 +116,10 @@ except KeyboardInterrupt:
 
 * InputDevice 라이브러리를 사용하여  GPIO 상태를 확인하는 코드를 작성.
 
-* 3_2_3.py
+* 3_2_4.py
 
 ```python
-from gpiozero import Button
+from gpiozero import InputDevice
 import time
 
 SW1 = InputDevice(5, pull_up=False)
