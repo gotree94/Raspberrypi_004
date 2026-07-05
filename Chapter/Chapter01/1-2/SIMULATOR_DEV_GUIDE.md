@@ -19,7 +19,7 @@
    ```
    D:\github\Raspberrypi_004\Chapter\Chapter01\1-2\
    ```
-2. `ICD_SIMULATOR.md` — 통신 프로토콜 규격 문서 (385줄 완성본은 최종 Stage 참조)
+2. `ICD_SIMULATOR.md` — 통신 프로토콜 규격 문서 (290줄 완성본은 최종 Stage 참조)
 3. 필요한 라이브러리:
    ```
    pip install pyserial  # (선택) 풍부한 COM 포트 정보
@@ -49,6 +49,19 @@ python -c "import tkinter; import serial; print('OK')"
 - `main()`: 인자 파싱 + 엔진/커뮤니케이션 연결
 
 ### 구현 상세
+
+먼저 필요한 모듈을 모두 임포트합니다:
+
+```python
+import threading
+import serial
+import argparse
+import time
+import sys
+import socket
+import glob
+import os
+```
 
 #### 1-a. SimulatorEngine 뼈대
 
@@ -138,7 +151,14 @@ def main():
     comms = CommsHandler(engine, serial_port=args.serial_port, baud=args.baud)
 
     if args.headless:
-        comms.start()
+        if not args.serial_port:
+            print("[ERROR] headless 모드에서는 --serial-port 가 필요합니다")
+            sys.exit(1)
+        try:
+            comms.start()
+        except Exception as e:
+            print(f"[ERROR] 시리얼 포트 열기 실패: {e}")
+            sys.exit(1)
         print(f"[Headless] 시작: {args.serial_port}")
         try:
             while True:
@@ -150,6 +170,10 @@ def main():
     else:
         # Stage 8에서 GUI로 대체
         print("GUI 모드는 Stage 8부터 구현")
+
+
+if __name__ == '__main__':
+    main()
 ```
 
 #### 1-d. 포트 스캐너
@@ -183,13 +207,12 @@ def scan_serial_ports():
 
 ### 검증
 ```
-# 문법 검사
-python -c "import ast; ast.parse(open('simulator_stm32.py').read()); print('OK')"
+# 문법 검사 (파일이 UTF-8로 저장되었으므로 encoding 명시)
+python -c "import ast; ast.parse(open('simulator_stm32.py', encoding='utf-8').read()); print('OK')"
 
 # headless 모드 실행 (연결 없이 엔진만 구동)
 python simulator_stm32.py --headless --serial-port COM1
-# → "Connecting..." 후 SerialException 발생 (당연함, 포트가 없으므로)
-# → Ctrl+C로 종료
+# → "[ERROR] 시리얼 포트 열기 실패: ..." 메시지 출력 후 종료 (COM1 없으므로 정상)
 ```
 
 ---
@@ -589,7 +612,14 @@ class SimulatorGUI:
 
         self.root = tk.Tk()
         self.root.title("NUCLEO STM32F103 차량 시뮬레이터 — Serial")
-        self.root.geometry("1000x750")
+        # 화면 해상도에 맞춰 동적 크기 설정
+        sw = self.root.winfo_screenwidth()
+        sh = self.root.winfo_screenheight()
+        w, h = 1000, 950
+        if sh < h + 80:
+            h = sh - 80
+        self.root.geometry(f"{w}x{h}")
+        self.root.minsize(900, 600)
         self.root.configure(bg=self.COLORS['bg'])
 
         style = ttk.Style()
@@ -1173,8 +1203,8 @@ python rpi_controller.py --serial-port /tmp/ttyV1 --auto-test
 
 ### 최종 검증 체크리스트
 
-- [ ] Stage 1~11: `simulator_stm32.py` 전체 876줄 문법 통과
-- [ ] Stage 12~14: `rpi_controller.py` 전체 ~650줄 문법 통과
+- [ ] Stage 1~11: `simulator_stm32.py` 전체 907줄 문법 통과
+- [ ] Stage 12~14: `rpi_controller.py` 전체 795줄 문법 통과
 - [ ] 10Hz S 패킷 수신: `tail -f` 또는 컨트롤러로 10초간 100±5 패킷 확인
 - [ ] 26개 자동 테스트: 26/26 통과
   - 22개 정상 명령 → R,OK
@@ -1188,7 +1218,7 @@ python rpi_controller.py --serial-port /tmp/ttyV1 --auto-test
 - [ ] GUI 로터리 엔코더: ROT 값 변화
 - [ ] GUI 연결 해제 후 재연결: 정상 동작
 - [ ] --headless 모드: console-only 10Hz 전송
-- [ ] ICD 문서: 385줄, 프로토콜/핀맵/시뮬레이터/컨트롤러/테스트 정확성
+- [ ] ICD 문서: 290줄, 프로토콜/핀맵/시뮬레이터/컨트롤러/테스트 정확성
 
 ### 알려진 이슈
 
@@ -1205,17 +1235,21 @@ python rpi_controller.py --serial-port /tmp/ttyV1 --auto-test
 
 ```
 1-2/
-├── ICD_SIMULATOR.md          # 385줄 — 통신 명세 + 전체 설명
+├── ICD_SIMULATOR.md          # 290줄 — ASCII 프로토콜 명세
+├── ICD_EFFICIENT.md          # — 효율적 바이너리 프로토콜 명세
 ├── SIMULATOR_DEV_GUIDE.md    # ← 본 문서
-├── simulator_stm32.py        # 876줄 — STM32F103 차량 시뮬레이터 (GUI)
+├── simulator_stm32.py        # 907줄 — STM32F103 차량 시뮬레이터 (GUI)
 │                             #   SimulatorEngine     (1~6)
 │                             #   CommsHandler        (1~7)
 │                             #   SimulatorGUI        (8~11)
 │                             #   main()              (1, 7)
-├── rpi_controller.py         # ~650줄 — RPi 컨트롤러 검증 도구 (GUI)
+├── simulator_stm32_v1.py     # 876줄 — ASCII-only 학습용 (DEV_GUIDE Stage 12~14 기준)
+├── rpi_controller.py         # 795줄 — RPi 컨트롤러 검증 도구 (GUI)
 │                             #   RPiController       (12, 14)
 │                             #   ControllerGUI       (13)
 │                             #   main()              (12, 14)
-├── README.md                 # 기존 하드웨어 조립 문서
-└── 1-2-F*.png                # 기존 이미지
+├── rpi_controller_v1.py      # — ASCII-only 컨트롤러 (DEV_GUIDE 순수 버전)
+├── serial_bridge.py          # com0com 없이 SW-only 연결 브리지
+├── README.md                 # 하드웨어 조립 + com0com 테스트 문서
+└── 1-2-F*.png                # 회로도/연결 이미지
 ```
