@@ -127,6 +127,7 @@ cd ~/pi-monitor
 npm install
 node server.js
 ```
+![](001.png)
 
 <img width="1254" height="1115" alt="126" src="https://github.com/user-attachments/assets/eff722b9-d426-4f94-b941-4f707435b8f0" />
 
