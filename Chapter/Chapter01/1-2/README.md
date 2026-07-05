@@ -1,11 +1,19 @@
 # 1-2 자율주행 자동차 조립하기
 
+---
+
 ## 1. 시스템 개요 (Overall System)
   * 이 시스템은 라즈베리 파이 4의 USB 포트와
   * NUCLEO 보드의 ST-LINK USB 포트(Mini-B)를 단 하나의 USB 케이블로 연결하여
   * 전원 공급과 시리얼(UART) 데이터 통신을 동시에 해결하는 구성을 보여줍니다.
 
+<br>
+
 ![](1-2-F002-1.png)
+
+<br>
+
+---
 
 ## 2. 블록별 기능 및 데이터 흐름
 
@@ -29,14 +37,6 @@
    * UART2 설정: STM32F103 칩의 PA2(UART2 TX) 핀을 통해 시리얼 데이터가 출력됩니다.
       * 보드 내부 라우팅: 이 내부 데이터 라인은 외부 핀으로만 나가는 것이 아니라, <br>
       NUCLEO 보드 상단에 위치한 ST-LINK 가상 시리얼 변환기(ST-LINK Virtual Serial Converter) 칩으로 직접 연결됩니다.
-
----
-
-## 1. STM32F103 및 NUCLEO 보드 내부 처리 (왼쪽)MCU 내부 설정 (UART2): STM32F103 칩셋 내부에서 PA2(UART2 TX) 핀을 활성화하여 외부로 보낼 시리얼 데이터를 출력합니다.보드 내부 라우팅: PA2 핀에서 출력된 데이터 신호는 NUCLEO 보드상의 회로 패턴을 따라 상단의 ST-LINK/V2-1 모듈 영역으로 전달됩니다.ST-LINK의 역할: ST-LINK 내부의 가상 컴포트(Internal Virtual COM Port) 변환기가 이 UART2 신호를 받아 USB 프로토콜 데이터로 변환합니다. 동시에 USB 라인을 통해 들어오는 전원(Power)을 관리합니다.
-
-## 2. 물리적 연결 및 케이블 인터페이스 (가운데)ST-LINK USB 포트: NUCLEO 보드 우측 상단에 위치한 Mini-B 타입의 USB 포트를 통해 외부와 연결됩니다.USB 케이블 (단일 라인 통합): 하나의 USB 케이블을 통해 두 가지 핵심 기능이 동시에 수행됩니다.5V Power (적색 라인): Raspberry Pi 4로부터 5V 전원을 공급받아 NUCLEO 보드를 구동합니다.Serial Data (청색 라인): 변환된 UART2 데이터가 시리얼 통신 패킷 형태로 전송됩니다.
-
-## 3. Raspberry Pi 4 Model B의 처리 및 최종 동작 (오른쪽)USB 호스트 역할: Raspberry Pi 4의 USB 포트에 케이블이 연결되면, 라즈베리 파이는 시스템적으로 VCP(Virtual COM Port) 드라이버를 통해 NUCLEO 보드를 하나의 시리얼 장치로 인식합니다.최종 동작 요약: 결과적으로 추가적인 전원 공급 장치나 복잡한 점퍼 와이어 연결 없이, 단 한 개의 USB 케이블 연결만으로 NUCLEO 보드의 전원 숙제와 라즈베리 파이 간의 시리얼 데이터 송수신(UART2 $\rightarrow$ ST-LINK $\rightarrow$ USB)이 완벽하게 해결되는 구조입니다.
 
 ---
 
