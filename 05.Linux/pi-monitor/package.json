@@ -1,0 +1,12 @@
+{
+  "name": "pi-monitor",
+  "version": "1.0.0",
+  "description": "Raspberry Pi System Monitoring Dashboard",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
