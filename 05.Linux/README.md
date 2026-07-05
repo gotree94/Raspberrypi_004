@@ -199,6 +199,12 @@ file *                  # 현재 디렉토리 모든 파일 타입 출력
 파일 또는 디렉토리의 접근 권한을 변경합니다.
 
 ```bash
+gotree94@rosrp4-nwk:~/pi-monitor/public $ ls -al
+total 24
+drwxrwxr-x 2 gotree94 gotree94  4096 Jul  5 13:52 .
+drwxrwxr-x 4 gotree94 gotree94  4096 Jul  5 13:42 ..
+-rw-rw-r-- 1 gotree94 gotree94 13076 Jul  5 14:15 index.html
+
 chmod 755 script.sh         # rwxr-xr-x 권한 설정
 chmod +x script.sh          # 실행 권한 추가
 chmod -w file.txt           # 쓰기 권한 제거
