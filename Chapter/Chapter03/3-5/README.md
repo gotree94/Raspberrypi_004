@@ -152,3 +152,36 @@ finally:
 ```
 
 
+## 6. 데이터 수신받아 자동차 조종 완성하기
+  * 이제 실제 자동차를 움직이는 부분을 넣어 코드를 환성하여 자동차를 앱으로 조종하는 코드를 만들어 완성합니다.
+
+* 3_5_5.py
+
+```python
+import serial
+import time
+
+bleSerial = serial.Serial("/dev/ttyAMA0", baudate=115200, timeout=0.1)
+leds = LEDBoard(26, 16, 20, 21)
+
+try:
+  while True:
+    if bleSerial.in_wating >0:
+        data = bleSerial.readline().decoder().strip().upper()
+        if "LEFT"in data:
+          print("ok left")
+        elif "RIGHT"in data:
+          print("ok right")
+        elif "GO"in data:
+          print("ok go")
+        elif "BACK"in data:
+          print("ok back")
+        elif "STOP"in data:
+          print("ok stop")
+  time.sleep(0.01)
+
+except KeyboardInterrupt:
+  pass
+finally:
+  bleSerial.close()
+```
