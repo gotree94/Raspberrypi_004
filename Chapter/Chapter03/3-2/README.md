@@ -80,6 +80,46 @@ except KeyboardInterrupt:
 from gpiozero import Button
 import time
 
+SW1 = Button(5, pull_up=False, bounce_time=0.05)
+SW2 = Button(6, pull_up=False, bounce_time=0.05)
+SW3 = Button(13, pull_up=False, bounce_time=0.05)
+SW4 = Button(19, pull_up=False, bounce_time=0.05)
+
+def sw1_pressed():
+    print("Button 1 predded")
+
+def sw2_pressed():
+    print("Button 2 predded")
+
+def sw3_pressed():
+    print("Button 3 predded")
+
+def sw4_pressed():
+    print("Button 4 predded")
+
+SW1.when_pressed = sW1_pressed
+SW2.when_pressed = sW2_pressed
+SW3.when_pressed = sW3_pressed
+SW4.when_pressed = sW4_pressed
+
+      time.sleep(0.5)
+
+except KeyboardInterrupt:
+  print("code end")
+```
+
+
+
+### 4. InputDevice 사용해서 GPIO 상태 확인하기 
+
+* InputDevice 라이브러리를 사용하여  GPIO 상태를 확인하는 코드를 작성.
+
+* 3_2_3.py
+
+```python
+from gpiozero import Button
+import time
+
 SW1 = InputDevice(5, pull_up=False)
 SW2 = InputDevice(6, pull_up=False)
 SW3 = InputDevice(13, pull_up=False)
