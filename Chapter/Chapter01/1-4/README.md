@@ -70,9 +70,13 @@ gotree94@rosrp4-nwk:~/AI_CAR $
 
 파이썬을 사용하기 위해서 Thonny 파이썬 IDE를 사용합니다.
 
+* 기본적으로 설치가 되어 있기 째문에 바로 실행하면 됨.
+
 ```
 thonny
 ```
+
+* 또는 설치되어 있지 않다면:
 
 ```
 sudo apt install thonny
