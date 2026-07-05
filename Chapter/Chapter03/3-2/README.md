@@ -7,9 +7,11 @@
 
 ## 버튼 상태 확인하기
 
-### 3_2_1.py
+### 1. 버튼을 누를 때만 동작차기
 
 * 버튼 상태를 출력하는 코드를 작성
+
+* 3_2_1.py
 
 ```python
 from gpiozero import Button
@@ -33,9 +35,11 @@ except KeyboardInterrupt:
   print("code end")
 ```
 
-### 3_2_2.py
+### 2. 이벤트 기반 콜백 방식으로 버튼을 누르면 한 번만 동작하기
 
 * 조건문을 이용하여 버튼을 누르고 있을 때만 값이 출력하도록 코드를 작성.
+
+* 3_2_2.py
 
 ```python
 from gpiozero import Button
@@ -66,9 +70,11 @@ except KeyboardInterrupt:
   print("code end")
 ```
 
-### 3_2_3.py
+### 3. InputDevice 사용해서 GPIO 상태 확인하기 
 
 * 이벤트 기반의 콜백 함수를 이용하여 버튼을 누르면 한번만 동작하도록 코드를 작성.
+
+* 3_2_3.py
 
 ```python
 from gpiozero import Button
