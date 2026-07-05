@@ -79,6 +79,8 @@ sudo apt install thonny
 thonny
 ```
 
+   ![](003.png)
+
 ## 6. jupyter notebook
 
 
