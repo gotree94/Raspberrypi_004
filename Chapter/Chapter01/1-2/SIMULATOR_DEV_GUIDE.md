@@ -225,59 +225,105 @@ python simulator_stm32.py --headless --serial-port COM1
 
 ### 구현 상세
 
-#### 2-a. sensors 딕셔너리 초기화
+#### Stage 1 파일에서 변경할 부분
+
+1. `import random`과 `import math`를 상단에 추가 (Stage 3/4에서 사용)
+2. `SimulatorEngine.__init__`에서 `self.sensors = {}`를 아래 `sensors` 딕셔너리로 **교체**
+3. `SimulatorEngine.update_sensors()` 메서드를 random walk 버전으로 **교체**
+4. `SimulatorEngine.get_status_line()` 메서드를 실제 8개 센서 문자열을 반환하도록 **교체**
+
+#### 변경 후 `SimulatorEngine` 클래스 전체 모습
 
 ```python
-self.sensors = {
-    'CDS':     {'val': 500, 'min': 0,   'max': 999, 'rate': 10},
-    'HALL':    {'val': 500, 'min': 0,   'max': 999, 'rate': 15},
-    'TEMP':    {'val': 500, 'min': 0,   'max': 999, 'rate': 5},
-    'HUMI_T':  {'val': 500, 'min': 0,   'max': 999, 'rate': 7},
-    'HUMI_H':  {'val': 500, 'min': 0,   'max': 999, 'rate': 11},
-    'ROT':     {'val': 0,   'min': 0,   'max': 100, 'rate': 0},   # 수동 조작
-    'US_DIST': {'val': 500, 'min': 0,   'max': 999, 'rate': 18},
-    'IR_RX':   {'val': 0,   'min': 0,   'max': 9,   'rate': 0},   # 버튼 입력
-}
-```
+class SimulatorEngine:
+    def __init__(self):
+        self.lock = threading.Lock()
+        self.sensors = {
+            'CDS':     {'val': 500, 'min': 0,   'max': 999, 'rate': 10},
+            'HALL':    {'val': 500, 'min': 0,   'max': 999, 'rate': 15},
+            'TEMP':    {'val': 500, 'min': 0,   'max': 999, 'rate': 5},
+            'HUMI_T':  {'val': 500, 'min': 0,   'max': 999, 'rate': 7},
+            'HUMI_H':  {'val': 500, 'min': 0,   'max': 999, 'rate': 11},
+            'ROT':     {'val': 0,   'min': 0,   'max': 100, 'rate': 0},
+            'US_DIST': {'val': 500, 'min': 0,   'max': 999, 'rate': 18},
+            'IR_RX':   {'val': 0,   'min': 0,   'max': 9,   'rate': 0},
+        }
+        self.joy = {'x': 500, 'y': 500}
+        self.gps_center_lat = 37.5600
+        self.gps_center_lng = 127.0000
+        self.gps_radius = 0.001
+        self.gps_theta = 0.0
+        self.fuel = 1000
+        self.acc_x = self.acc_y = 0.0
+        self.acc_z = 980.0
+        self.rpm = 550
+        self.act = {}
 
-#### 2-b. update_sensors() — random walk
+    def update_sensors(self):
+        with self.lock:
+            for key, s in self.sensors.items():
+                if s['rate'] > 0 and key not in ('ROT', 'IR_RX'):
+                    delta = (random.random() - 0.5) * 2 * s['rate'] / 600
+                    s['val'] = max(s['min'], min(s['max'], s['val'] + delta))
 
-```python
-def update_sensors(self):
-    with self.lock:
-        for key, s in self.sensors.items():
-            if s['rate'] > 0 and key not in ('ROT', 'IR_RX'):
-                delta = (random.random() - 0.5) * 2 * s['rate'] / 600
-                s['val'] = max(s['min'], min(s['max'], s['val'] + delta))
+    def get_status_line(self):
+        with self.lock:
+            return "S," + ",".join([
+                f"CDS={self.sensors['CDS']['val']:.0f}",
+                f"HALL={self.sensors['HALL']['val']:.0f}",
+                f"TEMP={self.sensors['TEMP']['val']:.0f}",
+                f"HUMI_T={self.sensors['HUMI_T']['val']:.0f}",
+                f"HUMI_H={self.sensors['HUMI_H']['val']:.0f}",
+                f"ROT={self.sensors['ROT']['val']:.0f}",
+                f"US_DIST={self.sensors['US_DIST']['val']:.0f}",
+                f"IR_RX={self.sensors['IR_RX']['val']:.0f}",
+            ])
+
+    def process_command(self, line):
+        return "R,OK"
 ```
 
 **변화율 공식**: `분당 rate / 600틱(10Hz×60초) = 1틱당 변화량`
 - `random.random()`은 0~1, `-0.5`로 -0.5~+0.5, `×2` = -1~+1 범위 보정
 - 예: `rate=10` → 1틱당 최대 ±0.0167, 분당 최대 ±10
-
-#### 2-c. get_status_line() — 센서 값을 S 패킷으로
-
-```python
-def get_status_line(self):
-    with self.lock:
-        return "S," + ",".join([
-            f"CDS={self.sensors['CDS']['val']:.0f}",
-            f"HALL={self.sensors['HALL']['val']:.0f}",
-            ...
-        ])
-```
+- 변화폭이 작으므로(`rate/600 ≈ 0.01~0.03/틱`) 정수 표시는 수백 틱 후에야 1씩 변함
 
 ### 검증
-```python
-# 엔진만 생성해서 100틱(10초) 후 값 변화 확인
+
+```bash
+# 문법 검사
+python -c "import ast; ast.parse(open('simulator_stm32_test.py', encoding='utf-8').read()); print('AST OK')"
+
+# random walk 시뮬레이션 실행 (2000틱 = 200초)
+python -c "
+import sys; sys.path.insert(0, '.')
+from simulator_stm32_test import SimulatorEngine
 engine = SimulatorEngine()
-for _ in range(100):
+for i in range(2000):
     engine.update_sensors()
-    print(engine.get_status_line())
-    time.sleep(0.1)
-# → CDS, HALL 등이 500 부근에서 ±랜덤하게 움직이는지 확인
-# → ROT는 항상 0, IR_RX는 항상 0
+    if i % 500 == 0:
+        print(engine.get_status_line())
+print('Raw float values (rounded to .3f):')
+print(f'  CDS={engine.sensors[\"CDS\"][\"val\"]:.3f}')
+print(f'  HALL={engine.sensors[\"HALL\"][\"val\"]:.3f}')
+print(f'  US_DIST={engine.sensors[\"US_DIST\"][\"val\"]:.3f}')
+"
 ```
+
+출력 예시:
+```
+S,CDS=500,HALL=500,TEMP=500,HUMI_T=500,HUMI_H=500,ROT=0,US_DIST=500,IR_RX=0
+S,CDS=500,HALL=499,TEMP=500,HUMI_T=500,HUMI_H=500,ROT=0,US_DIST=499,IR_RX=0
+...
+Raw float values (rounded to .3f):
+  CDS=500.206
+  HALL=499.511
+  US_DIST=498.823
+```
+
+→ `S` 패킷 형식(8개 키=값, 쉼표 구분) 확인
+→ ROT와 IR_RX는 항상 0 (rate=0, 수동 조작)
+→ raw float 값이 500에서 미세하게 변하면 random walk 정상 동작
 
 ---
 
@@ -286,41 +332,57 @@ for _ in range(100):
 ### 목표
 JOY_X(중앙 500, ±7), JOY_Y(중앙 500, ±11)의 5-step-up/5-step-down 왕복 패턴.
 
-### 구현 상세
+### 변경할 부분 (Stage 2 파일 기준)
+
+1. **`__init__`** — `self.joy = {'x': 500, 'y': 500}` 아래에 joy 방향/카운트 변수 8개 **추가**
+2. **`update_sensors()`** — random walk 아래에 조이스틱 패턴 코드 **추가**
+3. **`get_status_line()`** — `US_DIST`와 `IR_RX` 사이에 `JOY_X`, `JOY_Y` **추가**
+
+### 변경 후 `__init__`에 추가될 변수들
 
 ```python
-# 초기화
-self.joy = {'x': 500, 'y': 500}
-self.joy_dir_x = 1
-self.joy_dir_y = 1
-self.joy_count_x = 0
-self.joy_count_y = 0
-self.joy_step_x = 7
-self.joy_step_y = 11
-self.joy_cycles_x = 5
-self.joy_cycles_y = 5
+    self.joy = {'x': 500, 'y': 500}
+    self.joy_dir_x = 1
+    self.joy_dir_y = 1
+    self.joy_count_x = 0
+    self.joy_count_y = 0
+    self.joy_step_x = 7
+    self.joy_step_y = 11
+    self.joy_cycles_x = 5
+    self.joy_cycles_y = 5
 ```
 
-#### update_sensors()에 추가
+### 변경 후 `update_sensors()` — random walk 아래에 추가
 
 ```python
-def update_sensors(self):
-    with self.lock:
-        # 1. random walk (Stage 2 코드)
-        ...
-        # 2. 조이스틱
-        if self.joy_count_x < self.joy_cycles_x:
-            self.joy['x'] += self.joy_step_x * self.joy_dir_x
-            self.joy_count_x += 1
-        else:
-            self.joy_dir_x *= -1
-            self.joy_count_x = 0
-            self.joy['x'] += self.joy_step_x * self.joy_dir_x
-            self.joy_count_x += 1
-        # Y도 동일 패턴 (step=11, cycles=5)
-        ...
-        self.joy['x'] = max(0, min(999, self.joy['x']))
-        self.joy['y'] = max(0, min(999, self.joy['y']))
+    # 조이스틱 X
+    if self.joy_count_x < self.joy_cycles_x:
+        self.joy['x'] += self.joy_step_x * self.joy_dir_x
+        self.joy_count_x += 1
+    else:
+        self.joy_dir_x *= -1
+        self.joy_count_x = 0
+        self.joy['x'] += self.joy_step_x * self.joy_dir_x
+        self.joy_count_x += 1
+    # 조이스틱 Y (동일 패턴, step=11, cycles=5)
+    if self.joy_count_y < self.joy_cycles_y:
+        self.joy['y'] += self.joy_step_y * self.joy_dir_y
+        self.joy_count_y += 1
+    else:
+        self.joy_dir_y *= -1
+        self.joy_count_y = 0
+        self.joy['y'] += self.joy_step_y * self.joy_dir_y
+        self.joy_count_y += 1
+
+    self.joy['x'] = max(0, min(999, self.joy['x']))
+    self.joy['y'] = max(0, min(999, self.joy['y']))
+```
+
+### 변경 후 `get_status_line()` — `US_DIST`와 `IR_RX` 사이에 추가
+
+```python
+    f"JOY_X={self.joy['x']:.0f}",
+    f"JOY_Y={self.joy['y']:.0f}",
 ```
 
 **패턴 설명**:
@@ -329,16 +391,33 @@ def update_sensors(self):
 - 총 10틱 = 1초 주기, 분당 60사이클 왕복
 
 ### 검증
-```python
+
+```bash
+# 문법 검사
+python -c "import ast; ast.parse(open('simulator_stm32_test.py', encoding='utf-8').read()); print('AST OK')"
+
+# 조이스틱 20틱 확인
+python -c "
+import sys; sys.path.insert(0, '.')
+from simulator_stm32_test import SimulatorEngine
 engine = SimulatorEngine()
-last_x = -1
-for _ in range(20):
+for i in range(20):
     engine.update_sensors()
     line = engine.get_status_line()
-    # JOY_X=값 확인
-    print(line.split(',')[7])  # JOY_X=
-    time.sleep(0.1)
-# → 500, 507, 514, 521, 528, 535, 528, 521, 514, 507, 500, ...
+    parts = {p.split('=')[0]: p.split('=')[1] for p in line[2:].split(',')}
+    print(f'{i:2d}: JOY_X={parts[\"JOY_X\"]:>3s} JOY_Y={parts[\"JOY_Y\"]:>3s}')
+"
+```
+
+출력 예시:
+```
+ 0: JOY_X=507 JOY_Y=511
+ 1: JOY_X=514 JOY_Y=522
+  ... (5-step 증가)
+ 5: JOY_X=535 JOY_Y=555
+ 6: JOY_X=528 JOY_Y=544
+  ... (5-step 감소)
+10: JOY_X=500 JOY_Y=500  ← 1주기 완료
 ```
 
 ---
@@ -348,42 +427,60 @@ for _ in range(20):
 ### 목표
 사용자 설정 중심점 기준 반경 0.001° 원형 궤도, 1분 1바퀴.
 
-### 구현 상세
+### 변경할 부분 (Stage 3 파일 기준)
+
+1. **`__init__`** — `gps_radius`/`gps_theta` 아래에 `self.gps_speed` **추가**
+2. **`update_sensors()`** — 맨 끝(조이스틱 clamp 아래)에 GPS theta 증가 코드 **추가**
+3. **`get_status_line()`** — `JOY_Y`와 `IR_RX` 사이에 `GPS_LAT`, `GPS_LNG` **추가**
+
+### 변경 후 `__init__`에 추가될 변수
 
 ```python
-# 초기화
-self.gps_center_lat = 37.5600
-self.gps_center_lng = 127.0000
-self.gps_radius = 0.001
-self.gps_theta = 0.0
-self.gps_speed = 2 * math.pi / 600   # 600틱(10Hz×60초) = 1회전
+    self.gps_radius = 0.001
+    self.gps_theta = 0.0
+    self.gps_speed = 2 * math.pi / 600  # 600틱(10Hz×60초) = 1회전
 ```
 
-#### update_sensors()에 추가
+### 변경 후 `update_sensors()` — 조이스틱 코드 아래에 추가
 
 ```python
-self.gps_theta += self.gps_speed
-if self.gps_theta > 2 * math.pi:
-    self.gps_theta -= 2 * math.pi
+    self.gps_theta += self.gps_speed
+    if self.gps_theta > 2 * math.pi:
+        self.gps_theta -= 2 * math.pi
 ```
 
-#### get_status_line()에 GPS 추가
+### 변경 후 `get_status_line()` — `JOY_Y`와 `IR_RX` 사이에 추가
 
 ```python
-lat = self.gps_center_lat + self.gps_radius * math.cos(self.gps_theta)
-lng = self.gps_center_lng + self.gps_radius * math.sin(self.gps_theta)
-# f"GPS_LAT={lat:.4f}, GPS_LNG={lng:.4f}"
+    lat = self.gps_center_lat + self.gps_radius * math.cos(self.gps_theta)
+    lng = self.gps_center_lng + self.gps_radius * math.sin(self.gps_theta)
+    # ...
+    f"GPS_LAT={lat:.4f}",
+    f"GPS_LNG={lng:.4f}",
 ```
 
 ### 검증
-```python
+
+```bash
+python -c "import ast; ast.parse(open('simulator_stm32_test.py', encoding='utf-8').read()); print('AST OK')"
+
+python -c "
+import sys; sys.path.insert(0, '.')
+from simulator_stm32_test import SimulatorEngine
 engine = SimulatorEngine()
-for _ in range(1200):  # 120초
+for i in range(1200):
     engine.update_sensors()
-    if _ % 100 == 0:
-        print(engine.get_status_line().split(',')[11:13])
-        # GPS_LAT, GPS_LNG 값이 원형으로 변하는지 확인
-# → 60초 후 (600틱) 같은 위치로 돌아오는지 확인
+    if i % 200 == 0:
+        print(engine.get_status_line())
+"
+```
+
+출력 예시:
+```
+S,CDS=500,...GPS_LAT=37.5610,GPS_LNG=127.0000,...
+S,CDS=500,...GPS_LAT=37.5595,GPS_LNG=127.0009,...  ← 반대편
+S,CDS=500,...GPS_LAT=37.5595,GPS_LNG=126.9991,...  ← 반대편
+S,CDS=500,...GPS_LAT=37.5610,GPS_LNG=127.0000,...  ← 600틱 후 같은 위치
 ```
 
 ---
@@ -395,46 +492,72 @@ for _ in range(1200):  # 120초
 - ACC_X/Y/Z: ±진동 + ACC_Z 980 기준
 - RPM: 550 기준 ±랜덤
 
-### 구현 상세
+### 변경할 부분 (Stage 4 파일 기준)
+
+1. **`__init__`** — `self.fuel = 1000` 아래에 `self.fuel_driving = True` 추가, `acc_x/acc_y/acc_z` 초기값 변경
+2. **`update_sensors()`** — GPS theta 코드 아래에 FUEL/ACC/RPM 코드 **추가**
+3. **`get_status_line()`** — `GPS_LNG`와 `IR_RX` 사이에 `FUEL`, `ACC_X/Y/Z`, `RPM` **추가**
+
+### 변경 후 `__init__` 변수들
 
 ```python
-# 초기화
-self.fuel = 1000
-self.fuel_driving = True  # True=주행, False=정차
-self.acc_x = 0.0
-self.acc_y = 5.0
-self.acc_z = 980.0
-self.rpm = 550
+    self.fuel = 1000
+    self.fuel_driving = True   # True=주행(-1/틱), False=정차(-0.1/틱)
+    self.acc_x = 0.0
+    self.acc_y = 5.0
+    self.acc_z = 980.0
+    self.rpm = 550
 ```
 
-#### update_sensors()에 추가
+### 변경 후 `update_sensors()` — GPS 코드 아래에 추가
 
 ```python
-# 연료
-if self.fuel > 0:
-    self.fuel -= 0.1 if not self.fuel_driving else 1.0
-    self.fuel = max(0, self.fuel)
+    if self.fuel > 0:
+        self.fuel -= 0.1 if not self.fuel_driving else 1.0
+        self.fuel = max(0, self.fuel)
 
-# 가속도 (랜덤 진동)
-self.acc_x = (random.random() - 0.5) * 20
-self.acc_y = (random.random() - 0.5) * 20
-self.acc_z = 980 + (random.random() - 0.5) * 10
+    self.acc_x = (random.random() - 0.5) * 20
+    self.acc_y = (random.random() - 0.5) * 20
+    self.acc_z = 980 + (random.random() - 0.5) * 10
 
-# RPM
-self.rpm = max(0, min(999, self.rpm + (random.random() - 0.5) * 20))
+    self.rpm = max(0, min(999, self.rpm + (random.random() - 0.5) * 20))
+```
+
+### 변경 후 `get_status_line()` — `GPS_LNG`와 `IR_RX` 사이에 추가
+
+```python
+    f"FUEL={self.fuel:.0f}",
+    f"ACC_X={self.acc_x:.1f}",
+    f"ACC_Y={self.acc_y:.1f}",
+    f"ACC_Z={self.acc_z:.1f}",
+    f"RPM={self.rpm:.0f}",
 ```
 
 ### 검증
-```python
+
+```bash
+# 문법 검사
+python -c "import ast; ast.parse(open('simulator_stm32_test.py', encoding='utf-8').read()); print('AST OK')"
+
+# 100틱 FUEL 감소 확인 (주행 모드: -1/틱)
+python -c "
+import sys; sys.path.insert(0, '.')
+from simulator_stm32_test import SimulatorEngine
 engine = SimulatorEngine()
-engine.fuel_driving = True
 for i in range(100):
     engine.update_sensors()
-    if i % 10 == 0:
-        line = engine.get_status_line()
-        # FUEL= 값이 1000에서 1씩 감소하는지 확인
-        print(line.split(',')[12])  # FUEL=
-# → 100틱 후 FUEL ≈ 900 (1000 - 100×1)
+    if i % 20 == 0:
+        print(engine.get_status_line())
+print(f'100틱 후 FUEL = {engine.fuel:.0f} (예상: 900)')
+"
+```
+
+출력 예시:
+```
+S,...,FUEL=999,ACC_X=-2.8,ACC_Y=-3.9,ACC_Z=984.1,RPM=551,...
+S,...,FUEL=979,ACC_X=9.0,ACC_Y=7.7,ACC_Z=983.8,RPM=531,...
+S,...,FUEL=959,...
+100틱 후 FUEL = 900 (예상: 900)
 ```
 
 ---
@@ -463,79 +586,116 @@ RPi로부터 `C,WHEEL1=500,CLCD=Hello,...` 명령 수신 시:
 
 ### 구현 상세
 
+Stage 5 파일의 `SimulatorEngine` 클래스에 다음을 **변경/추가**:
+
+1. **클래스 변수 `ACTUATOR_KEYS`** — 범위 검증용 딕셔너리 추가
+2. **`process_command()` 메서드** — 전체를 아래 코드로 **교체** (`return "R,OK"` 자리)
+
+### `SimulatorEngine` 클래스에 추가할 클래스 변수
+
 ```python
-def process_command(self, line):
-    line = line.strip()
-    if not line.startswith('C,'):
-        return None
-    body = line[2:]
-    pairs = body.split(',')
-    errors = []
-    for pair in pairs:
-        if '=' not in pair:
-            continue
-        k, v = pair.split('=', 1)
-        k = k.strip().upper()
-        v = v.strip()
-        if k in ('WHEEL1','WHEEL2','WHEEL3','WHEEL4'):
-            try:
-                val = int(v)
-                if 0 <= val <= 999:
-                    self.act[k] = val
+    ACTUATOR_KEYS = {
+        'WHEEL1': (0, 999), 'WHEEL2': (0, 999), 'WHEEL3': (0, 999), 'WHEEL4': (0, 999),
+        'SERVO1': (0, 999), 'SERVO2': (0, 999),
+        'LED_G': (0, 999), 'LED_B': (0, 999),
+        'LED_RGB_R': (0, 999), 'LED_RGB_G': (0, 999), 'LED_RGB_B': (0, 999),
+    }
+```
+
+### 교체할 `process_command()` 메서드
+
+```python
+    def process_command(self, line):
+        line = line.strip()
+        if not line.startswith('C,'):
+            return None
+        body = line[2:]
+        pairs = body.split(',')
+        errors = []
+        processed = 0
+        for pair in pairs:
+            if '=' not in pair:
+                continue
+            processed += 1
+            k, v = pair.split('=', 1)
+            k = k.strip().upper()
+            v = v.strip()
+            if k in self.ACTUATOR_KEYS:
+                lo, hi = self.ACTUATOR_KEYS[k]
+                try:
+                    val = int(v)
+                    if lo <= val <= hi:
+                        self.act[k] = val
+                    else:
+                        errors.append(f"{k} out of range ({lo}~{hi})")
+                except ValueError:
+                    errors.append(f"{k} invalid int")
+            elif k == 'CLCD':
+                self.act['CLCD'] = v[:32]
+            elif k == 'BUZZER':
+                if v in ('0', '1'):
+                    self.act['BUZZER'] = int(v)
                 else:
-                    errors.append(f"{k} out of range (0~999)")
-            except ValueError:
-                errors.append(f"{k} invalid int")
-        elif k in ('SERVO1','SERVO2'):
-            # WHEEL과 동일한 0~999 검증
-        elif k == 'CLCD':
-            self.act['CLCD'] = v[:32]
-        elif k in ('LED_G','LED_B'):
-            # 0~999 검증
-        elif k in ('LED_RGB_R','LED_RGB_G','LED_RGB_B'):
-            # 0~999 검증
-        elif k == 'BUZZER':
-            if v in ('0','1'):
-                self.act['BUZZER'] = int(v)
-            else:
-                errors.append("BUZZER must be 0 or 1")
-        elif k == 'LASER':
-            if v in ('0','1'):
-                self.act['LASER'] = int(v)
-            else:
-                errors.append("LASER must be 0 or 1")
-        elif k == 'IR_TX':
-            try:
-                val = int(v)
-                if 1 <= val <= 9:
-                    self.act['IR_TX'] = val
+                    errors.append("BUZZER must be 0 or 1")
+            elif k == 'LASER':
+                if v in ('0', '1'):
+                    self.act['LASER'] = int(v)
                 else:
-                    errors.append("IR_TX out of range (1~9)")
-            except ValueError:
-                errors.append("IR_TX invalid int")
-        else:
-            errors.append(f"Unknown key: {k}")
-    if errors:
-        return "R,ERR=" + "; ".join(errors)
-    return "R,OK"
+                    errors.append("LASER must be 0 or 1")
+            elif k == 'IR_TX':
+                try:
+                    val = int(v)
+                    if 1 <= val <= 9:
+                        self.act['IR_TX'] = val
+                    else:
+                        errors.append("IR_TX out of range (1~9)")
+                except ValueError:
+                    errors.append("IR_TX invalid int")
+            else:
+                errors.append(f"Unknown key: {k}")
+        if errors:
+            return "R,ERR=" + "; ".join(errors)
+        if processed == 0:
+            return None
+        return "R,OK"
 ```
 
 ### 검증
-```python
+
+```bash
+# 문법 검사
+python -c "import ast; ast.parse(open('simulator_stm32_test.py', encoding='utf-8').read()); print('AST OK')"
+
+# 7개 테스트 케이스 실행
+python -c "
+import sys; sys.path.insert(0, '.')
+from simulator_stm32_test import SimulatorEngine
 engine = SimulatorEngine()
 tests = [
-    ("C,WHEEL1=500", "R,OK"),
-    ("C,SERVO1=999", "R,OK"),
-    ("C,BUZZER=1", "R,OK"),
-    ("C,BUZZER=2", "R,ERR=BUZZER must be 0 or 1"),
-    ("C,FAKE_KEY=1", "R,ERR=Unknown key: FAKE_KEY"),
-    ("C,WHEEL1=1000", "R,ERR=WHEEL1 out of range (0~999)"),
-    ("C,INVALID", None),  # = 없으면 무시
+    ('C,WHEEL1=500', 'R,OK'),
+    ('C,SERVO1=999', 'R,OK'),
+    ('C,BUZZER=1', 'R,OK'),
+    ('C,BUZZER=2', 'R,ERR=BUZZER must be 0 or 1'),
+    ('C,FAKE_KEY=1', 'R,ERR=Unknown key: FAKE_KEY'),
+    ('C,WHEEL1=1000', 'R,ERR=WHEEL1 out of range (0~999)'),
+    ('C,INVALID', None),
 ]
 for cmd, expected in tests:
     resp = engine.process_command(cmd)
-    status = "PASS" if resp == expected else f"FAIL (got {resp})"
-    print(f"{status}: {cmd} → {resp}")
+    status = 'PASS' if resp == expected else f'FAIL (got {resp})'
+    print(f'{status}: {cmd} -> {resp}')
+"
+```
+
+출력 예시:
+```
+PASS: C,WHEEL1=500 -> R,OK
+PASS: C,SERVO1=999 -> R,OK
+PASS: C,BUZZER=1 -> R,OK
+PASS: C,BUZZER=2 -> R,ERR=BUZZER must be 0 or 1
+PASS: C,FAKE_KEY=1 -> R,ERR=Unknown key: FAKE_KEY
+PASS: C,WHEEL1=1000 -> R,ERR=WHEEL1 out of range (0~990)
+PASS: C,INVALID -> None
 ```
 
 ---
