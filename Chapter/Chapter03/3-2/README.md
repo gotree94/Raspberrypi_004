@@ -7,8 +7,9 @@
 
 ## 버튼 상태 확인하기
 
-* 3_2_1.py
-    * 버튼 상태를 출력하는 코드를 작성
+### 3_2_1.py
+
+* 버튼 상태를 출력하는 코드를 작성
 
 ```python
 from gpiozero import Button
@@ -32,8 +33,9 @@ except KeyboardInterrupt:
   print("code end")
 ```
 
-* 3_2_1.py
-    * 조건문을 이용하여 버튼을 누르고 있을 때만 값이 출력하도록 코드를 작성.
+### 3_2_2.py
+
+* 조건문을 이용하여 버튼을 누르고 있을 때만 값이 출력하도록 코드를 작성.
 
 ```python
 from gpiozero import Button
@@ -63,3 +65,42 @@ try :
 except KeyboardInterrupt:
   print("code end")
 ```
+
+### 3_2_3.py
+
+* 이벤트 기반의 콜백 함수를 이용하여 버튼을 누르면 한번만 동작하도록 코드를 작성.
+
+```python
+from gpiozero import Button
+import time
+
+SW1 = Button(5, pull_up=False, bounce_time=0.05)
+SW2 = Button(6, pull_up=False, bounce_time=0.05)
+SW3 = Button(13, pull_up=False, bounce_time=0.05)
+SW4 = Button(19, pull_up=False, bounce_time=0.05)
+
+def sw1_pressed():
+   print("Button 1 pressed")
+
+def sw2_pressed():
+   print("Button 2 pressed")
+
+def sw3_pressed():
+   print("Button 3 pressed")
+
+def sw4_pressed():
+   print("Button 4 pressed")
+
+SW1.when.pressed = sw1_pressed
+SW2.when.pressed = sw2_pressed
+SW3.when.pressed = sw3_pressed
+SW4.when.pressed = sw4_pressed
+
+try:
+   while True:
+      time.sleep(0.5)
+
+except KeyboardInterrupt:
+  print("code end")
+```
+
