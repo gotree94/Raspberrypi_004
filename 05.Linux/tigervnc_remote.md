@@ -1,26 +1,41 @@
 # TigerVNC — 라즈베리파이 고속 원격 데스크톱
 
-> TigerVNC는 RealVNC보다 가볍고 빠른 오픈소스 VNC 구현체입니다. <br>
+> TigerVNC는 RealVNC보다 가볍고 빠른 오픈소스 VNC 구현체입니다.
 > 로컬 네트워크에서 직접 연결하므로 클라우드 중계 방식보다 지연시간이 훨씬 짧습니다.
+> **RealVNC가 설치된 상태에서도 WayVNC + TigerVNC 사용이 가능합니다.**
 
 ---
 
 ## 1. 개요
 
-| 항목 | RealVNC | TigerVNC |
-|------|---------|----------|
-| 연결 방식 | 클라우드 중계 (외부 서버 경유) | 직접 연결 (로컬 네트워크) |
+| 항목 | RealVNC | TigerVNC + WayVNC |
+|------|---------|-------------------|
+| 연결 방식 | 클라우드 중계 (외부 서버 경유) | **직접 연결** (로컬 네트워크) |
 | 속도 | 상대적으로 느림 | **빠름** (압축/인코딩 최적화) |
 | 라이선스 | Home plan 제한 (무료 판도 변화) | **완전 무료 오픈소스** |
-| Bookworm 지원 | Wayland 미지원 | **WayVNC + TigerVNC 조합 권장** |
+| Wayland 지원 | ❌ 미지원 (X11 전용) | **✅ WayVNC가 Wayland 네이티브 지원** |
 
 ---
 
 ## 2. 라즈베리파이 설정 (서버)
 
-Raspberry Pi OS Bookworm/Trixie에는 **WayVNC**가 기본 포함되어 있습니다.
+Raspberry Pi OS Bookworm/Trixie는 **Wayland**가 기본이며 **WayVNC**가 이미 내장되어 있습니다.
 
-### 2.1. VNC 활성화
+### 2.1. RealVNC와 WayVNC의 공존 여부 확인
+
+```bash
+# 현재 디스플레이 서버 확인
+echo $XDG_SESSION_TYPE
+# → wayland  (기본, RealVNC는 동작 불가)
+# → x11     (이 경우만 RealVNC와 포트 충돌 가능)
+```
+
+> **중요:** Bookworm/Trixie 기본은 Wayland입니다.  
+> RealVNC는 Wayland를 지원하지 않아 **설치만 되어 있을 뿐 실제로 실행되지 않습니다.**  
+> 따라서 WayVNC가 5900 포트를 문제없이 사용할 수 있습니다.  
+> X11 모드로 전환한 경우에만 포트 충돌이 발생합니다.
+
+### 2.2. VNC 활성화
 
 ```bash
 # 방법 1: raspi-config
@@ -31,13 +46,27 @@ sudo raspi-config
 # 메뉴 → Preferences → Raspberry Pi Configuration → Interfaces → VNC → Enable
 ```
 
-### 2.2. WayVNC 상태 확인
+### 2.3. WayVNC 상태 확인
 
 ```bash
 systemctl --user status wayvnc
+# ● wayvnc.service - WayVNC
+#      Active: active (running) ← 이렇게 나와야 정상
 ```
 
-### 2.3. (선택) RealVNC 제거 — 충돌 방지
+### 2.4. 포트 충돌 확인
+
+```bash
+# 5900 포트를 사용 중인 프로세스 확인
+sudo ss -tlnp | grep 5900
+
+# wayvnc가 사용 중이면 정상 (realvnc-vnc-server는 보이지 않음)
+```
+
+### 2.5. (필요시만) RealVNC 완전 제거
+
+Wayland 환경에서는 제거하지 않아도 됩니다.  
+X11 모드에서 RealVNC와 충돌이 발생할 때만 실행하세요.
 
 ```bash
 sudo apt purge realvnc-vnc-server
@@ -119,12 +148,26 @@ systemctl --user status wayvnc
 systemctl --user start wayvnc
 ```
 
+### 포트 충돌 (RealVNC와 충돌)
+
+```bash
+# 증상: "Address already in use" 또는 Connection refused
+# 확인
+sudo ss -tlnp | grep 5900
+
+# 원인: X11 모드에서 RealVNC가 5900 포트를 선점
+# 해결: RealVNC 제거
+sudo apt purge realvnc-vnc-server
+sudo reboot
+```
+
 ### 검은 화면만 보임
 
 ```bash
 # 최신 패키지로 업데이트
 sudo apt update
 sudo apt upgrade
+sudo reboot
 ```
 
 ### 인증 실패
@@ -132,6 +175,15 @@ sudo apt upgrade
 `raspi-config`에서 VNC를 활성화한 후 **반드시 재부팅**하세요.
 
 ```bash
+sudo reboot
+```
+
+### 디스플레이 서버가 X11인 경우
+
+```bash
+# Wayland로 전환 (RPi OS 기본)
+sudo raspi-config
+# → Advanced Options → Wayland → X11 대신 Wayland 선택
 sudo reboot
 ```
 
