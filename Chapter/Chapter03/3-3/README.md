@@ -9,5 +9,22 @@
 * 3_3_1.py
 
 ```python
+from gpiozero import Button
+import time
 
+buzzer = PWMOutputDevice(12)
+
+notes = [262, 294, 330, 349, 392, 440, 494, 523]
+
+try :
+    while True:
+      for f = in notes:
+    buzzer.frequency = f
+    buzzer.value = 0.5
+    time.sleep(0.3)
+    buzzer.value = 0
+    time.sleep(0.1)
+
+except KeyboardInterrupt:
+  print("code end")
 ```
