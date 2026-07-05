@@ -130,7 +130,3 @@ source venv/bin/activate
 pip install torch opencv-python ultralytics
 ```
 
-
-```
-pip install torch opencv-python ultralystic
-```
