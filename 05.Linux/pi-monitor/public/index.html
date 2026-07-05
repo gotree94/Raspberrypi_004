@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pi Monitor - Raspberry Pi Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -23,6 +24,24 @@
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .grid-4-top {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
       gap: 16px;
       margin-bottom: 16px;
     }
@@ -62,11 +81,13 @@
     .stat-row {
       display: flex;
       justify-content: space-between;
-      padding: 4px 0;
+      padding: 5px 0;
       border-bottom: 1px solid #1e2d40;
+      font-size: 14px;
     }
-    .stat-row .label { color: #8899a6; }
-    .stat-row .value { color: #e1e8ed; font-family: monospace; }
+    .stat-row .label { color: #8899a6; white-space: nowrap; margin-right: 12px; }
+    .stat-row .label-desc { color: #556677; font-size: 12px; margin-left: 4px; }
+    .stat-row .value { color: #e1e8ed; font-family: monospace; text-align: right; }
     .throttle-badge {
       display: inline-block;
       padding: 3px 10px;
@@ -77,62 +98,104 @@
     .badge-ok { background: #1b5e20; color: #a5d6a7; }
     .badge-warn { background: #e65100; color: #ffcc80; }
     .badge-err { background: #b71c1c; color: #ef9a9a; }
+    .chart-container { position: relative; height: 90px; }
     .last-updated {
       text-align: right;
       color: #556677;
       font-size: 12px;
       margin-top: 12px;
     }
-    @media (max-width: 600px) {
-      .grid { grid-template-columns: 1fr; }
+    #sys-info { font-size: 14px; line-height: 2; color: #e1e8ed; }
+    .thr-item {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 8px;
+      margin: 2px;
+      border-radius: 3px;
+    }
+    .thr-active { background: #b71c1c; color: #ef9a9a; }
+    .thr-inactive { background: #1a2332; color: #556677; border: 1px solid #2a3a4e; }
+    @media (max-width: 1100px) {
+      .grid-4-top { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 700px) {
+      .grid-4-top { grid-template-columns: 1fr; }
+      .grid-2 { grid-template-columns: 1fr; }
+      .grid-4 { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
-<h1>Pi Monitor <small>Raspberry Pi System Dashboard</small></h1>
+<h1>&#120156;&#8203;i Monitor <small>Raspberry Pi System Dashboard</small></h1>
 
-<div class="grid">
+<div class="grid-4-top">
   <div class="card">
-    <h2>CPU 온도</h2>
+    <h2>CPU &amp; Temperature</h2>
     <div id="cpu-temp" class="big-temp normal">--<span class="unit">&deg;C</span></div>
-    <div id="cpu-clock" class="stat-row"><span class="label">클럭</span><span class="value">--</span></div>
-    <div id="cpu-load" class="stat-row"><span class="label">Load Avg</span><span class="value">--</span></div>
+    <div id="cpu-percent" class="stat-row"><span class="label">CPU 사용률</span><span class="value">--</span></div>
+    <div id="cpu-clock" class="stat-row"><span class="label">클럭 속도</span><span class="value">--</span></div>
+    <div id="cpu-load" class="stat-row"><span class="label">Load Average <span class="label-desc">(1/5/15분)</span></span><span class="value">--</span></div>
   </div>
 
   <div class="card">
-    <h2>전압 &amp; 스로틀링</h2>
-    <div id="volt-core" class="stat-row"><span class="label">Core 전압</span><span class="value">--</span></div>
-    <div id="volt-sdram" class="stat-row"><span class="label">SDRAM 전압</span><span class="value">--</span></div>
-    <div id="throttle-status" class="stat-row"><span class="label">스로틀링</span><span class="value">--</span></div>
-    <div id="throttle-detail" style="margin-top:8px;font-size:12px;color:#8899a6;"></div>
+    <h2>Memory</h2>
+    <div id="mem-percent" class="stat-row"><span class="label">메모리 사용률</span><span class="value">--</span></div>
+    <div id="mem-total" class="stat-row"><span class="label">전체 용량</span><span class="value">--</span></div>
+    <div id="mem-used" class="stat-row"><span class="label">사용 중</span><span class="value">--</span></div>
+    <div id="mem-gpu" class="stat-row"><span class="label">GPU 할당 <span class="label-desc">(vcgencmd get_mem gpu)</span></span><span class="value">--</span></div>
+    <div id="mem-arm" class="stat-row"><span class="label">ARM 할당 <span class="label-desc">(vcgencmd get_mem arm)</span></span><span class="value">--</span></div>
   </div>
 
   <div class="card">
-    <h2>시스템 정보</h2>
-    <div id="sys-model" class="stat-row"><span class="label">모델</span><span class="value">--</span></div>
-    <div id="sys-kernel" class="stat-row"><span class="label">커널</span><span class="value">--</span></div>
-    <div id="sys-os" class="stat-row"><span class="label">OS</span><span class="value">--</span></div>
-    <div id="sys-revision" class="stat-row"><span class="label">Revision</span><span class="value">--</span></div>
-    <div id="sys-serial" class="stat-row"><span class="label">시리얼</span><span class="value">--</span></div>
-    <div id="sys-firmware" class="stat-row"><span class="label">펌웨어</span><span class="value">--</span></div>
+    <h2>Voltage &amp; Throttling</h2>
+    <div id="volt-core" class="stat-row"><span class="label">Core 전압 <span class="label-desc">(measure_volts core)</span></span><span class="value">--</span></div>
+    <div id="volt-sdram" class="stat-row"><span class="label">SDRAM_C 전압 <span class="label-desc">(measure_volts sdram_c)</span></span><span class="value">--</span></div>
+    <div id="volt-sdrami" class="stat-row"><span class="label">SDRAM_I 전압</span><span class="value">--</span></div>
+    <div id="volt-sdramp" class="stat-row"><span class="label">SDRAM_P 전압</span><span class="value">--</span></div>
+    <div id="throttle-status" style="margin-top:8px;"></div>
   </div>
 
   <div class="card">
-    <h2>메모리</h2>
-    <pre id="mem-free">--</pre>
-    <div id="mem-gpu" class="stat-row"><span class="label">GPU 메모리</span><span class="value">--</span></div>
-    <div id="mem-arm" class="stat-row"><span class="label">ARM 메모리</span><span class="value">--</span></div>
+    <h2>System Information</h2>
+    <pre id="sys-info" style="font-size:14px;line-height:2;"></pre>
   </div>
 </div>
 
-<div class="grid">
+<div class="grid-4">
   <div class="card">
-    <h2>디스크 사용량</h2>
+    <h2>CPU Usage <span style="text-transform:none;color:#556677;font-size:11px;">(last 60s)</span></h2>
+    <div class="chart-container">
+      <canvas id="chart-cpu"></canvas>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Temperature <span style="text-transform:none;color:#556677;font-size:11px;">(last 60s)</span></h2>
+    <div class="chart-container">
+      <canvas id="chart-temp"></canvas>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Memory Usage <span style="text-transform:none;color:#556677;font-size:11px;">(last 60s)</span></h2>
+    <div class="chart-container">
+      <canvas id="chart-mem"></canvas>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Core Voltage <span style="text-transform:none;color:#556677;font-size:11px;">(last 60s)</span></h2>
+    <div class="chart-container">
+      <canvas id="chart-volt"></canvas>
+    </div>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <h2>Disk Usage <span class="label-desc" style="text-transform:none;">(df -h)</span></h2>
     <pre id="disk-df">--</pre>
   </div>
   <div class="card">
-    <h2>Inode 사용량</h2>
+    <h2>Inode Usage <span class="label-desc" style="text-transform:none;">(df -i)</span></h2>
     <pre id="disk-inode">--</pre>
   </div>
 </div>
@@ -140,11 +203,72 @@
 <div class="last-updated" id="last-updated">Waiting for data...</div>
 
 <script>
+const MAX_POINTS = 12;
+const labels = Array.from({ length: MAX_POINTS }, (_, i) => `${(MAX_POINTS - i) * 5}s`).reverse();
+
+function makeChart(ctx, label, color, bgColor, fixed) {
+  return new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels.slice(),
+      datasets: [{
+        label,
+        data: Array(MAX_POINTS).fill(null),
+        borderColor: color,
+        backgroundColor: bgColor,
+        borderWidth: 2,
+        pointRadius: 2,
+        pointHoverRadius: 4,
+        tension: 0.3,
+        fill: true,
+      }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 300 },
+      plugins: { legend: { display: false } },
+      scales: {
+        x: {
+          ticks: { color: '#556677', font: { size: 10 }, maxTicksLimit: 6 },
+          grid: { color: '#1e2d40' },
+        },
+        y: {
+          beginAtZero: true,
+          ticks: { color: '#556677', font: { size: 10 } },
+          grid: { color: '#1e2d40' },
+          ...(fixed ? { max: fixed.max, min: fixed.min } : {}),
+        },
+      },
+    },
+  });
+}
+
+const chartCpu = makeChart(document.getElementById('chart-cpu'), 'CPU %', '#4fc3f7', 'rgba(79,195,247,0.1)', { min: 0, max: 100 });
+const chartTemp = makeChart(document.getElementById('chart-temp'), 'Temp °C', '#ff8a65', 'rgba(255,138,101,0.1)', { min: 30, max: 90 });
+const chartMem = makeChart(document.getElementById('chart-mem'), 'Mem %', '#81c784', 'rgba(129,199,132,0.1)', { min: 0, max: 100 });
+const chartVolt = makeChart(document.getElementById('chart-volt'), 'Voltage V', '#ce93d8', 'rgba(206,147,216,0.1)', { min: 0.8, max: 1.4 });
+
+function pushValue(chart, val) {
+  const data = chart.data.datasets[0].data;
+  data.push(val === null ? null : val);
+  data.shift();
+  chart.update();
+}
+
+function setText(id, text) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = text ?? 'N/A';
+}
+
+function setHTML(id, html) {
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = html;
+}
+
 function parseThrottled(hex) {
-  if (!hex || hex === '0x0') return { status: 'ok', msg: '정상', bits: [] };
-  const m = hex.match(/0x([0-9a-fA-F]+)/);
-  if (!m) return { status: 'ok', msg: '알 수 없음', bits: [] };
-  const val = parseInt(m[1], 16);
+  if (!hex || !hex.value) return { status: 'ok', msg: '정상', bits: [] };
+  const val = hex.value;
   const bits = [];
   if (val & 0x1) bits.push('언더볼트 발생 중');
   if (val & 0x2) bits.push('주파수 상한 설정됨');
@@ -154,88 +278,95 @@ function parseThrottled(hex) {
   if (val & 0x20000) bits.push('주파수 상한 이력');
   if (val & 0x40000) bits.push('스로틀링 이력');
   if (val & 0x80000) bits.push('소프트 온도 한계 도달 이력');
-  const severity = (val & 0xF) ? 'warn' : 'ok';
-  return { status: severity, msg: bits.length > 0 ? bits.join(', ') : '이상 감지', bits };
-}
-
-function setText(id, text) {
-  const el = document.getElementById(id);
-  if (el) el.textContent = text || 'N/A';
-}
-
-function setHTML(id, html) {
-  const el = document.getElementById(id);
-  if (el) el.innerHTML = html;
+  const now = val & 0xF;
+  const severity = now ? 'err' : (bits.length ? 'warn' : 'ok');
+  return { status: severity, msg: bits.length ? bits.join(', ') : '정상', bits };
 }
 
 async function fetchAll() {
   try {
-    const [sys, cpu, mem, volt, disk] = await Promise.all([
-      fetch('/api/system').then(r => r.json()),
-      fetch('/api/cpu').then(r => r.json()),
-      fetch('/api/memory').then(r => r.json()),
-      fetch('/api/voltage').then(r => r.json()),
-      fetch('/api/disk').then(r => r.json()),
-    ]);
+    const res = await fetch('/api/snapshot');
+    const d = await res.json();
 
-    // System
-    const osName = sys.osRelease ? (sys.osRelease.match(/PRETTY_NAME="([^"]+)"/) || [,''])[1] : '';
-    setText('sys-model', sys.model.split('\n')[0] || 'N/A');
-    setText('sys-kernel', sys.uname.split(' ')[2] || sys.uname.split('\n')[0] || 'N/A');
-    setText('sys-os', osName || 'N/A');
-    setText('sys-revision', sys.revision || 'N/A');
-    setText('sys-serial', sys.serial || 'N/A');
-    setText('sys-firmware', (sys.firmware || '').split('\n')[0] || 'N/A');
+    const s = d.system;
+    const model = s.model ? s.model.trim() : 'N/A';
+    const kernel = s.uname ? s.uname.split(' ')[2] : 'N/A';
+    const os = s.os || 'N/A';
+    const revision = s.revision || 'N/A';
+    const serial = s.serial || 'N/A';
+    const firmware = s.firmware ? s.firmware.split('\n')[0] : 'N/A';
+    setText('sys-info',
+      'Model     : ' + model + '\n' +
+      'Kernel    : ' + kernel + '\n' +
+      'OS        : ' + os + '\n' +
+      'Revision  : ' + revision + '\n' +
+      'Serial    : ' + serial + '\n' +
+      'Firmware  : ' + firmware
+    );
 
-    // CPU
-    const tempMatch = cpu.temp ? cpu.temp.match(/([\d.]+)/) : null;
-    if (tempMatch) {
-      const tempVal = parseFloat(tempMatch[1]);
+    const cpu = d.cpu;
+    if (cpu.temp !== null) {
       const el = document.getElementById('cpu-temp');
-      el.innerHTML = tempVal.toFixed(1) + '<span class="unit">&deg;C</span>';
-      el.className = 'big-temp ' + (tempVal < 60 ? 'normal' : tempVal < 75 ? 'warm' : 'hot');
+      el.innerHTML = cpu.temp.toFixed(1) + '<span class="unit">&deg;C</span>';
+      el.className = 'big-temp ' + (cpu.temp < 60 ? 'normal' : cpu.temp < 75 ? 'warm' : 'hot');
     }
-    const clockMatch = cpu.clock ? cpu.clock.match(/([\d.]+)/) : null;
-    if (clockMatch) {
-      const mhz = (parseFloat(clockMatch[1]) / 1000000).toFixed(1);
-      setText('cpu-clock', mhz + ' MHz');
-    } else if (cpu.scalingFreq) {
-      const mhz = (parseInt(cpu.scalingFreq) / 1000).toFixed(1);
-      setText('cpu-clock', mhz + ' MHz (scaling)');
-    }
+    setText('cpu-percent', cpu.percent !== null ? cpu.percent + '%' : 'N/A');
+    setText('cpu-clock', cpu.clock ? cpu.clock + ' MHz' : 'N/A');
     setText('cpu-load', cpu.load || 'N/A');
 
-    // Memory
-    setText('mem-free', cpu.meminfo || cpu.free || 'N/A');
-    if (cpu.meminfo && cpu.meminfo.includes('\n')) {
-      setText('mem-free', cpu.free || cpu.meminfo.split('\n').slice(0,4).join('\n'));
+    const mem = d.memory;
+    if (mem) {
+      setText('mem-percent', mem.percent !== null ? mem.percent.toFixed(1) + '%' : 'N/A');
+      setText('mem-total', mem.totalMB ? (mem.totalMB / 1024).toFixed(1) + ' GB' : 'N/A');
+      setText('mem-used', mem.usedMB ? (mem.usedMB / 1024).toFixed(2) + ' GB' : 'N/A');
+      setText('mem-gpu', mem.gpuMem || 'N/A');
+      setText('mem-arm', mem.armMem || 'N/A');
     }
-    setHTML('mem-free', (mem.free || 'N/A').replace(/\n/g, '<br>'));
-    setText('mem-gpu', mem.gpuMem || 'N/A');
-    setText('mem-arm', mem.armMem || 'N/A');
 
-    // Voltage / Throttle
-    setText('volt-core', volt.coreVolt || 'N/A');
-    setText('volt-sdram', volt.sdramVolt || 'N/A');
+    const v = d.voltage;
+    setText('volt-core', v.core !== null ? v.core.toFixed(3) + ' V' : 'N/A');
+    setText('volt-sdram', v.sdram_c !== null ? v.sdram_c.toFixed(3) + ' V' : 'N/A');
+    setText('volt-sdrami', v.sdram_i !== null ? v.sdram_i.toFixed(3) + ' V' : 'N/A');
+    setText('volt-sdramp', v.sdram_p !== null ? v.sdram_p.toFixed(3) + ' V' : 'N/A');
 
-    const thr = parseThrottled(volt.throttled);
-    const badgeClass = thr.status === 'ok' ? 'badge-ok' : 'badge-warn';
-    setHTML('throttle-status', '<span class="throttle-badge ' + badgeClass + '">' + thr.msg + '</span>');
-    setText('throttle-detail', volt.throttled ? 'Raw: ' + volt.throttled : '');
+    const thr = parseThrottled(d.throttled);
+    let thrHtml = '';
+    const allBits = [
+      { bit: 0x1, label: '언더볼트' },
+      { bit: 0x2, label: '주파수 상한' },
+      { bit: 0x4, label: '스로틀링' },
+      { bit: 0x8, label: '온도 한계' },
+    ];
+    const rawVal = d.throttled?.value || 0;
+    for (const b of allBits) {
+      const now = rawVal & b.bit;
+      const occ = rawVal & (b.bit << 16);
+      let cls = 'thr-inactive';
+      let label = b.label;
+      if (now) { cls = 'thr-active'; label += '!'; }
+      else if (occ) { cls = 'thr-active'; label += '(과거)'; }
+      thrHtml += '<span class="thr-item ' + cls + '">' + label + '</span>';
+    }
+    setHTML('throttle-status', thrHtml + ' <span style="color:#556677;font-size:11px;">' + (d.throttled?.hex || '') + '</span>');
 
-    // Disk
-    setHTML('disk-df', (disk.df || 'N/A').replace(/\n/g, '<br>'));
-    setHTML('disk-inode', (disk.inode || 'N/A').replace(/\n/g, '<br>'));
+    pushValue(chartCpu, cpu.percent);
+    pushValue(chartTemp, cpu.temp);
+    pushValue(chartMem, mem?.percent ?? null);
+
+    const diskRes = await fetch('/api/disk').then(r => r.json());
+    setHTML('disk-df', (diskRes.df || 'N/A').replace(/\n/g, '<br>'));
+    setHTML('disk-inode', (diskRes.inode || 'N/A').replace(/\n/g, '<br>'));
+
+    pushValue(chartVolt, v.core);
 
     document.getElementById('last-updated').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
   } catch (err) {
-    console.error(err);
+    console.error('Fetch error:', err);
   }
 }
 
 fetchAll();
-setInterval(fetchAll, 5000);
+setInterval(fetchAll, 1000);
 </script>
-
 </body>
 </html>
