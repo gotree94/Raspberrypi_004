@@ -118,27 +118,4 @@ nano ~/.config/Thonny/configuration.json
 /home/gotree94/AI_CAR/venv/bin/python
 ```
 
-## 6. jupyter notebook
-
-```
-# pip 설치 (없는 경우)
-sudo apt update
-sudo apt install -y python3-pip
-
-# Jupyter 설치
-pip3 install jupyter
-
-# 실행
-jupyter notebook
-```
-
-* 원격 접속 시 --ip=0.0.0.0 옵션:
-
-```
-jupyter notebook --ip=0.0.0.0 --port=8888
-```
-
-* 브라우저에서 http://<라즈베리파이-IP>:8888 으로 접속하면 됩니다.
-
-
 
