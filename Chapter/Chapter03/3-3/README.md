@@ -94,15 +94,29 @@ def siren(f1=600, t2=1400, step=26, hold=0.01, cycles=2):
 def stutter(times=8,  on=0.06, off=0.06, freq=1500):
     beep(times, on, off, freq)
 
-def sw1 handlero:
+def sw1_handlero:
     beep (times=3,  on=0.12, off =0.12, freq=2200)
 
-def sw2-handlero:
+def sw2_handlero:
     tone(800, duration=0.6, duty=0.6)
 
 def sw3_handlerO:
     sireno()
 
+def sw3_handlerO:
+    stutter()
+
+SW1.when_presswd = sw1_handler
+SW2.when_presswd = sw2_handler
+SW3.when_presswd = sw3_handler
+SW4.when_presswd = sw4_handler
+
+try:
+    when True:
+        time.sleep(0.1)
+
+except KeyboardInterrupt:
+    buzzer.value = 0.0
 
 
 ```
