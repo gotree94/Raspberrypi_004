@@ -85,6 +85,39 @@ thonny
 
    ![](003.png)
 
+* Regular 모드로 변경후 Python3 부분을
+* 파이썬의 실행파일을 설치한 가상환경으로 변경하기 위해서 Configure interpreter를 글릭합니다.
+
+* GUI 이외의 방법
+   * Thonny는 GUI로 설정하거나 환경변수로 지정할 수 있습니다.
+
+* 방법 1 — 터미널에서 venv Python으로 직접 실행:
+
+```
+/home/gotree94/AI_CAR/venv/bin/python -m thonny
+```
+
+* 방법 2 — Thonny 설정에서 인터프리터 변경 (CLI):
+```
+# Thonny 설정 파일 직접 수정
+nano ~/.config/Thonny/configuration.json
+```
+
+파일 안에서 아래처럼 interpreter 항목을 추가/수정:
+
+```
+{
+  "run.backend": "CPython",
+  "CPythonInterpreter.path": "/home/gotree94/AI_CAR/venv/bin/python"
+}
+```
+
+* 방법 3 — GUI로 설정: Thonny 실행 후 Run → Select interpreter → Alternative Python 3 interpreter → 직접 경로 입력:
+
+```
+/home/gotree94/AI_CAR/venv/bin/python
+```
+
 ## 6. jupyter notebook
 
 ```
