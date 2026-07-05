@@ -1,8 +1,8 @@
 # TigerVNC — 라즈베리파이 고속 원격 데스크톱
 
-> TigerVNC는 RealVNC보다 가볍고 빠른 오픈소스 VNC 구현체입니다.
-> 로컬 네트워크에서 직접 연결하므로 클라우드 중계 방식보다 지연시간이 훨씬 짧습니다.
-> **RealVNC가 설치된 상태에서도 WayVNC + TigerVNC 사용이 가능합니다.**
+> TigerVNC는 RealVNC보다 가볍고 빠른 오픈소스 VNC 구현체입니다. <br>
+> 로컬 네트워크에서 직접 연결하므로 클라우드 중계 방식보다 지연시간이 훨씬 짧습니다. <br>
+> **RealVNC가 설치된 상태에서도 WayVNC + TigerVNC 사용이 가능합니다.** <br>
 
 ---
 
