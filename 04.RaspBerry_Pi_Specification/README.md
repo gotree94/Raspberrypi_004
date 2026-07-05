@@ -356,6 +356,19 @@ finally:
 
 **Python 예시 (I2C 통신):**
 
+* I2C 활성화
+
+```
+# 1. I2C 활성화 (raspi-config)
+sudo raspi-config
+# → Interface Options → I2C → Enable → Finish → 재부팅
+
+# 또는 config.txt 직접 수정
+echo "dtparam=i2c_arm=on" | sudo tee -a /boot/firmware/config.txt
+sudo reboot
+```
+
+
 ```python
 import smbus2
 
