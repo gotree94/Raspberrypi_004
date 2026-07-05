@@ -94,7 +94,7 @@ thonny
 * 방법 1 — 터미널에서 venv Python으로 직접 실행:
 
 ```
-/home/gotree94/AI_CAR/venv/bin/python -m thonny
+/home/gotree94/AI_CAR/venv/bin/python -m thonny &
 ```
 
 * 방법 2 — Thonny 설정에서 인터프리터 변경 (CLI):
@@ -118,4 +118,8 @@ nano ~/.config/Thonny/configuration.json
 /home/gotree94/AI_CAR/venv/bin/python
 ```
 
+## pip install
 
+```
+pip install torch opencv-python ultralystic
+```
