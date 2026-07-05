@@ -130,6 +130,7 @@ node server.js
 ![](001.png)
 
 ---
+---
 
 ## 2. 네트워크 설정
 
@@ -582,8 +583,9 @@ nmap -sV 192.168.1.100        # 서비스 버전 포함
 - [Wikipedia — List of TCP and UDP port numbers](https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers)
 
 ---
+---
 
-### IP 주소 / 인터페이스 확인
+## 3. IP 주소 / 인터페이스 확인
 
 ```bash
 # IP 주소 확인
