@@ -116,6 +116,8 @@ python rpi_controller.py --efficient --serial-port COM4 --auto-test
 
 ![](connect.png)
 
+![](005.png)
+
 
 
 
