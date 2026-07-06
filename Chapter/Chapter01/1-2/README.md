@@ -47,8 +47,11 @@
    install portname=COM3 portname=COM4
    ```
 ## Virtual Serial Port Driver (VSPD) 
-https://www.virtual-serial-port.org/downloads.html
+* https://www.virtual-serial-port.org/downloads.html
 
+![](001.png)
+
+![](002.png)
 
 4. 장치 관리자에서 COM3, COM4 한 쌍이 보이는지 확인
 
