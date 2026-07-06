@@ -46,6 +46,10 @@
    ```bash
    install portname=COM3 portname=COM4
    ```
+## Virtual Serial Port Driver (VSPD) 
+https://www.virtual-serial-port.org/downloads.html
+
+
 4. 장치 관리자에서 COM3, COM4 한 쌍이 보이는지 확인
 
 ## ASCII 프로토콜 테스트
