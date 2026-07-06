@@ -63,7 +63,7 @@ LON = 126.8526
 # Seoul:  LAT=37.5665, LON=126.9780
 ```
 
-> 위경도 좌표 확인: [Google Maps](https://maps.google.com) 에서 원하는 위치 우클릭 → 좌표 복사
+> 위경도 좌표 확인: [Google Maps](https://maps.google.com) 에서 원하는 위치 우클릭 → 좌표 복사 <br>
 > https://findmycoordinates.com/find-coordinates 를 사용할 수도 있음.
 
 ### API 응답 확인 (브라우저)
