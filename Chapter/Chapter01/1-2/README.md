@@ -46,6 +46,8 @@
    ```bash
    install portname=COM3 portname=COM4
    ```
+4. 장치 관리자에서 COM3, COM4 한 쌍이 보이는지 확인
+
 ## Virtual Serial Port Driver (VSPD) 
 * https://www.virtual-serial-port.org/downloads.html
 
@@ -53,7 +55,7 @@
 
 ![](002.png)
 
-4. 장치 관리자에서 COM3, COM4 한 쌍이 보이는지 확인
+* 서로 연결한 포트를 설정하고 "Create" 버튼을 누르면 장치 관리자에 포트가 추가되고 케이블을 연결한것처럼 동작 됩니다.
 
 ## ASCII 프로토콜 테스트
 
