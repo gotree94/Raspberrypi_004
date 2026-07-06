@@ -31,10 +31,7 @@
 
 ---
 
-# 통신 연결
-
-![](connect.png)
-
+# 통신 연결 (PC-PC)
 
 # 시뮬레이터 ↔ 컨트롤러 연결 테스트 (com0com 가상 시리얼 포트)
 
@@ -103,6 +100,12 @@ python rpi_controller.py --efficient --serial-port COM4 --auto-test
 | 센서 데이터 미표시 | COM3↔COM4 페어가 반대 방향인지 확인 |
 | pyserial 오류 | `pip install pyserial` |
 | 자동 테스트 FAIL | 시뮬레이터 ↔ 컨트롤러 모드(ASCII/Binary) 일치 여부 |
+
+---
+
+# PC - Raspberry Pi
+
+![](connect.png)
 
 
 
