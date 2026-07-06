@@ -10,6 +10,13 @@ RPi 4B 설정 방법:
 enable_uart=1
 dtoverlay=disable-bt
 ```
+* 블루투스를 비활성화해서 UART0(TXD0/RXD0 on GPIO 14/15)가 Bluetooth에 할당되지 않도록 풀어주는 장치 트리 오버레이입니다.
+
+* dtoverlay=disable-bt → 블루투스 끄고, PL011 UART0를 GPIO 14/15로 완전히 사용 가능
+* enable_uart=1 → mini UART 활성화
+* 두 줄 다 없으면 RPi 4B에서는 UART0가 Bluetooth에 점유되어 GPIO 14/15를 serial console로 쓰기 어렵습니다.
+* 블루투스를 계속 써야 한다면 dtoverlay=disable-bt를 빼고 enable_uart=1만 넣으면 되지만, mini UART는 속도가 불안정할 수 있습니다.
+
 
 2. GPIO 핀 연결 (USB-시리얼 어댑터 필요):
 
