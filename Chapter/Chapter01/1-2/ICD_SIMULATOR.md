@@ -1,4 +1,29 @@
-# ICD (Interface Control Document) — STM32F103 ↔ Raspberry Pi 4 UART 통신
+# ICD (Interface Control Document) 
+# STM32F103 ↔ Raspberry Pi 4 UART 통신
+
+---
+
+RPi 4B 설정 방법:
+
+1. /boot/firmware/config.txt (Bookworm) 또는 /boot/config.txt 에 추가:
+```
+enable_uart=1
+dtoverlay=disable-bt
+```
+
+2. GPIO 핀 연결 (USB-시리얼 어댑터 필요):
+
+```
+GPIO 14 (TXD) → USB-시리얼 RX
+GPIO 15 (RXD) → USB-시리얼 TX
+GND          → GND
+```
+
+3. PC에서 PuTTY 등으로 115200 baud 연결
+> 참고: 그냥 부팅 후 로그만 확인하려면 journalctl -b 또는 dmesg 명령어로도 충분합니다. serial 콘솔은 부팅 과정 전체를 실시간으로 볼 때 필요합니다.
+
+---
+
 
 ## 시스템 개요
 
