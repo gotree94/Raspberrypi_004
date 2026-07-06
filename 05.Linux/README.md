@@ -199,6 +199,12 @@ file *                  # 현재 디렉토리 모든 파일 타입 출력
 파일 또는 디렉토리의 접근 권한을 변경합니다.
 * 순서 : 소유자(user) / 그룹(group) / 기타(others)
 
+# 모든 줄 끝에 있는 \r(CR) 문자를 제거하여 Windows CRLF → Unix LF로 바꾸는 명령
+
+```
+sed -i 's/\r$//' test.sh
+```
+
 ```bash
 chmod 755 script.sh         # rwxr-xr-x 권한 설정
 chmod +x script.sh          # 실행 권한 추가
