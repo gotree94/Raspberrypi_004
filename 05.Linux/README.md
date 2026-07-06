@@ -197,6 +197,7 @@ file *                  # 현재 디렉토리 모든 파일 타입 출력
 ### 13. `chmod` — 파일 권한 변경
 
 파일 또는 디렉토리의 접근 권한을 변경합니다.
+* 순서 : 소유자(user) / 그룹(group) / 기타(others)
 
 ```bash
 chmod 755 script.sh         # rwxr-xr-x 권한 설정
