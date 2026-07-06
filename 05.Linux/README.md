@@ -329,6 +329,16 @@ cat > newfile.txt           # 키보드 입력으로 파일 생성 (Ctrl+D 종�
 cat file1.txt >> file2.txt  # 파일 내용 추가
 ```
 
+```
+cat > hello.c << 'EOF'
+#include <stdio.h>
+int main() {
+    printf("hello\n");
+    return 0;
+}
+EOF
+```
+
 ---
 
 ### 22. `less` — 파일 페이지 단위 보기
