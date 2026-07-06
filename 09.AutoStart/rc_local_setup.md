@@ -138,13 +138,19 @@ exit 0
 
 > ⚠️ 맨 뒤에 **`&`** 를 반드시 붙여야 백그라운드 실행 → 부팅이 멈추지 않습니다.
 
-### 3-3. rc-local 서비스 활성화 (Bookworm 이상)
+### 3-3. 실행권한 부여 및 서비스 시작 (Bookworm 이상)
+
+Bookworm에서는 `rc-local` 서비스가 이미 static unit으로 등록되어 있으므로 `systemctl enable`은 불필요합니다.  
+파일 생성 + 실행권한 부여만으로 조건이 충족됩니다.
 
 ```bash
 sudo chmod +x /etc/rc.local
 sudo systemctl start rc-local
 sudo systemctl status rc-local
 ```
+
+> `status`에서 `active (exited)` 가 나와야 정상입니다.  
+> `ConditionFileIsExecutable=/etc/rc.local was not met` 오류가 뜨면 파일이 없거나 실행권한이 없는 상태입니다.
 
 ### 3-4. 실행 확인
 
@@ -203,7 +209,7 @@ which python3
 | 네트워크 관련 오류 | 부팅 타이밍 문제 | `After=network-online.target` 또는 `sleep` 추가 |
 | GPIO 접근 오류 | 권한 문제 | `User=root` 또는 gpio 그룹 확인 |
 | 로그가 보이지 않음 | 경로 오류 | `journalctl -u 서비스명 -f` 로 에러 확인 |
-| rc.local이 실행 안 됨 | 서비스 비활성화 | `sudo systemctl enable rc-local` 실행 |
+| rc.local이 실행 안 됨 | 파일 없음/실행권한 없음 | `ls -la /etc/rc.local` 확인 후 `sudo chmod +x /etc/rc.local` |
 
 ---
 
