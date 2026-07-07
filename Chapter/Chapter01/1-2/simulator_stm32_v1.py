@@ -561,9 +561,6 @@ class SimulatorGUI:
                       command=lambda v=n: self._ir_tx(v),
                       bg=self.COLORS['card'], fg=self.COLORS['accent'],
                       font=('Consolas', 9)).pack(side=tk.LEFT, padx=1)
-        self.ir_tx_label = tk.Label(ir_frame, text="→ 0", bg=self.COLORS['bg'],
-                                    fg=self.COLORS['yellow'], font=('Consolas', 9, 'bold'))
-        self.ir_tx_label.pack(side=tk.LEFT, padx=5)
         row += 1
 
         ir_rx_frame = tk.Frame(act_frame, bg=self.COLORS['bg'])
@@ -825,19 +822,6 @@ class SimulatorGUI:
                 self.led3r_var.set(self.engine.act['LED_RGB_R'])
                 self.led3g_var.set(self.engine.act['LED_RGB_G'])
                 self.led3b_var.set(self.engine.act['LED_RGB_B'])
-                clcd_text = self.engine.act.get('CLCD', '')
-                if clcd_text:
-                    line1 = clcd_text[:16] if len(clcd_text) >= 16 else clcd_text
-                    line2 = clcd_text[16:32] if len(clcd_text) > 16 else ''
-                    self.clcd_display.config(text=f"[{line1:<16}]\n[{line2:<16}]")
-                buz = self.engine.act['BUZZER']
-                self.buzzer_btn.config(text=f"BUZZER {'ON' if buz else 'OFF'}",
-                                       fg=self.COLORS['green'] if buz else self.COLORS['red'])
-                las = self.engine.act['LASER']
-                self.laser_btn.config(text=f"LASER {'ON' if las else 'OFF'}",
-                                      fg=self.COLORS['green'] if las else self.COLORS['red'])
-                ir_val = self.engine.act['IR_TX']
-                self.ir_tx_label.config(text=f"→ {ir_val}")
             self._updating = False
 
             status_line = self.engine.get_status_line()

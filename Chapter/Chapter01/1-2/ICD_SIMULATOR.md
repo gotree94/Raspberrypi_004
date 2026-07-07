@@ -1,36 +1,4 @@
-# ICD (Interface Control Document) 
-# STM32F103 ↔ Raspberry Pi 4 UART 통신
-
----
-
-RPi 4B 설정 방법:
-
-1. /boot/firmware/config.txt (Bookworm) 또는 /boot/config.txt 에 추가:
-```
-enable_uart=1
-dtoverlay=disable-bt
-```
-
-  * 블루투스를 비활성화해서 UART0(TXD0/RXD0 on GPIO 14/15)가 Bluetooth에 할당되지 않도록 풀어주는 장치 트리 오버레이입니다.
-    * dtoverlay=disable-bt → 블루투스 끄고, PL011 UART0를 GPIO 14/15로 완전히 사용 가능
-    * enable_uart=1 → mini UART 활성화
-  * 두 줄 다 없으면 RPi 4B에서는 UART0가 Bluetooth에 점유되어 GPIO 14/15를 serial console로 쓰기 어렵습니다.
-  * 블루투스를 계속 써야 한다면 dtoverlay=disable-bt를 빼고 enable_uart=1만 넣으면 되지만, mini UART는 속도가 불안정할 수 있습니다.
-
-
-2. GPIO 핀 연결 (USB-시리얼 어댑터 필요):
-
-```
-GPIO 14 (TXD) → USB-시리얼 RX
-GPIO 15 (RXD) → USB-시리얼 TX
-GND          → GND
-```
-
-3. PC에서 PuTTY 등으로 115200 baud 연결
-> 참고: 그냥 부팅 후 로그만 확인하려면 journalctl -b 또는 dmesg 명령어로도 충분합니다. serial 콘솔은 부팅 과정 전체를 실시간으로 볼 때 필요합니다.
-
----
-
+# ICD (Interface Control Document) — STM32F103 ↔ Raspberry Pi 4 UART 통신
 
 ## 시스템 개요
 

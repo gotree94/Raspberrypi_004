@@ -31,7 +31,7 @@
 
 ---
 
-# 통신 연결 (PC-PC)
+# 통신 연결
 
 # 시뮬레이터 ↔ 컨트롤러 연결 테스트 (com0com 가상 시리얼 포트)
 
@@ -47,15 +47,6 @@
    install portname=COM3 portname=COM4
    ```
 4. 장치 관리자에서 COM3, COM4 한 쌍이 보이는지 확인
-
-## Virtual Serial Port Driver (VSPD) 
-* https://www.virtual-serial-port.org/downloads.html
-
-![](001.png)
-
-![](002.png)
-
-* 서로 연결한 포트를 설정하고 "Create" 버튼을 누르면 장치 관리자에 포트가 추가되고 케이블을 연결한것처럼 동작 됩니다.
 
 ## ASCII 프로토콜 테스트
 
@@ -109,14 +100,6 @@ python rpi_controller.py --efficient --serial-port COM4 --auto-test
 | 센서 데이터 미표시 | COM3↔COM4 페어가 반대 방향인지 확인 |
 | pyserial 오류 | `pip install pyserial` |
 | 자동 테스트 FAIL | 시뮬레이터 ↔ 컨트롤러 모드(ASCII/Binary) 일치 여부 |
-
----
-
-# PC - Raspberry Pi
-
-![](connect.png)
-
-![](005.png)
 
 
 

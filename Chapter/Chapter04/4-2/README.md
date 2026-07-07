@@ -23,32 +23,32 @@ import mycamera
 import cv2
 from pyzbar import pyzbar
 
-def read_barcodes(frame)  :
-    barcodes = pyzbar. decode(f rame)
+def read_barcodes(frame):
+    barcodes = pyzbar.decode(frame)
     for barcode in barcodes:
-        X, y, trl, h = barcode.rect
-        cv2,rectangle(frame,  (x, y), (x + w, Y + h), (0' 255,0),2)
-        barcode_data  = barcode.data.decode('utf-8')
+        x, y, w, h = barcode.rect
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        barcode_data = barcode.data.decode('utf-8')
         barcode_type = barcode.type
-        text = f"{barcode_data}  ({barcode-type})"
-        cv2.putText(frame, text, (x, y -10),
-                cv2.F0NT-HERSHEY-Sil'IPLEX, 0.5, (0, 255' 0)' 2)
+        text = f"{barcode_data} ({barcode_type})"
+        cv2.putText(frame, text, (x, y - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
         print("Detected : ", text)
     return frame
 
-if  --name-- =="__main--"  :
-    camera = mycamera.HyPiCamera(640,480)
+if __name__ == "__main__":
+    camera = mycamera.MyPiCamera(640, 480)
 
-while camera.isOpenedQ:
-    -, image = camera.read0
-    image = cv2.flip(image, -1)
-    imags = read_barcodes(image)
-    cv2. imshow("mycamera',  image)
+    while camera.isOpened():
+        _, image = camera.read()
+        image = cv2.flip(image, -1)
+        image = read_barcodes(image)
+        cv2.imshow("mycamera", image)
 
-    if cv2.waitKey(1)  == ord('q'):
-      break
+        if cv2.waitKey(1) == ord('q'):
+            break
 
-cv2.destroyAllWindows()
+    cv2.destroyAllWindows()
 ```
 
 ### 2.2 인식한 조건으로 LED 제어하기
@@ -63,33 +63,34 @@ from gpiozero import LEDBoard
 
 leds = LEDBoard(26, 16, 20, 27)
 
-def read_barcodes(f  rame) :
-    barcodes = pyzbar.decode(f  rame)
+def read_barcodes(frame):
+    barcodes = pyzbar.decode(frame)
     for barcode in barcodes:
-        Xr y, w, h = barcode.rect
-        cv2.rectangle(frame,  (x, y), (x + w, y + h), (0,255,0)' 2)
-        data = barcode.data.decode(' utf-8' )
-        cv2.putText(frame, data, (x, y -10),
-            cv2.F0NT-HERSHEY-SII'IPLEX,     0.5, (0, 255, 0)' 2)
-        print("Detected  : ", data)
-        if data.lowero =="tedon' :
-            leds. on o
-        elif data.lowerO =="1.6011"' leds.offo
+        x, y, w, h = barcode.rect
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        data = barcode.data.decode('utf-8')
+        cv2.putText(frame, data, (x, y - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+        print("Detected : ", data)
+        if data.lower() == "ledon":
+            leds.on()
+        elif data.lower() == "ledoff":
+            leds.off()
     return frame
 
-if  --name-- =="__main__"  :
-    camera = mycamera.llyPiCamera(640,480)
-    while camera.is0penedo   :
-        _, image = camera.reado
+if __name__ == "__main__":
+    camera = mycamera.MyPiCamera(640, 480)
+    while camera.isOpened():
+        _, image = camera.read()
         image = cv2.flip(image, -1)
         image = read_barcodes(image)
+        cv2.imshow("mycamera", image)
 
-    cv2.imshow("mycamera", image)
-    if cv2.waitKey(l)  == ord('q')'
-      break
+        if cv2.waitKey(1) == ord('q'):
+            break
 
-cv2.destroyAllWindows()
-leds.off()
+    cv2.destroyAllWindows()
+    leds.off()
 ```
 
 

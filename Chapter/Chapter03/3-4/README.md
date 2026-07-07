@@ -27,10 +27,10 @@ BIN2 = DigitalOutputDevice(24)
 try :
     while True:
       AIN1.value = 0
-      AIN2.value = 0
+      AIN2.value = 1
       PWMA.value = 0.3
       BIN1.value = 0
-      BIN2.value = 0
+      BIN2.value = 1
       PWMB.value = 0.3
       print("0.3")
       time.sleep(2.0)
@@ -45,21 +45,21 @@ try :
       time.sleep(2.0)
 
       AIN1.value = 0
-      AIN2.value = 0
+      AIN2.value = 1
       PWMA.value = 1.0
       BIN1.value = 0
-      BIN2.value = 0
+      BIN2.value = 1
       PWMB.value = 1.0
       print("1.0")
       time.sleep(2.0)
 
       AIN1.value = 0
-      AIN2.value = 1
+      AIN2.value = 0
       PWMA.value = 0.0
       BIN1.value = 0
-      BIN2.value = 1
+      BIN2.value = 0
       PWMB.value = 0.0
-      print("0.0")
+      print("stop")
       time.sleep(10.0)
 
 except KeyboardInterrupt:
@@ -156,10 +156,10 @@ def motor_back(speed):
 
 def motor_stop():
       AIN1.value = 0
-      AIN2.value = 1
+      AIN2.value = 0
       PWMA.value = 0.0
       BIN1.value = 0
-      BIN2.value = 1
+      BIN2.value = 0
       PWMB.value = 0.0
 
 try :
