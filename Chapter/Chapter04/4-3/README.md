@@ -45,7 +45,7 @@ if __name__ == "__main__":
     cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
     while cam.isOpened():
         _, img = cam.read()
-        img = cv2.flip(img, -1)
+        img = cv2.flip(img, 1)
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
         red = cv2.inRange(hsv, (0, 120, 70), (10, 255, 255)) | cv2.inRange(hsv, (170, 120, 70), (180, 255, 255))
@@ -149,7 +149,7 @@ if __name__ == "__main__":
     cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
     while cam.isOpened():
         _, img = cam.read()
-        img = cv2.flip(img, -1)
+        img = cv2.flip(img, 1)
         result = detect_shapes(img)
         cv2.imshow("shapes", result)
         if cv2.waitKey(1) == ord('q'):
@@ -233,7 +233,7 @@ if __name__ == "__main__":
     cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
     while cam.isOpened():
         _, img = cam.read()
-        img = cv2.flip(img, -1)
+        img = cv2.flip(img, 1)
         cv2.imshow("shapes", detect(img))
         if cv2.waitKey(1) == ord('q'):
             break
