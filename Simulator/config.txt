@@ -1,0 +1,118 @@
+{
+    "port_combo": {
+        "x": 120,
+        "y": 75
+    },
+    "btn_refresh": {
+        "x": 380,
+        "y": 62
+    },
+    "baud_combo": {
+        "x": 590,
+        "y": 65
+    },
+    "btn_connect": {
+        "x": 710,
+        "y": 60
+    },
+    "lbl_status": {
+        "x": 920,
+        "y": 65
+    },
+    "lbl_speed_fl": {
+        "x": 60,
+        "y": 230
+    },
+    "lbl_speed_fr": {
+        "x": 464,
+        "y": 230
+    },
+    "lbl_speed_rl": {
+        "x": 62,
+        "y": 392
+    },
+    "lbl_speed_rr": {
+        "x": 470,
+        "y": 390
+    },
+    "lbl_servo_pan_in": {
+        "x": 60,
+        "y": 520
+    },
+    "lbl_servo_pan_deg": {
+        "x": 50,
+        "y": 550
+    },
+    "lbl_servo_tilt_in": {
+        "x": 320,
+        "y": 520
+    },
+    "lbl_servo_tilt_deg": {
+        "x": 320,
+        "y": 550
+    },
+    "lcd_line1": {
+        "x": 607,
+        "y": 210
+    },
+    "lcd_line2": {
+        "x": 608,
+        "y": 240
+    },
+    "led_2color": {
+        "x": 604,
+        "y": 341
+    },
+    "led_3color_1": {
+        "x": 702,
+        "y": 340
+    },
+    "led_3color_2": {
+        "x": 801,
+        "y": 340
+    },
+    "btn_laser": {
+        "x": 720,
+        "y": 474
+    },
+    "btn_buzzer": {
+        "x": 720,
+        "y": 517
+    },
+    "btn_relay": {
+        "x": 720,
+        "y": 560
+    },
+    "lbl_ultrasonic": {
+        "x": 1020,
+        "y": 190
+    },
+    "lbl_lt_left": {
+        "x": 910,
+        "y": 410
+    },
+    "lbl_lt_center": {
+        "x": 1010,
+        "y": 410
+    },
+    "lbl_lt_right": {
+        "x": 1100,
+        "y": 410
+    },
+    "lbl_remote": {
+        "x": 910,
+        "y": 470
+    },
+    "remote_frame": {
+        "x": 904,
+        "y": 525
+    },
+    "lbl_env": {
+        "x": 1050,
+        "y": 520
+    },
+    "lbl_fire": {
+        "x": 770,
+        "y": 620
+    }
+}
