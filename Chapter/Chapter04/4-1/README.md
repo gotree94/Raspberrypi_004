@@ -34,9 +34,9 @@ if __name__ == "__main__":
     cam.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
     cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
-    while camera.isOpened():
-        _, image = camera.read()
-        image = cv2.flip(image, 1)
+    while cam.isOpened():
+        _, image = cam.read()
+        image = cv2.flip(image, -1)
         cv2.imshow("mycamera", image)
 
         if cv2.waitKey(1) == ord('q'):
@@ -77,8 +77,8 @@ if __name__ == "__main__":
     cam.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
     cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
-    while camera.isOpened():
-        _, image = camera.read()
+    while cam.isOpened():
+        _, image = cam.read()
         image = cv2.flip(image, 1)
         height, width, _ = image.shape
         roi = image[int(height/2):, :]
@@ -126,8 +126,8 @@ if __name__ == "__main__":
     cam.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
     cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
-    while camera.isOpened():
-        _, image = camera.read()
+    while cam.isOpened():
+        _, image = cam.read()
         image = cv2.flip(image, 1)
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
@@ -179,8 +179,8 @@ if __name__ == "__main__":
     cam.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
     cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
-    while camera.isOpened():
-        _, image = camera.read()
+    while cam.isOpened():
+        _, image = cam.read()
         image = cv2.flip(image, 1)
         blur1 = cv2.GaussianBlur(image, (3, 3), 0)
         blur2 = cv2.GaussianBlur(image, (7, 7), 0)
@@ -240,8 +240,8 @@ if __name__ == "__main__":
     os.makedirs(save_dir, exist_ok=True)
     count = 0
 
-    while camera.isOpened():
-        _, image = camera.read()
+    while cam.isOpened():
+        _, image = cam.read()
         image = cv2.flip(image, 1)
         cv2.imshow("Camera", image)
 
