@@ -90,7 +90,7 @@ if __name__ == "__main__":
     cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
     while cam.isOpened():
         _, img = cam.read()
-        img = cv2.flip(img, -1)
+        img = cv2.flip(img, 1)
         vis = img.copy()
         best, mask = find_blue_triangle(img)
         if best is not None:
@@ -242,7 +242,7 @@ if __name__ == "__main__":
     cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
     while cam.isOpened():
         _, img = cam.read()
-        img = cv2.flip(img, -1)
+        img = cv2.flip(img, 1)
         h, w = img.shape[:2]
         center_x = w // 2
         vis = img.copy()
@@ -465,7 +465,7 @@ if __name__ == "__main__":
     try:
         while cam.isOpened():
             _, img = cam.read()
-            img = cv2.flip(img, -1)
+            img = cv2.flip(img, 1)
             h, w = img.shape[:2]
             cx_mid = w // 2
             best, mask = find_blue_triangle(img)
