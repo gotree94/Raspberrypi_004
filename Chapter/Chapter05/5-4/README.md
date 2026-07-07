@@ -31,7 +31,7 @@ print("bias:", b.view(-1))
 ```
 
 
-## Lisnear 레이어로 순전파(Forward)이해
+## 손실함수 + 옵티마이저 + 한 사리클 학습
 Pytorch의 가장 기본 신경망 구성 단위인 nn.Linuar를 사용하겨
 입력 데이터를 모델에 통과시켰을때 어떤 계산이 일어나는지 확인합니다.
 nn.Linear(1,1)은 
@@ -61,7 +61,7 @@ print("loss:", loss. item())
 print("predict(5):", model(test). item())
 ```
 
-## Lisnear 레이어로 순전파(Forward)이해
+## ReLu를 포함한 간단 MLP학습
 Pytorch의 가장 기본 신경망 구성 단위인 nn.Linuar를 사용하겨
 입력 데이터를 모델에 통과시켰을때 어떤 계산이 일어나는지 확인합니다.
 nn.Linear(1,1)은 
@@ -94,7 +94,7 @@ print('loss:",  loss.item())
 print("predict([3,4]):",  model(test). item())
 ```
 
-## Lisnear 레이어로 순전파(Forward)이해
+## 모델 저장/불러오기(state_dict)와 추론
 Pytorch의 가장 기본 신경망 구성 단위인 nn.Linuar를 사용하겨
 입력 데이터를 모델에 통과시켰을때 어떤 계산이 일어나는지 확인합니다.
 nn.Linear(1,1)은 
