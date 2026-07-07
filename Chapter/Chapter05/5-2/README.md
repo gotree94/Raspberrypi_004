@@ -14,7 +14,7 @@ Tensor의 생성, 형태 변환, 수학 연산 등을 실습하며 데이터 처
 import torch
 
 torch. manua 1_seed (0)
-a = torch.tensor([[1.0, 2.0], [3.0, 4.0]l)
+a = torch.tensor([[1.0, 2.0], [3.0, 4.0]])
 b = torch.zeros((2,  2))
 c = torch.rand((2,  2))
 
