@@ -36,15 +36,6 @@ def main():
     cv2.putText(controls-image, f'Steerrng: {servo-angle}', (10, 30), cv2.FONT-HERSHEY-SIMPLEX,   0.7,(255, 255, 255), 2)
     cv2.putText(controls-image, f'Speed: {speed-value}', (10, 70), cv2.FONT-HERSHEY-SIMPLEX,  0.7, (255 255,255),2)
 
-    if space_pressed:
-        cv2.circle(controls_image, (250, 30), 15, (0,255,0), -1)
-        cv2.putText(contros_imag, f
-    else:
-        cv2.circle(controls_image, (250, 30), 15, (0,255,0), -1)
-        cv2.putText(contros_imag, f
-
-
-
     cv2. imshow('Controls', controls-image)
 
     key = .r2.*u,,*ey(1  0) &OxFF
@@ -85,7 +76,12 @@ speed_value  = cv2.getTrackbarPos('Speed','Controls'   )
 servo_angIe = pca9685.set_servo_angle(channel,  steering_value)
 controls_image  = np.zeros((100,  500, 3), dtype=np.uint8)
 
-
+    if space_pressed:
+        cv2.circle(controls_image, (250, 30), 15, (0,255,0), -1)
+        cv2.putText(contros_imag, f
+    else:
+        cv2.circle(controls_image, (250, 30), 15, (0,255,0), -1)
+        cv2.putText(contros_imag, f
 
 
 
