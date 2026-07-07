@@ -1,0 +1,10 @@
+# 10. 권장 표준
+
+- ISO/IEC/IEEE 29148
+- IEEE 1016
+- ISO/IEC/IEEE 42010
+- IEEE 802.3
+- IEEE1588 PTP
+- CANopen
+- OPC UA
+- gRPC + Protocol Buffers
