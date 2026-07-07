@@ -390,7 +390,6 @@ if __name__ == "__main__":
 ```python
 import cv2
 import numpy as np
-import myservo
 import time
 from gpiozero import PWMOutputDevice, DigitalOutputDevice
 
