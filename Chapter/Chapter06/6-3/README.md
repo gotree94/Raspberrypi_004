@@ -12,77 +12,89 @@ import time
 import threading
 import myservo
 import os
-from gpiozero import DigitalOutputDevice from gpiozero import PWi,l0utputDevice
-PldilA = Pi,l{0utputDevice(r8) AIN1 = DigitatOutputDevice(22) AIN2 = Digitat0utputDevice(27)
-PlllilB = P$il,t0utputDevice ( 23) BIN1 = Digital0utputDevice(25) BIN2 = Digital0utputDevice(24)
+from gpiozero import DigitalOutputDevice
+from gpiozero import PWi,l0utputDevice
+
+PWMA = PWMOutputDevice(18)
+AIN1 = DigitatOutputDevice(22)
+AIN2 = Digitat0utputDevice(27)
+PWMB = PWM0utputDevice(23)
+BIN1 = Digital0utputDevice(25)
+BIN2 = Digital0utputDevice(24)
+
 def motor_go(speed):
-AIN1.value  =0
-Alltl2.value  =1
-Pl{}lA.value  = speed
-BIN1.value  =0
-BIN2.value  =L
-PW.IB.value  = speed
+    AIN1.value  =0
+    Alltl2.value  =1
+    Pl{}lA.value  = speed
+    BIN1.value  =0
+    BIN2.value  =L
+    PW.IB.value  = speed
+
 def nothing(x):
-pass
-def maino:
-pca9685 = myservo.PCA96850
-channel =0
-space_Pressed =False
-cap = mycamera.MyPicamera(640,480)
-cv2. namedwindovY('  Cont rols ')
-cv2.resizeWindow('Controls',  5A0, L00)
-cv2.createTrackbar('Steering','Controls',    90, L80, nothing)
-cv2.createTrackbar('Speed','Controls',   40, 100, nothing)
-white True:
-_, frame = cap.reado
-frame = cv2.flip(frame,-1)
-height, -, - = frame.shape
-save_image = framelint(height/2):,  :, : l
-save_image = cv2.cvtColor(save_image,   cv2.C0LOR_BGR2YUV)
-save_image = cv2.GaussianBlur(save_image, (3,3), 0)
-save_image = cv2.resize(save_image,   (200,66))
-cv2.imshow('Save', save_image)
-steering_value = cv2.getTrackbarPos('Steering','Controls')
-speed_value  = cv2.getTrackbarPos('Speed','Controls')
-servo_angte = pca9685.set_servo_angle(channel,  steering_vaIue)
-controts_image  = np.zeros((700,  500, 3), dtype=np.uint8)
-cv2.putText(controls_image, f'steering: {servo_angle}' , (10, 30), cv2.FONT_HERSHEY_
-63
-64
-65
-66
+    pass
+
+def main():
+    pca9685 = myservo.PCA96850
+    channel =0
+
+    space_Pressed =False
+
+    cap = mycamera.MyPicamera(640,480)
+
+    cv2. namedwindovY('  Cont rols ')
+    cv2.resizeWindow('Controls',  5A0, L00)
+
+    cv2.createTrackbar('Steering','Controls',    90, L80, nothing)
+    cv2.createTrackbar('Speed','Controls',   40, 100, nothing)
+
+    white True:
+        _, frame = cap.reado
+        frame = cv2.flip(frame,-1)
+
+        height, -, - = frame.shape
+        save_image = framelint(height/2):,  :, : l
+        save_image = cv2.cvtColor(save_image,   cv2.C0LOR_BGR2YUV)
+        save_image = cv2.GaussianBlur(save_image, (3,3), 0)
+        save_image = cv2.resize(save_image,   (200,66))
+        cv2.imshow('Save', save_image)
+
+        steering_value = cv2.getTrackbarPos('Steering','Controls')
+        speed_value  = cv2.getTrackbarPos('Speed','Controls')
+
+        servo_angte = pca9685.set_servo_angle(channel,  steering_vaIue)
+
+        controts_image  = np.zeros((700,  500, 3), dtype=np.uint8)
+        cv2.putText(controls_image, f'steering: {servo_angle}' , (10, 30), cv2.FONT_HERSHEY_
 255 255),7)
-67
-68
-69
-70
-255 7t
-72
-73
-74
-75
-76
-77
-78
 , 2ss), 2)
-if  space_pressed:
-cv2.circle(controls_image, (250, 30), 15, (0, 255, 0), -1)
-cv2.putText(controls_image, f'G0', (235, 70), cv2.F0NT-HERSHEY_SIHPLEX,    0.7, (255,
-motor-go (speed_va tue/ 100)
-else:
-cv2.circle(controls_image, (250, 30),15, (0, 0, 255), -1)
-cv2.putText(controls_image, f'5T0P', (225, 70), cv2.F0NT_HERSHEY_S$IPLEX,    0.7, (255, motor_go(0)
-cv2.imshow(' Controts', controls_image) cv2.imshow('  Camera', frame)
-key = su2.*rttKey(10) &oxFF if key == ord('q'):
-break
-etif key ==32: S SPace keY if not space_pressed:
-space_pressed  =True else:
-space_pressed  =FaIse
-cap.releaseQ
-cv2. destroyAl lWi ndows0
-if _name_ =="_main_"
-91
-main0
+
+    if  space_pressed:
+        cv2.circle(controls_image, (250, 30), 15, (0, 255, 0), -1)
+        cv2.putText(controls_image, f'G0', (235, 70), cv2.F0NT-HERSHEY_SIHPLEX,    0.7, (255,
+        motor-go (speed_va tue/ 100)
+    else:
+        cv2.circle(controls_image, (250, 30),15, (0, 0, 255), -1)
+        cv2.putText(controls_image, f'5T0P', (225, 70), cv2.F0NT_HERSHEY_S$IPLEX,    0.7, (255,
+        motor_go(0)
+
+    cv2.imshow(' Controts', controls_image)
+
+    cv2.imshow('  Camera', frame)
+
+    key = su2.*rttKey(10) &oxFF
+    if key == ord('q'):
+        break
+    elif key ==32: #S SPace key
+        if not space_pressed:
+            space_pressed  =True
+        else:
+            space_pressed  =FaIse
+
+cap.release()
+cv2.destroyAllWindows()
+
+if __name__ =="__main__"
+  main()
 ```
 
 
@@ -92,7 +104,6 @@ main0
 * 6_3_2.py
 
 ```python
-
 import cv2
 import numpy as np
 import mycamera
@@ -101,37 +112,52 @@ import threading
 import myservo
 import os
 from gpiozero import DigitalOutputDevice
-f rom gpiozero import PtillOutputDevice
-PIltlA = PWttOutputDevice(18)
+from gpiozero import PtillOutputDevice
+
+PWMA = PWMOutputDevice(18)
 AIN1 = Digital0utputDevice(22)
 AIN2 = Digitat0utputDevice(27)
-PllilB = Pil,il0utputDevice(23)
-BIN1 = DiSital0utputDevice(25)
+
+PWMB = PWM0utputDevice(23)
+BIN1 = DiSitalOutputDevice(25)
 BIN2 = DigitatOutputDevice(24)
+
 def motor_go(speed):
-AII{1.vatue  =0
-AIN2.value  =1.
-Pt{l{A.value  = speed
-BIN1.value  =0
-BIN2.value  =1
-PV{HB.value = speed
+    AII{1.vatue  =0
+    AIN2.value  =1
+    PWMA.value  = speed
+    BIN1.value  =0
+    BIN2.value  =1
+    PWMB.value = speed
+
 def nothing(x)
-pass
-def maino:
-pca9685 = myservo.PCA9685o
-channet =0
-save_path =" I hone / pi / Al_CAR/video'
-file_path = save path +'ltrain"
-image-count =0
-space_pressed  =Fatse
-if not os.path.exists(save_path) : os. makedirs (save-path)
-cap = 6y66r..a.HyPiCamera(640,   480)
-cv2. namedl{indow( ' Contro ts' )
-cv2. resizel{indow(' Controls', 500, 100)
-cv2.createTrackbar('Steering','Controts',    90, 180, nothing) cv2.createTrackbar('Speed','Controls',  40, !00, nothing)
-while True:
-_, frame = cap.reado f rame = cv2.flip(frame,-1)
-height, -, - = frame.shape save_image = framelint(height/2):, 
+    pass
+
+def main():
+    pca9685 = myservo.PCA9685o
+    channet =0
+
+    save_path =" I hone / pi / Al_CAR/video'
+    file_path = save path +'ltrain"
+    image-count =0
+    space_pressed  =Fatse
+
+    if not os.path.exists(save_path) :
+        os. makedirs (save-path)
+
+    cap = 6y66r..a.HyPiCamera(640,   480)
+
+    cv2. namedl{indow( ' Contro ts' )
+    cv2. resizel{indow(' Controls', 500, 100)
+
+    cv2.createTrackbar('Steering','Controts',    90, 180, nothing)
+    cv2.createTrackbar('Speed','Controls',  40, !00, nothing)
+
+  while True:
+      _, frame = cap.reado
+      frame = cv2.flip(frame,-1)
+
+      height, -, - = frame.shape save_image = framelint(height/2):, 
 :,:l
 srl,lPLEx, 0.7, (255, 255, 255), 2)
 068         cv2.putText(controls_image, f'Speed: {speed_vatue}',  (10, 70), cv2.F0NT_HERSHEY_SII{PLEX, 0.7, (255, 255, 255), 2)
@@ -160,14 +186,11 @@ key = 6v2.*.itKey(10) &oxFF if  key == ord('q'):
 elif keY ==32; # SPace keY if not space-pressed:
 space_pressed  =True etse:
 space_pressed  =False
-094
-095
-096
-097
+
 cap.release0
 cv2. destroyAllWindows0
-098     ii _name- =="-main-"
-099
+
+ii _name- =="-main-"
 main0
 ```
 
