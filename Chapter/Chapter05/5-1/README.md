@@ -39,3 +39,75 @@ b = torch.tenso(2.0)
 result=a*b+5
 print('Result:",  result
 ```
+
+
+
+## 
+
+* 5_1_3.py
+
+```Python
+import torch
+
+x = torch.tensor(2.0,  requires_grad=True)
+y1 = x*2
+y2 = y1+3
+y3 = y2 **2
+
+print("x: ", x)
+print("y1: ", y1)
+print("y2: ", y2)
+print("y3: ", y3)
+
+print("y3 grad-f n : ", y3.grad-fn)
+print('y2 grad-f n :", y2. grad-fn)
+print("y1 grad-fn:", yl.grad-fn)
+
+```
+
+## 
+
+* 5_1_4.py
+
+```Python
+
+import torch
+x = torch.tenso(2.0, requires-grad=True) y=x**2+3*X+1
+y.backward0
+print("dyldx :', x.grad)
+```
+
+## 
+
+* 5_1_5.py
+
+```Python
+import torch
+x = torch.tensor(1.0,  requires_grad=True) z = torch.tensor(2.0,  requires_grad=True)
+y =3*X +4*Z**2
+y. backward o
+print("dyldx: ", x.grad)
+print("dyldz:  ", z. grad)
+```
+
+## 
+
+* 5_1_6.py
+
+```Python
+
+import torch
+02
+03    x = torch.tenso(1 .0, requires-grad=True)
+04
+05    for step in range(3):
+06
+07
+08
+09
+10
+y = (x -3)**2
+y.backward0
+print(f'Step {sleprl} | x={x item0. 4fi l y={y rtem0 4f} l grad={x grad.item(): 4f}") x=x-0.1 *x.grad
+x = x.detach0.clone0.requires-grad_(True)
+```
