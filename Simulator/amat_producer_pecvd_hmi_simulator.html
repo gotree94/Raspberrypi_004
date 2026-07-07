@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AMAT Producer 300mm PECVD HMI Control & Simulator</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b0f19;
+            color: #f1f5f9;
+        }
+        
+        .font-mono-custom {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 2px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        /* Plasma Glowing animation */
+        @keyframes plasma-glow {
+            0% { box-shadow: 0 0 15px 5px rgba(168, 85, 247, 0.4), inset 0 0 20px rgba(168, 85, 247, 0.3); background-color: rgba(168, 85, 247, 0.15); }
+            50% { box-shadow: 0 0 25px 8px rgba(192, 132, 252, 0.6), inset 0 0 35px rgba(192, 132, 252, 0.5); background-color: rgba(168, 85, 247, 0.3); }
+            100% { box-shadow: 0 0 15px 5px rgba(168, 85, 247, 0.4), inset 0 0 20px rgba(168, 85, 247, 0.3); background-color: rgba(168, 85, 247, 0.15); }
+        }
+        .plasma-active {
+            animation: plasma-glow 2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="h-screen w-screen flex flex-col overflow-hidden">
+
+    <!-- TOP BRANDING & STATUS HEADER -->
+    <header class="bg-[#111827] border-b border-slate-800 px-6 py-2.5 flex justify-between items-center shrink-0">
+        <div class="flex items-center gap-6">
+            <!-- Applied Materials Logo -->
+            <img src="image_83d623.png" alt="Applied Materials" class="h-9 object-contain bg-white px-2 py-1 rounded" onerror="this.src='https://placehold.co/120x36/ffffff/00649b?text=AMAT';">
+            
+            <div class="flex items-center gap-2">
+                <span class="text-xs bg-cyan-600 text-white px-2.5 py-0.5 rounded font-bold tracking-wider font-mono-custom">PRODUCER® GT</span>
+                <h1 class="text-base font-semibold tracking-tight text-slate-300">300mm PECVD SYSTEM MASTER</h1>
+            </div>
+        </div>
+        
+        <!-- Live Interlock & Communication Stats -->
+        <div class="hidden lg:flex gap-5 text-xs text-slate-400">
+            <span class="flex items-center gap-1.5 border-r border-slate-800 pr-4"><i class="fa-solid fa-link text-emerald-500"></i> SECS/GEM: <strong class="text-emerald-400" id="host-comm-state">REMOTE</strong></span>
+            <span class="flex items-center gap-1.5 border-r border-slate-800 pr-4"><i class="fa-solid fa-circle text-emerald-500 text-[10px] animate-pulse"></i> SAFETY INT: <strong class="text-emerald-400">OK</strong></span>
+            <span class="flex items-center gap-1.5 border-r border-slate-800 pr-4"><i class="fa-solid fa-snowflake text-cyan-400"></i> CHILLER: <strong class="text-slate-300">21.5°C</strong></span>
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-gas-pump text-amber-500"></i> SCRUBBER: <strong class="text-emerald-400">ONLINE</strong></span>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <!-- Global Status Badge -->
+            <div id="global-status-badge" class="bg-amber-500/10 border border-amber-500/30 text-amber-400 px-3 py-1 rounded font-bold text-xs font-mono-custom tracking-widest animate-pulse">
+                SYSTEM STANDBY
+            </div>
+            <div class="text-right font-mono-custom text-xs">
+                <div id="live-time" class="text-slate-300 font-bold">22:36:56</div>
+                <div class="text-[10px] text-slate-500">2026-07-07</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN HMI WORKSPACE -->
+    <main class="flex-1 flex overflow-hidden">
+
+        <!-- LEFT PANEL: FOUPs & Equipment Front End Module (EFEM) -->
+        <section class="w-[320px] bg-[#111827]/90 border-r border-slate-800 flex flex-col p-4 shrink-0 overflow-y-auto justify-between">
+            <div class="space-y-4">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider"><i class="fa-solid fa-truck-ramp-box mr-1.5"></i> Wafer Supply Map (300mm)</span>
+                    <span class="text-[11px] font-mono-custom text-cyan-400">4 FOUP Support</span>
+                </div>
+
+                <!-- 4 FOUP Grid (Producer Platform Specific, match image_83d603.png) -->
+                <div class="grid grid-cols-2 gap-3">
+                    <!-- FOUP 1 -->
+                    <div id="foup-1" class="bg-slate-900 border border-cyan-500/30 rounded-lg p-2.5 flex flex-col justify-between cursor-pointer hover:border-cyan-400 transition-all">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-[10px] font-bold text-cyan-400">FOUP 01</span>
+                            <span class="text-[9px] bg-cyan-900/40 text-cyan-300 px-1 rounded">25 Wafers</span>
+                        </div>
+                        <div class="grid grid-cols-5 gap-1 my-1.5" id="foup-1-slots">
+                            <!-- JS will generate 25 miniature dots symbolizing slots -->
+                        </div>
+                        <div class="text-[9px] text-slate-400 font-mono-custom text-right">LOADED</div>
+                    </div>
+
+                    <!-- FOUP 2 -->
+                    <div id="foup-2" class="bg-slate-900 border border-slate-800 rounded-lg p-2.5 flex flex-col justify-between opacity-70">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-[10px] font-bold text-slate-400">FOUP 02</span>
+                            <span class="text-[9px] text-slate-500">Empty</span>
+                        </div>
+                        <div class="grid grid-cols-5 gap-1 my-1.5" id="foup-2-slots"></div>
+                        <div class="text-[9px] text-slate-500 font-mono-custom text-right">UNLOADED</div>
+                    </div>
+
+                    <!-- FOUP 3 -->
+                    <div id="foup-3" class="bg-slate-900 border border-slate-800 rounded-lg p-2.5 flex flex-col justify-between opacity-70">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-[10px] font-bold text-slate-400">FOUP 03</span>
+                            <span class="text-[9px] text-slate-500">Empty</span>
+                        </div>
+                        <div class="grid grid-cols-5 gap-1 my-1.5" id="foup-3-slots"></div>
+                        <div class="text-[9px] text-slate-500 font-mono-custom text-right">UNLOADED</div>
+                    </div>
+
+                    <!-- FOUP 4 -->
+                    <div id="foup-4" class="bg-slate-900 border border-slate-800 rounded-lg p-2.5 flex flex-col justify-between opacity-70">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-[10px] font-bold text-slate-400">FOUP 04</span>
+                            <span class="text-[9px] text-slate-500">Empty</span>
+                        </div>
+                        <div class="grid grid-cols-5 gap-1 my-1.5" id="foup-4-slots"></div>
+                        <div class="text-[9px] text-slate-500 font-mono-custom text-right">UNLOADED</div>
+                    </div>
+                </div>
+
+                <!-- EFEM ATM Robot & Aligner State -->
+                <div class="bg-slate-900 border border-slate-800 rounded-lg p-3 space-y-2">
+                    <h3 class="text-xs font-bold text-slate-400 border-b border-slate-800 pb-1.5"><i class="fa-solid fa-robot mr-1"></i> Atmospheric Transport Module</h3>
+                    <div class="flex justify-between text-xs font-mono-custom">
+                        <span class="text-slate-400">EFEM Robot arm:</span>
+                        <span id="efem-arm-state" class="text-cyan-400">RETRACTED</span>
+                    </div>
+                    <div class="flex justify-between text-xs font-mono-custom">
+                        <span class="text-slate-400">Aligner (ALN):</span>
+                        <span id="aligner-state" class="text-emerald-400">VACUUM GRIP OK</span>
+                    </div>
+                    <div class="flex justify-between text-xs font-mono-custom">
+                        <span class="text-slate-400">Current Wafer ID:</span>
+                        <span id="active-wafer-id" class="text-yellow-400">WF-260707-12</span>
+                    </div>
+                </div>
+
+                <!-- Load Lock Chamber State (Dual Load Lock) -->
+                <div class="bg-slate-900 border border-slate-800 rounded-lg p-3 space-y-2">
+                    <h3 class="text-xs font-bold text-slate-400 border-b border-slate-800 pb-1.5"><i class="fa-solid fa-door-open mr-1"></i> Dual Load Lock Slots</h3>
+                    <div class="grid grid-cols-2 gap-2 text-[11px] font-mono-custom">
+                        <div class="bg-slate-950 p-1.5 rounded text-center border border-slate-800" id="ll-slot-1">
+                            <div class="text-slate-500 text-[9px]">L/L A</div>
+                            <span class="text-yellow-500">EMPTY</span>
+                        </div>
+                        <div class="bg-slate-950 p-1.5 rounded text-center border border-slate-800" id="ll-slot-2">
+                            <div class="text-slate-500 text-[9px]">L/L B</div>
+                            <span class="text-yellow-500">EMPTY</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Equipment Profile (Utilizing Producer Image asset: image_83d603.png) -->
+            <div class="border-t border-slate-800 pt-3">
+                <div class="bg-slate-900/60 p-2.5 rounded-lg border border-slate-800 text-center">
+                    <img src="image_83d603.png" alt="AMAT Producer Platform" class="w-full h-36 object-contain mb-2 rounded border border-slate-800/50 bg-slate-950 p-1" onerror="this.src='https://placehold.co/240x140/0b0f19/ffffff?text=Producer+GT';">
+                    <div class="text-[10px] text-slate-500 font-mono-custom">Applied Materials® Producer® Platform</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CENTER PANEL: Twin Chambers P&ID Schematic & Physics Simulation -->
+        <section class="flex-1 bg-[#0b0f19]/30 flex flex-col p-4 overflow-hidden gap-4">
+            
+            <!-- Quick System Dashboard Stats -->
+            <div class="grid grid-cols-4 gap-4 bg-[#111827]/60 border border-slate-800 rounded-xl p-3 shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 bg-cyan-950/40 text-cyan-400 rounded-lg"><i class="fa-solid fa-circle-dot text-lg"></i></div>
+                    <div>
+                        <div class="text-[10px] text-slate-500 font-bold uppercase">Wafer Size</div>
+                        <div class="text-sm font-bold font-mono-custom">300 mm (12&quot;)</div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 bg-purple-950/40 text-purple-400 rounded-lg"><i class="fa-solid fa-bolt text-lg"></i></div>
+                    <div>
+                        <div class="text-[10px] text-slate-500 font-bold uppercase">Twin RF Plasma</div>
+                        <div class="text-sm font-bold font-mono-custom text-purple-400" id="dash-rf-power">1200 W</div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 bg-rose-950/40 text-rose-400 rounded-lg"><i class="fa-solid fa-temperature-three-quarters text-lg"></i></div>
+                    <div>
+                        <div class="text-[10px] text-slate-500 font-bold uppercase">Susceptor Temp</div>
+                        <div class="text-sm font-bold font-mono-custom text-rose-400" id="dash-temp">350.5 °C</div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 bg-blue-950/40 text-blue-400 rounded-lg"><i class="fa-solid fa-gauge text-lg"></i></div>
+                    <div>
+                        <div class="text-[10px] text-slate-500 font-bold uppercase">Chamber A / B Press</div>
+                        <div class="text-sm font-bold font-mono-custom text-blue-400" id="dash-pressure">3.42 Torr</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Double Twin Chamber Graphic P&ID (Chamber A & Chamber B) -->
+            <div class="flex-1 grid grid-cols-2 gap-4 min-h-0">
+                <!-- Chamber A -->
+                <div class="bg-[#111827]/80 rounded-xl border border-slate-800 p-4 flex flex-col justify-between relative overflow-hidden">
+                    <div class="absolute top-2 right-2 flex gap-1.5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-cyan-500 animate-pulse" id="ch-a-heartbeat"></span>
+                        <span class="text-[10px] font-mono-custom text-slate-400">CHAMBER A</span>
+                    </div>
+
+                    <!-- Gas Inflow Lines (P&ID Flow) -->
+                    <div class="space-y-2 shrink-0">
+                        <div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider"><i class="fa-solid fa-shuffle mr-1"></i> Mass Flow Controllers (MFCs)</div>
+                        <div class="grid grid-cols-4 gap-2 text-xs font-mono-custom">
+                            <div class="bg-slate-950 p-2 rounded border border-slate-800">
+                                <div class="text-cyan-400 font-bold">SiH₄</div>
+                                <div id="mfc-sih4-val" class="text-sm">180 sccm</div>
+                                <div class="text-[9px] text-slate-500">Target: 180</div>
+                            </div>
+                            <div class="bg-slate-950 p-2 rounded border border-slate-800">
+                                <div class="text-purple-400 font-bold">NH₃</div>
+                                <div id="mfc-nh3-val" class="text-sm">450 sccm</div>
+                                <div class="text-[9px] text-slate-500">Target: 450</div>
+                            </div>
+                            <div class="bg-slate-950 p-2 rounded border border-slate-800">
+                                <div class="text-emerald-400 font-bold">N₂O</div>
+                                <div id="mfc-n2o-val" class="text-sm">0 sccm</div>
+                                <div class="text-[9px] text-slate-500">Target: 0</div>
+                            </div>
+                            <div class="bg-slate-950 p-2 rounded border border-slate-800">
+                                <div class="text-amber-400 font-bold">Ar</div>
+                                <div id="mfc-ar-val" class="text-sm">2200 sccm</div>
+                                <div class="text-[9px] text-slate-500">Target: 2200</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Twin Physical Viewport (Viewport Animation for Wafer & Plasma) -->
+                    <div class="flex-1 my-3 bg-slate-950 rounded-lg border border-slate-800 relative flex flex-col justify-center items-center overflow-hidden">
+                        
+                        <!-- Plasma 방전 Visual (When Active) -->
+                        <div id="plasma-glow-a" class="absolute inset-x-8 top-8 bottom-16 rounded-full transition-all duration-500 flex items-center justify-center">
+                            <span id="plasma-status-text-a" class="text-purple-300 text-xs font-bold font-mono-custom tracking-widest hidden">PLASMA ACTIVATED</span>
+                        </div>
+
+                        <!-- Gas Showerhead -->
+                        <div class="absolute top-1 w-2/3 h-6 border-b border-slate-800 flex justify-around items-end bg-slate-900/60 rounded">
+                            <div class="w-1.5 h-1.5 bg-slate-700 rounded-full animate-bounce"></div>
+                            <div class="w-1.5 h-1.5 bg-slate-700 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                            <div class="w-1.5 h-1.5 bg-slate-700 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                            <div class="w-1.5 h-1.5 bg-slate-700 rounded-full animate-bounce" style="animation-delay: 0.3s"></div>
+                            <div class="w-1.5 h-1.5 bg-slate-700 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+                        </div>
+
+                        <!-- Susceptor & Lift Pin Block -->
+                        <div class="absolute bottom-6 w-3/4 h-12 bg-slate-800 rounded border-t-2 border-rose-500 flex flex-col justify-between items-center px-4">
+                            <!-- Wafer Sitting on Pedestal -->
+                            <div id="wafer-on-pedestal-a" class="w-4/5 h-2 bg-amber-500/80 rounded border border-yellow-200 -translate-y-1 transform transition-all duration-500 hidden"></div>
+                            <div class="text-[10px] text-slate-400 font-mono-custom mt-2">HEATER PEDESTAL</div>
+                        </div>
+
+                        <!-- Lift Pins -->
+                        <div class="absolute bottom-16 flex gap-12">
+                            <span class="w-1 h-8 bg-slate-600 transition-all duration-300" id="pin-a-1"></span>
+                            <span class="w-1 h-8 bg-slate-600 transition-all duration-300" id="pin-a-2"></span>
+                        </div>
+
+                        <!-- Live Digital overlay -->
+                        <div class="absolute bottom-2 left-2 text-[10px] font-mono-custom text-slate-500 bg-slate-900/90 px-1.5 py-0.5 rounded border border-slate-800">
+                            APC: <strong class="text-cyan-400" id="ch-a-apc-deg">38.2% Open</strong>
+                        </div>
+                    </div>
+
+                    <!-- Exhaust Lines & Turbo Pump Telemetry -->
+                    <div class="flex justify-between items-center border-t border-slate-800 pt-2 font-mono-custom text-xs">
+                        <span class="text-slate-500">Dry Pump Stack:</span>
+                        <span class="text-emerald-400 font-bold"><i class="fa-solid fa-gear animate-spin mr-1"></i> ACTIVE (14,500 RPM)</span>
+                    </div>
+                </div>
+
+                <!-- Chamber B -->
+                <div class="bg-[#111827]/80 rounded-xl border border-slate-800 p-4 flex flex-col justify-between relative overflow-hidden">
+                    <div class="absolute top-2 right-2 flex gap-1.5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-slate-700" id="ch-b-heartbeat"></span>
+                        <span class="text-[10px] font-mono-custom text-slate-400">CHAMBER B</span>
+                    </div>
+
+                    <!-- Gas Inflow Lines (P&ID Flow) -->
+                    <div class="space-y-2 shrink-0">
+                        <div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider"><i class="fa-solid fa-shuffle mr-1"></i> Mass Flow Controllers (MFCs)</div>
+                        <div class="grid grid-cols-4 gap-2 text-xs font-mono-custom">
+                            <div class="bg-slate-950 p-2 rounded border border-slate-800">
+                                <div class="text-cyan-400 font-bold">SiH₄</div>
+                                <div id="mfc-sih4-val-b" class="text-sm">0 sccm</div>
+                                <div class="text-[9px] text-slate-500">Target: 0</div>
+                            </div>
+                            <div class="bg-slate-950 p-2 rounded border border-slate-800">
+                                <div class="text-purple-400 font-bold">NH₃</div>
+                                <div id="mfc-nh3-val-b" class="text-sm">0 sccm</div>
+                                <div class="text-[9px] text-slate-500">Target: 0</div>
+                            </div>
+                            <div class="bg-slate-950 p-2 rounded border border-slate-800">
+                                <div class="text-emerald-400 font-bold">N₂O</div>
+                                <div id="mfc-n2o-val-b" class="text-sm">0 sccm</div>
+                                <div class="text-[9px] text-slate-500">Target: 0</div>
+                            </div>
+                            <div class="bg-slate-950 p-2 rounded border border-slate-800">
+                                <div class="text-amber-400 font-bold">Ar</div>
+                                <div id="mfc-ar-val-b" class="text-sm">150 sccm</div>
+                                <div class="text-[9px] text-slate-500">Target: 150</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Twin Physical Viewport (Viewport Animation for Wafer & Plasma) -->
+                    <div class="flex-1 my-3 bg-slate-950 rounded-lg border border-slate-800 relative flex flex-col justify-center items-center overflow-hidden">
+                        
+                        <!-- Plasma 방전 Visual (When Active) -->
+                        <div id="plasma-glow-b" class="absolute inset-x-8 top-8 bottom-16 rounded-full transition-all duration-500 flex items-center justify-center">
+                            <span id="plasma-status-text-b" class="text-purple-300 text-xs font-bold font-mono-custom tracking-widest hidden">PLASMA ACTIVATED</span>
+                        </div>
+
+                        <!-- Gas Showerhead -->
+                        <div class="absolute top-1 w-2/3 h-6 border-b border-slate-800 flex justify-around items-end bg-slate-900/60 rounded">
+                            <div class="w-1.5 h-1.5 bg-slate-700 rounded-full"></div>
+                            <div class="w-1.5 h-1.5 bg-slate-700 rounded-full"></div>
+                            <div class="w-1.5 h-1.5 bg-slate-700 rounded-full"></div>
+                            <div class="w-1.5 h-1.5 bg-slate-700 rounded-full"></div>
+                        </div>
+
+                        <!-- Susceptor & Lift Pin Block -->
+                        <div class="absolute bottom-6 w-3/4 h-12 bg-slate-800 rounded border-t-2 border-slate-700 flex flex-col justify-between items-center px-4">
+                            <!-- Wafer Sitting on Pedestal -->
+                            <div id="wafer-on-pedestal-b" class="w-4/5 h-2 bg-slate-500 rounded border border-slate-600 -translate-y-1 transform transition-all duration-500 hidden"></div>
+                            <div class="text-[10px] text-slate-400 font-mono-custom mt-2">HEATER PEDESTAL</div>
+                        </div>
+
+                        <!-- Lift Pins -->
+                        <div class="absolute bottom-16 flex gap-12">
+                            <span class="w-1 h-8 bg-slate-600 transition-all duration-300" id="pin-b-1"></span>
+                            <span class="w-1 h-8 bg-slate-600 transition-all duration-300" id="pin-b-2"></span>
+                        </div>
+
+                        <!-- Live Digital overlay -->
+                        <div class="absolute bottom-2 left-2 text-[10px] font-mono-custom text-slate-500 bg-slate-900/90 px-1.5 py-0.5 rounded border border-slate-800">
+                            APC: <strong class="text-slate-400" id="ch-b-apc-deg">100.0% Open</strong>
+                        </div>
+                    </div>
+
+                    <!-- Exhaust Lines & Turbo Pump Telemetry -->
+                    <div class="flex justify-between items-center border-t border-slate-800 pt-2 font-mono-custom text-xs">
+                        <span class="text-slate-500">Dry Pump Stack:</span>
+                        <span class="text-slate-500 font-bold"><i class="fa-solid fa-circle-notch mr-1"></i> IDLE (100 RPM)</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RIGHT PANEL: HMI PARAMETER CONTROL & SYSTEM STEPS -->
+        <section class="w-[380px] bg-[#111827] border-l border-slate-800 flex flex-col p-4 shrink-0 overflow-y-auto gap-4">
+            <div class="border-b border-slate-800 pb-2">
+                <h2 class="text-sm font-bold text-slate-300 tracking-tight flex items-center gap-1.5">
+                    <i class="fa-solid fa-sliders text-cyan-400"></i> CHAMBER PARAMETER CONTROL
+                </h2>
+                <p class="text-[10px] text-slate-500">Real-time setpoint adjustments and override configurations</p>
+            </div>
+
+            <!-- Interlock Status Switches -->
+            <div class="bg-slate-900 rounded-lg p-3 border border-slate-800 space-y-3">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Manual Process Override</span>
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-slate-300">SiH₄ Feed Valve (Chamber A)</span>
+                        <button onclick="toggleValve('sih4')" id="btn-valve-sih4" class="px-3 py-1 bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 text-xs rounded font-bold">OPEN</button>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-slate-300">RF Generator Interlock</span>
+                        <button onclick="toggleRFInterlock()" id="btn-rf-interlock" class="px-3 py-1 bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 text-xs rounded font-bold">PERMITTED</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 300mm Deposition Material Selector -->
+            <div class="bg-slate-900 rounded-lg p-3 border border-slate-800 space-y-2">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Select Pre-configured Deposition Film</span>
+                <select id="film-select" onchange="changeRecipe()" class="w-full bg-slate-950 border border-slate-800 rounded p-2 text-xs text-slate-200 outline-none">
+                    <option value="sio2">Silicon Dioxide (SiO₂) - TEOS</option>
+                    <option value="sin">Silicon Nitride (SiN) - High Quality Barrier</option>
+                    <option value="sion">Silicon Oxynitride (SiON) - Hardmask</option>
+                    <option value="lowk">Low-k Dielectric (CDO film)</option>
+                </select>
+            </div>
+
+            <!-- Interactive Param Sliders -->
+            <div class="bg-slate-900 rounded-lg p-3 border border-slate-800 space-y-4">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wide block border-b border-slate-800 pb-1">Real-time Tuning</span>
+                
+                <!-- Temp Slider -->
+                <div class="space-y-1">
+                    <div class="flex justify-between text-xs">
+                        <span class="text-slate-400">Chamber A Pedestal Temp</span>
+                        <span class="text-rose-400 font-bold font-mono-custom" id="slider-temp-val">350 °C</span>
+                    </div>
+                    <input type="range" id="slider-temp" min="150" max="550" value="350" oninput="updateSliderVal('temp')" class="w-full h-1.5 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-rose-500">
+                </div>
+
+                <!-- RF Power Slider -->
+                <div class="space-y-1">
+                    <div class="flex justify-between text-xs">
+                        <span class="text-slate-400">High-Freq RF Power</span>
+                        <span class="text-purple-400 font-bold font-mono-custom" id="slider-rf-val">1200 W</span>
+                    </div>
+                    <input type="range" id="slider-rf" min="0" max="3000" step="50" value="1200" oninput="updateSliderVal('rf')" class="w-full h-1.5 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-purple-500">
+                </div>
+
+                <!-- Vacuum Level Target Slider -->
+                <div class="space-y-1">
+                    <div class="flex justify-between text-xs">
+                        <span class="text-slate-400">Target Pressure</span>
+                        <span class="text-cyan-400 font-bold font-mono-custom" id="slider-press-val">3.40 Torr</span>
+                    </div>
+                    <input type="range" id="slider-press" min="0.1" max="10.0" step="0.1" value="3.4" oninput="updateSliderVal('press')" class="w-full h-1.5 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-cyan-500">
+                </div>
+            </div>
+
+            <!-- Operation Panel Logs -->
+            <div class="bg-slate-900 rounded-lg p-3 border border-slate-800 flex-1 flex flex-col min-h-[160px]">
+                <div class="flex justify-between items-center mb-1">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Live SECS/GEM & PLC Logs</span>
+                    <button onclick="clearLogs()" class="text-[9px] text-slate-500 hover:text-rose-400 transition-all"><i class="fa-solid fa-trash-can"></i> Clear</button>
+                </div>
+                <div id="log-box" class="flex-1 bg-slate-950 p-2 rounded border border-slate-850 font-mono-custom text-[10px] overflow-y-auto space-y-1.5 text-slate-300">
+                    <div><span class="text-slate-500">[22:36:51]</span> <span class="text-cyan-400">SYSTEM READY:</span> Producer GT PECVD sequence waiting for trigger.</div>
+                    <div><span class="text-slate-500">[22:36:52]</span> <span class="text-emerald-400">SECS/GEM:</span> ESTABLISHED - Control state REMOTE online.</div>
+                    <div><span class="text-slate-500">[22:36:54]</span> <span class="text-rose-400">HEATER:</span> Temp stabilized in Range (CH A: 350.5°C)</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- BOTTOM FOOTER PANEL: GLOBAL PROGRESS & STATISTICAL COUNTER -->
+    <footer class="bg-[#111827] border-t border-slate-800 p-4 shrink-0 flex flex-col md:flex-row gap-4 items-center justify-between">
+        
+        <!-- Throughput Counter (Input/Output/Accumulated) -->
+        <div class="flex flex-wrap items-center gap-6">
+            <!-- Process Action Trigger -->
+            <button id="btn-process" onclick="toggleProcess()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 py-2 rounded-lg text-xs tracking-wider uppercase transition-all duration-300 flex items-center gap-2">
+                <i class="fa-solid fa-play" id="process-icon"></i> <span id="process-text">START PRODUCTION RUN</span>
+            </button>
+
+            <!-- Inputs / Outputs -->
+            <div class="flex items-center gap-4 text-xs font-mono-custom border-l border-slate-800 pl-6">
+                <div>
+                    <span class="text-slate-500">INPUT WAFER:</span>
+                    <strong class="text-cyan-400" id="stat-input">25 / 25</strong>
+                </div>
+                <div>
+                    <span class="text-slate-500">OUTPUT PASSED:</span>
+                    <strong class="text-emerald-400" id="stat-output">0</strong>
+                </div>
+                <div>
+                    <span class="text-slate-500">CUMULATIVE YIELD:</span>
+                    <strong class="text-yellow-400" id="stat-yield">100.0%</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Bar (Steps/Timer) -->
+        <div class="flex-1 max-w-xl w-full flex items-center gap-4 text-xs font-mono-custom">
+            <div class="text-right shrink-0">
+                <span class="text-slate-500">RECIPE STEP:</span>
+                <strong id="active-step-num" class="text-slate-200">1 / 5 (N2O Purge)</strong>
+            </div>
+            <!-- Progress Bar Frame -->
+            <div class="flex-1 bg-slate-950 border border-slate-800 h-3 rounded-full overflow-hidden">
+                <div id="recipe-progress" class="h-full bg-cyan-500 w-0 transition-all duration-300"></div>
+            </div>
+            <div class="shrink-0 text-left">
+                <span class="text-slate-500">REM TIME:</span>
+                <strong id="remaining-time" class="text-slate-200">00:00</strong>
+            </div>
+        </div>
+
+        <!-- Secondary action for emergency -->
+        <button onclick="emergencyStop()" class="bg-rose-950/40 hover:bg-rose-600 hover:text-white border border-rose-500/30 text-rose-400 font-bold px-4 py-2 rounded-lg text-xs transition-all">
+            EMERGENCY ABORT
+        </button>
+    </footer>
+
+    <!-- REALTIME PROCESS CONTROLLER & ANIMATOR LOGIC -->
+    <script>
+        // System Internal state
+        let systemActive = false;
+        let isProcessing = false;
+        let elapsedStepTime = 0;
+        let stepDuration = 10; // in seconds
+        let currentStepIndex = 0;
+        let inputWafers = 25;
+        let processedCount = 0;
+        let totalProcessed = 0;
+        let cycleInterval = null;
+
+        // Current Recipe variables
+        let recipeConfig = {
+            sio2: { name: "Silicon Dioxide (SiO₂)", steps: ["Teos Feed Preheating", "N2O Gas Setup", "RF Deposition Active", "He Purging", "Exhaust Release"], duration: [8, 10, 15, 8, 6], RF: [0, 0, 1500, 0, 0], SiH4: [0, 0, 180, 0, 0], NH3: [0, 0, 450, 0, 0], N2O: [120, 150, 150, 0, 0], Ar: [2200, 2200, 2200, 500, 150] },
+            sin: { name: "Silicon Nitride (SiN)", steps: ["N2 Preheating", "SiH4 Stabilization", "Plasma Deposition", "NH3 Purge Run", "N2 Vented"], duration: [6, 12, 18, 6, 6], RF: [0, 0, 1200, 0, 0], SiH4: [0, 120, 120, 0, 0], NH3: [300, 300, 450, 0, 0], N2O: [0, 0, 0, 0, 0], Ar: [1500, 1500, 1500, 300, 100] },
+            sion: { name: "Silicon Oxynitride (SiON)", steps: ["Stabilize Carrier Gas", "Ar Plasma Conditioning", "SiON Reactive Dep", "N2 Purging", "Final Exhaust"], duration: [8, 8, 20, 8, 5], RF: [0, 600, 1600, 0, 0], SiH4: [0, 0, 150, 0, 0], NH3: [200, 200, 300, 0, 0], N2O: [100, 100, 250, 0, 0], Ar: [1800, 1800, 1800, 600, 150] },
+            lowk: { name: "Low-k Dielectric (CDO)", steps: ["Pre-Condition Temp", "Stabilize Carbon Feed", "Low RF Deposition", "Vacuum Purge", "Finish Lift"], duration: [10, 10, 22, 10, 6], RF: [0, 0, 950, 0, 0], SiH4: [0, 0, 80, 0, 0], NH3: [100, 100, 200, 0, 0], N2O: [50, 50, 100, 0, 0], Ar: [1000, 1000, 1000, 200, 100] }
+        };
+        let activeRecipeKey = 'sio2';
+
+        // Override controls state
+        let overrides = {
+            sih4Valve: true,
+            rfPermit: true,
+            temp: 350,
+            rfPower: 1200,
+            press: 3.40
+        };
+
+        // DOM elements cache
+        const logBox = document.getElementById('log-box');
+        const liveTimeEl = document.getElementById('live-time');
+        const foup1Slots = document.getElementById('foup-1-slots');
+        const foup2Slots = document.getElementById('foup-2-slots');
+        const foup3Slots = document.getElementById('foup-3-slots');
+        const foup4Slots = document.getElementById('foup-4-slots');
+
+        // Initial setup on window loaded
+        window.onload = function() {
+            generateFoupDots();
+            startLiveClock();
+            addLog("System Initialized", "SYS", "STANDBY");
+        }
+
+        // Generate 25 visual dots per FOUP matching actual 300mm wafer load
+        function generateFoupDots() {
+            foup1Slots.innerHTML = '';
+            for (let i = 1; i <= 25; i++) {
+                const dot = document.createElement('div');
+                dot.id = `wf-dot-${i}`;
+                dot.className = "w-2.5 h-2.5 rounded-full bg-cyan-400 transition-all border border-cyan-300/30";
+                dot.title = `Slot ${i}: Wafer Ready`;
+                foup1Slots.appendChild(dot);
+            }
+            // Other FOUPs empty
+            foup2Slots.innerHTML = '<div class="col-span-5 text-[8px] text-slate-600 text-center py-2">NO DATA</div>';
+            foup3Slots.innerHTML = '<div class="col-span-5 text-[8px] text-slate-600 text-center py-2">NO DATA</div>';
+            foup4Slots.innerHTML = '<div class="col-span-5 text-[8px] text-slate-600 text-center py-2">NO DATA</div>';
+        }
+
+        // Clock Generator
+        function startLiveClock() {
+            setInterval(() => {
+                const now = new Date();
+                liveTimeEl.textContent = now.toLocaleTimeString('ko-KR', { hour12: false });
+                
+                // Toggle heartbeats
+                document.getElementById('ch-a-heartbeat').classList.toggle('bg-cyan-500');
+                document.getElementById('ch-a-heartbeat').classList.toggle('bg-slate-700');
+                
+                if (isProcessing && Math.random() > 0.4) {
+                    document.getElementById('ch-b-heartbeat').classList.toggle('bg-emerald-500');
+                    document.getElementById('ch-b-heartbeat').classList.toggle('bg-slate-700');
+                }
+            }, 1000);
+        }
+
+        // Add Log to Terminal
+        function addLog(text, comp, val) {
+            const time = new Date().toLocaleTimeString('ko-KR', { hour12: false });
+            const logElement = document.createElement('div');
+            
+            let colorClass = "text-slate-300";
+            if (comp === "SYS" || comp === "PLC") colorClass = "text-cyan-400";
+            if (comp === "SECS") colorClass = "text-emerald-400";
+            if (comp === "ABORT" || comp === "ERR") colorClass = "text-rose-400 font-bold";
+
+            logElement.innerHTML = `<span class="text-slate-500">[${time}]</span> <span class="${colorClass}">${comp}:</span> ${text} (${val})`;
+            logBox.appendChild(logElement);
+            logBox.scrollTop = logBox.scrollHeight;
+        }
+
+        function clearLogs() {
+            logBox.innerHTML = '';
+            addLog("Terminal Logs Cleared", "PLC", "OK");
+        }
+
+        // Slider real-time updates
+        function updateSliderVal(param) {
+            if (param === 'temp') {
+                const val = document.getElementById('slider-temp').value;
+                overrides.temp = parseFloat(val);
+                document.getElementById('slider-temp-val').textContent = val + " °C";
+                document.getElementById('dash-temp').textContent = (parseFloat(val) + (Math.random() - 0.5)).toFixed(1) + " °C";
+            }
+            if (param === 'rf') {
+                const val = document.getElementById('slider-rf').value;
+                overrides.rfPower = parseInt(val);
+                document.getElementById('slider-rf-val').textContent = val + " W";
+                document.getElementById('dash-rf-power').textContent = val + " W";
+            }
+            if (param === 'press') {
+                const val = document.getElementById('slider-press').value;
+                overrides.press = parseFloat(val);
+                document.getElementById('slider-press-val').textContent = val + " Torr";
+                document.getElementById('dash-pressure').textContent = val + " Torr";
+            }
+        }
+
+        // Recipe Change Logic
+        function changeRecipe() {
+            activeRecipeKey = document.getElementById('film-select').value;
+            const rep = recipeConfig[activeRecipeKey];
+            
+            // Set Slider Values dynamically matching standard values
+            document.getElementById('slider-rf').value = Math.max(...rep.RF);
+            updateSliderVal('rf');
+            addLog(`Recipe Loaded: ${rep.name}`, "SYS", "LOADED");
+        }
+
+        // Overrides Switch logic
+        function toggleValve(type) {
+            if (type === 'sih4') {
+                overrides.sih4Valve = !overrides.sih4Valve;
+                const btn = document.getElementById('btn-valve-sih4');
+                if (overrides.sih4Valve) {
+                    btn.textContent = "OPEN";
+                    btn.className = "px-3 py-1 bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 text-xs rounded font-bold";
+                    addLog("Chamber A SiH4 Interlock Valve manual override OPEN", "PLC", "ACTIVE");
+                } else {
+                    btn.textContent = "CLOSED";
+                    btn.className = "px-3 py-1 bg-rose-600/20 text-rose-400 border border-rose-500/30 text-xs rounded font-bold";
+                    addLog("Chamber A SiH4 Interlock Valve manual override CLOSED", "PLC", "ISOLATED");
+                }
+            }
+        }
+
+        function toggleRFInterlock() {
+            overrides.rfPermit = !overrides.rfPermit;
+            const btn = document.getElementById('btn-rf-interlock');
+            if (overrides.rfPermit) {
+                btn.textContent = "PERMITTED";
+                btn.className = "px-3 py-1 bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 text-xs rounded font-bold";
+                addLog("RF Generator safety interlock permit active", "PLC", "ARMED");
+            } else {
+                btn.textContent = "BYPASS LOCK";
+                btn.className = "px-3 py-1 bg-rose-600/20 text-rose-400 border border-rose-500/30 text-xs rounded font-bold";
+                addLog("RF Generator safety permit BYPASS / INHIBITED", "PLC", "LOCKED");
+            }
+        }
+
+        // Process Loop Engine
+        function toggleProcess() {
+            if (isProcessing) {
+                pauseProduction();
+            } else {
+                startProduction();
+            }
+        }
+
+        function startProduction() {
+            isProcessing = true;
+            document.getElementById('global-status-badge').className = "bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-3 py-1 rounded font-bold text-xs font-mono-custom tracking-widest animate-pulse";
+            document.getElementById('global-status-badge').textContent = "AUTO RUNNING";
+            
+            document.getElementById('process-text').textContent = "PAUSE PRODUCTION RUN";
+            document.getElementById('process-icon').className = "fa-solid fa-pause";
+
+            addLog(`Production sequence for ${recipeConfig[activeRecipeKey].name} initiated`, "SECS", "START_S1F1");
+            
+            // Start Clock Interval (1 second ticks)
+            cycleInterval = setInterval(processTick, 1000);
+        }
+
+        function pauseProduction() {
+            isProcessing = false;
+            document.getElementById('global-status-badge').className = "bg-amber-500/10 border border-amber-500/30 text-amber-400 px-3 py-1 rounded font-bold text-xs font-mono-custom tracking-widest";
+            document.getElementById('global-status-badge').textContent = "SYSTEM STANDBY";
+            
+            document.getElementById('process-text').textContent = "RESUME PRODUCTION RUN";
+            document.getElementById('process-icon').className = "fa-solid fa-play";
+
+            addLog("Production sequence paused by Host request", "SECS", "PAUSE_OK");
+            clearInterval(cycleInterval);
+        }
+
+        function processTick() {
+            const rep = recipeConfig[activeRecipeKey];
+            const stepsCount = rep.steps.length;
+            stepDuration = rep.duration[currentStepIndex];
+
+            elapsedStepTime++;
+
+            // Handle Wafers visual loading animation
+            if (elapsedStepTime === 1) {
+                // Remove wafer from FOUP dot
+                if (processedCount < 25) {
+                    const nextDotIdx = processedCount + 1;
+                    const dot = document.getElementById(`wf-dot-${nextDotIdx}`);
+                    if (dot) {
+                        dot.className = "w-2.5 h-2.5 rounded-full bg-slate-800 transition-all border border-slate-700";
+                        dot.title = `Slot ${nextDotIdx}: Processing`;
+                    }
+                }
+
+                // Show robot transferring
+                document.getElementById('efem-arm-state').textContent = "EXTENDED -> ALN";
+                document.getElementById('efem-arm-state').className = "text-yellow-400 animate-pulse";
+                addLog(`Wafer WF-260707-${25-processedCount} picked from FOUP Slot`, "PLC", "ROBOT_ARM_MOVE");
+                
+                // Set Load Lock slots
+                document.getElementById('ll-slot-1').innerHTML = `
+                    <div class="text-cyan-400 text-[9px]">L/L A</div>
+                    <span class="text-cyan-400 animate-pulse">WF-IN</span>
+                `;
+            }
+
+            if (elapsedStepTime === 2) {
+                document.getElementById('efem-arm-state').textContent = "RETRACTED";
+                document.getElementById('efem-arm-state').className = "text-emerald-400";
+                
+                // Load Wafer into Chamber A visual
+                document.getElementById('wafer-on-pedestal-a').classList.remove('hidden');
+                document.getElementById('pin-a-1').className = "w-1 h-3 bg-slate-600 transition-all duration-300";
+                document.getElementById('pin-a-2').className = "w-1 h-3 bg-slate-600 transition-all duration-300";
+                addLog("Wafer placed onto Pedestal A. Lift Pins DESCENDED", "PLC", "WAFER_CLAMP_OK");
+            }
+
+            // Real-time MFC dynamic change simulation matching steps
+            const Sih4Target = rep.SiH4[currentStepIndex];
+            const Nh3Target = rep.NH3[currentStepIndex];
+            const N2oTarget = rep.N2O[currentStepIndex];
+            const ArTarget = rep.Ar[currentStepIndex];
+
+            document.getElementById('mfc-sih4-val').textContent = `${Sih4Target} sccm`;
+            document.getElementById('mfc-nh3-val').textContent = `${Nh3Target} sccm`;
+            document.getElementById('mfc-n2o-val').textContent = `${N2oTarget} sccm`;
+            document.getElementById('mfc-ar-val').textContent = `${ArTarget} sccm`;
+
+            // Active Plasma step glow control
+            const currentRF = rep.RF[currentStepIndex];
+            if (currentRF > 0 && overrides.rfPermit) {
+                document.getElementById('plasma-glow-a').className = "absolute inset-x-8 top-8 bottom-16 rounded-full transition-all duration-500 flex items-center justify-center plasma-active";
+                document.getElementById('plasma-status-text-a').classList.remove('hidden');
+                
+                // Chamber Pressure fluctuation under plasma
+                document.getElementById('dash-pressure').textContent = (overrides.press + (Math.random() * 0.1 - 0.05)).toFixed(2) + " Torr";
+            } else {
+                document.getElementById('plasma-glow-a').className = "absolute inset-x-8 top-8 bottom-16 rounded-full transition-all duration-500 flex items-center justify-center";
+                document.getElementById('plasma-status-text-a').classList.add('hidden');
+            }
+
+            // Calculate progress %
+            const progressPercent = (elapsedStepTime / stepDuration) * 100;
+            document.getElementById('recipe-progress').style.width = `${progressPercent}%`;
+            document.getElementById('active-step-num').textContent = `${currentStepIndex + 1} / ${stepsCount} (${rep.steps[currentStepIndex]})`;
+            document.getElementById('remaining-time').textContent = `00:${String(stepDuration - elapsedStepTime).padStart(2, '0')}`;
+
+            if (elapsedStepTime >= stepDuration) {
+                // Go to next step
+                elapsedStepTime = 0;
+                currentStepIndex++;
+                if (currentStepIndex >= stepsCount) {
+                    // One Wafer Deposition cycle completed!
+                    currentStepIndex = 0;
+                    processedCount++;
+                    totalProcessed++;
+                    
+                    document.getElementById('stat-output').textContent = processedCount;
+                    document.getElementById('stat-input').textContent = `${25 - processedCount} / 25`;
+                    
+                    // visual reset inside viewport
+                    document.getElementById('wafer-on-pedestal-a').classList.add('hidden');
+                    
+                    addLog(`Chamber A Deposition successfully complete for Wafer Slot ${processedCount}`, "SECS", "CYCLE_COMPLETE_S1F4");
+
+                    if (processedCount >= 25) {
+                        // Complete batch finished
+                        pauseProduction();
+                        addLog("Production Batch Complete! All 25 Wafers Processed OK", "SYS", "ALL_COMPLETE");
+                    }
+                } else {
+                    addLog(`Advancing to step: ${rep.steps[currentStepIndex]}`, "PLC", "STEP_CHANGE");
+                }
+            }
+        }
+
+        // Emergency Stop System
+        function emergencyStop() {
+            clearInterval(cycleInterval);
+            isProcessing = false;
+            systemActive = false;
+
+            document.getElementById('global-status-badge').className = "bg-rose-500/10 border border-rose-500/30 text-rose-500 px-3 py-1 rounded font-bold text-xs font-mono-custom tracking-widest animate-pulse";
+            document.getElementById('global-status-badge').textContent = "ABORT FAULT";
+
+            document.getElementById('process-text').textContent = "RECOVER PRODUCTION";
+            document.getElementById('process-icon').className = "fa-solid fa-arrows-spin";
+
+            // All Valves Force Closed
+            document.getElementById('mfc-sih4-val').textContent = "0 sccm";
+            document.getElementById('mfc-nh3-val').textContent = "0 sccm";
+            document.getElementById('mfc-n2o-val').textContent = "0 sccm";
+            document.getElementById('mfc-ar-val').textContent = "0 sccm";
+
+            // Plasma glow force off
+            document.getElementById('plasma-glow-a').className = "absolute inset-x-8 top-8 bottom-16 rounded-full transition-all duration-500 flex items-center justify-center";
+            document.getElementById('plasma-status-text-a').classList.add('hidden');
+
+            addLog("EMERGENCY MANUAL ABORT TRIGGERED. GAS INFLOW ISOLATED. PLASMA ABORTED.", "ABORT", "SHUTDOWN");
+        }
+    </script>
+</body>
+</html>
