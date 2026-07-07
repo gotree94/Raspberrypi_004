@@ -60,40 +60,54 @@ import time
 import myservo
 from gpiozero import Digital0utputDevice
 from gpiozero import PWMOutputDevice
+
 def nothing(x):
-pass
-def maino:
-pca9685 = myservo.PCA9685Q
-channel =0
-space_pressed  =False
-cv2. namedWindow('  Cont rols' )
-cv2. resizeWindow('Controls',  500, 100)
-cv2.createTrackbar('Steering','Controls',    90, !80, nothing)
-cv2.createTrackbar('Speed','Controls',  40, 100, nothing)
-while True:
-steering_value = cv2.getTrackbarPos('Steering','ControIs'    )
-speed_value  = cv2.getTrackbarPos('Speed','Controls'   )
-servo_angIe = pca9685.set_servo_angle(channel,  steering_value)
-controls_image  = np.zeros((100,  500, 3), dtype=np.uint8)
+    pass
 
-    if space_pressed:
-        cv2.circle(controls_image, (250, 30), 15, (0,255,0), -1)
-        cv2.putText(contros_imag, f
-    else:
-        cv2.circle(controls_image, (250, 30), 15, (0,255,0), -1)
-        cv2.putText(contros_imag, f
+def main():
+        pca9685 = myservo.PCA9685Q
+        channel =0
 
+        space_pressed  =False
 
+        cv2. namedWindow('  Cont rols' )
+        cv2. resizeWindow('Controls',  500, 100)
 
+        cv2.createTrackbar('Steering','Controls',    90, !80, nothing)
+        cv2.createTrackbar('Speed','Controls',  40, 100, nothing)
 
-key = 6v2.r.itKey(10)  &OxFF if  keY == ord('q'):
-etif keY ==32; # SPace keY
-break
-if not space_pressed: space_pressed  =True
-else:
-space_pressed  =False cv2. destroyAl lWi ndows0
-if _name_ =="_main_
-main0
+        while True:
+                steering_value = cv2.getTrackbarPos('Steering','ControIs'    )
+                speed_value  = cv2.getTrackbarPos('Speed','Controls'   )
+
+                servo_angIe = pca9685.set_servo_angle(channel,  steering_value)
+
+                controls_image  = np.zeros((100,  500, 3), dtype=np.uint8)
+                cv2.putText(controls_image, f'Steering: {servo_angle}', (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,255),2)
+                cv2.putText(controls_image, f'Speed: {speed_value}', (10,70), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,255),2)
+
+                if space_pressed:
+                    cv2.circle(controls_image, (250, 30), 15, (0,255,0), -1)
+                    cv2.putText(contros_imag, f'GO', (235, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,255), 2)
+                else:
+                    cv2.circle(controls_image, (250, 30), 15, (0,255,0), -1)
+                    cv2.putText(contros_imag, f'STOP', (235, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,255), 2)
+
+                cv2.imshow('Controls', controls_image)
+
+                key = cv2.waitKey(10)&OxFF
+                if  key == ord('q'):
+                    break
+                etif key ==32; # SPace keY
+                if not space_pressed:
+                    space_pressed  =True
+                else:
+                    space_pressed  =False
+
+    cv2. destroyAl lWi ndows0
+
+if __name__ =="__main__":
+    main()
 ```
 
 
