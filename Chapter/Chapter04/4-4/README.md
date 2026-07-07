@@ -496,7 +496,7 @@ if __name__ == "__main__":
             time.sleep(0.01)
     finally:
         motor_stop()
-        pca9685.set_servo_angle(SERVO_CH, CENTER_ANGLE)
+        #pca9685.set_servo_angle(SERVO_CH, CENTER_ANGLE)
         cv2.destroyAllWindows()
 ```
 
