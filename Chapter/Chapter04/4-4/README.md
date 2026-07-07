@@ -413,7 +413,7 @@ def motor_stop():
     AIN1.value = 0; AIN2.value = 0; PWMA.value = 0.0
     BIN1.value = 0; BIN2.value = 0; PWMB.value = 0.0
 
-pca9685 = myservo.PCA9685()
+#pca9685 = myservo.PCA9685()
 SERVO_CH = 0
 LEFT_ANGLE = 45
 RIGHT_ANGLE = 135
@@ -460,7 +460,7 @@ if __name__ == "__main__":
     cam = cv2.VideoCapture(0)
     cam.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
     cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-    pca9685.set_servo_angle(SERVO_CH, CENTER_ANGLE)
+    #pca9685.set_servo_angle(SERVO_CH, CENTER_ANGLE)
     try:
         while cam.isOpened():
             _, img = cam.read()
@@ -479,7 +479,7 @@ if __name__ == "__main__":
                 else:
                     target_angle = CENTER_ANGLE + KP_ANGLE * err
                 target_angle = clamp(target_angle, LEFT_ANGLE, RIGHT_ANGLE)
-                pca9685.set_servo_angle(SERVO_CH, int(target_angle))
+                #pca9685.set_servo_angle(SERVO_CH, int(target_angle))
                 if area >= AREA_NEAR:
                     motor_stop()
                 elif AREA_OK_LO <= area <= AREA_OK_HI:
@@ -487,7 +487,7 @@ if __name__ == "__main__":
                 else:
                     motor_go(BASE_SPEED)
             else:
-                pca9685.set_servo_angle(SERVO_CH, CENTER_ANGLE)
+                #pca9685.set_servo_angle(SERVO_CH, CENTER_ANGLE)
                 motor_stop()
             cv2.imshow("view", vis)
             cv2.imshow("mask", mask)
