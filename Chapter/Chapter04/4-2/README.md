@@ -41,7 +41,7 @@ if __name__ == "__main__":
 
     while camera.isOpened():
         _, image = camera.read()
-        image = cv2.flip(image, -1)
+        image = cv2.flip(image, 1)
         image = read_barcodes(image)
         cv2.imshow("mycamera", image)
 
@@ -75,7 +75,7 @@ if __name__ == "__main__":
 
     while cam.isOpened():
         _, image = cam.read()
-        image = cv2.flip(image, -1)
+        image = cv2.flip(image, 1)
         image = read_barcodes(image)
         cv2.imshow("mycamera", image)
 
@@ -116,7 +116,7 @@ if __name__ == "__main__":
     camera = mycamera.MyPiCamera(640, 480)
     while camera.isOpened():
         _, image = camera.read()
-        image = cv2.flip(image, -1)
+        image = cv2.flip(image, 1)
         image = read_barcodes(image)
         cv2.imshow("mycamera", image)
 
@@ -155,7 +155,7 @@ if __name__ == "__main__":
     cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
     while cam.isOpened():
         _, image = cam.read()
-        image = cv2.flip(image, -1)
+        image = cv2.flip(image, 1)
         image = read_barcodes(image)
         cv2.imshow("mycamera", image)
 
