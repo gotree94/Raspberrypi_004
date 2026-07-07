@@ -200,5 +200,43 @@ if __name__ == "__main__":
 cv2.destroyAllWindows()
 ```
 
+```python
+import cv2
+import numpy as np
 
+def detect(frame):
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    red = cv2.inRange(hsv, (0, 120, 70), (10, 255, 255)) | cv2.inRange(hsv, (170, 120, 70), (180, 255, 255))
+    blue = cv2.inRange(hsv, (100, 120, 70), (140, 255, 255))
+    for name, mask, color in [("red", red, (0, 0, 255)), ("blue", blue, (255, 0, 0))]:
+        cnts, _ = cv2.findContours(cv2.medianBlur(mask, 5), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        for c in cnts:
+            if cv2.contourArea(c) < 800:
+                continue
+            peri = cv2.arcLength(c, True)
+            approx = cv2.approxPolyDP(c, 0.07 * peri, True)
+            x, y, w, h = cv2.boundingRect(approx)
+            if name == "red" and len(approx) == 4 and 0.85 <= w / float(h) <= 1.15:
+                cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
+                cv2.putText(frame, "red square", (x, y - 8), cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2)
+                cv2.drawContours(frame, [approx], -1, color, 2)
+            if name == "blue" and len(approx) == 3:
+                cx = x + w // 2
+                cy = y + h // 2
+                cv2.putText(frame, "blue triangle", (cx - 60, cy - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2)
+                cv2.drawContours(frame, [approx], -1, color, 2)
+    return frame
+
+if __name__ == "__main__":
+    cam = cv2.VideoCapture(0)
+    cam.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+    cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+    while cam.isOpened():
+        _, img = cam.read()
+        img = cv2.flip(img, -1)
+        cv2.imshow("shapes", detect(img))
+        if cv2.waitKey(1) == ord('q'):
+            break
+cv2.destroyAllWindows()
+```
 
