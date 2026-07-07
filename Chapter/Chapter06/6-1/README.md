@@ -16,12 +16,12 @@ f rom gpiozero import niH0utputDevice
 def nothing(x):
     pass
 
-def maino:
-    pca9685 = myservo.PCA96850
+def main():
+    pca9685 = myservo.PCA9685()
     channel =0
 
     cv2 . namedWindow(  ' Cont rots ' )
-    cv2. resizeWindow(' Controls', 500, t00)
+    cv2. resizeWindow(' Controls', 500, 100)
 
     cv2.createTrackbar('steering','Controls', 90, 180, nothing)
     cv2.createTrackbar('Speed','Controls',  40, 700, nothing)
@@ -35,6 +35,15 @@ def maino:
     controls-image = np.zeros((1 00, 500, 3), dtype=np.uint8)
     cv2.putText(controls-image, f'Steerrng: {servo-angle}', (10, 30), cv2.FONT-HERSHEY-SIMPLEX,   0.7,(255, 255, 255), 2)
     cv2.putText(controls-image, f'Speed: {speed-value}', (10, 70), cv2.FONT-HERSHEY-SIMPLEX,  0.7, (255 255,255),2)
+
+    if space_pressed:
+        cv2.circle(controls_image, (250, 30), 15, (0,255,0), -1)
+        cv2.putText(contros_imag, f
+    else:
+        cv2.circle(controls_image, (250, 30), 15, (0,255,0), -1)
+        cv2.putText(contros_imag, f
+
+
 
     cv2. imshow('Controls', controls-image)
 
