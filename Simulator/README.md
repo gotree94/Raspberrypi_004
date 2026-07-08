@@ -44,6 +44,6 @@
 
 ![](aesa002.png)
 
-!()[cmp001.png]
+![](cmp001.png)
 
-!()[cmp002.png]
+![](cmp002.png)
