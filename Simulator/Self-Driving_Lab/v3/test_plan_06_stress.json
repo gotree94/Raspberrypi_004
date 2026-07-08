@@ -1,0 +1,17 @@
+{
+    "experiment_name": "T6_ExtremeValues_StressTest",
+    "description": "극한값 스트레스 - 초기 RPM=4000(최대), 분주=300µL(최대)",
+    "target": {
+        "metric": "max_absorbance",
+        "value": 0.7,
+        "tolerance": 0.05
+    },
+    "initial_rpm": 4000,
+    "max_iterations": 3,
+    "sequence": [
+        {"step": 1, "device": "plate_hotel", "port": 50052, "cmd": "EJECT:1"},
+        {"step": 2, "device": "liquid_handler", "port": 50051, "cmd": "DISPENSE:300"},
+        {"step": 3, "device": "centrifuge", "port": 50054, "cmd": "SPIN:4000"},
+        {"step": 4, "device": "plate_reader", "port": 50053, "cmd": "SCAN:4000"}
+    ]
+}

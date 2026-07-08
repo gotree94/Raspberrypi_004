@@ -1,0 +1,17 @@
+{
+    "experiment_name": "T2_HighTarget_RPMUpperLimit",
+    "description": "고흡광도 목표(1.2) - 물리 모델 상한 초과로 수렴 실패 예상",
+    "target": {
+        "metric": "max_absorbance",
+        "value": 1.2,
+        "tolerance": 0.05
+    },
+    "initial_rpm": 2000,
+    "max_iterations": 5,
+    "sequence": [
+        {"step": 1, "device": "plate_hotel", "port": 50052, "cmd": "EJECT:2"},
+        {"step": 2, "device": "liquid_handler", "port": 50051, "cmd": "DISPENSE:100"},
+        {"step": 3, "device": "centrifuge", "port": 50054, "cmd": "SPIN:2000"},
+        {"step": 4, "device": "plate_reader", "port": 50053, "cmd": "SCAN:2000"}
+    ]
+}

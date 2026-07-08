@@ -1,0 +1,17 @@
+{
+    "experiment_name": "T4_TightTolerance_PrecisionTest",
+    "description": "정밀 수렴 테스트 - Tolerance ±0.01, 초기 RPM 3000",
+    "target": {
+        "metric": "max_absorbance",
+        "value": 0.8,
+        "tolerance": 0.01
+    },
+    "initial_rpm": 3000,
+    "max_iterations": 5,
+    "sequence": [
+        {"step": 1, "device": "plate_hotel", "port": 50052, "cmd": "EJECT:3"},
+        {"step": 2, "device": "liquid_handler", "port": 50051, "cmd": "DISPENSE:50"},
+        {"step": 3, "device": "centrifuge", "port": 50054, "cmd": "SPIN:3000"},
+        {"step": 4, "device": "plate_reader", "port": 50053, "cmd": "SCAN:3000"}
+    ]
+}

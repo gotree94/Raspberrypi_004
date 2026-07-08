@@ -1,0 +1,17 @@
+{
+    "experiment_name": "T3_LowTarget_RPMLowerLimit",
+    "description": "저흡광도 목표(0.3) - RPM 하한 1000 도달 테스트",
+    "target": {
+        "metric": "max_absorbance",
+        "value": 0.3,
+        "tolerance": 0.05
+    },
+    "initial_rpm": 2000,
+    "max_iterations": 5,
+    "sequence": [
+        {"step": 1, "device": "plate_hotel", "port": 50052, "cmd": "EJECT:1"},
+        {"step": 2, "device": "liquid_handler", "port": 50051, "cmd": "DISPENSE:30"},
+        {"step": 3, "device": "centrifuge", "port": 50054, "cmd": "SPIN:2000"},
+        {"step": 4, "device": "plate_reader", "port": 50053, "cmd": "SCAN:2000"}
+    ]
+}
