@@ -4,6 +4,8 @@
 
 AlphaFold 단백질 구조 예측, RDKit 분자 모델링, ML 기반 ADMET 예측, VAE/GAN 분자 생성, AutoDock Vina 도킹 자동화를 통합한 종단간(end-to-end) 신약 개발 자동화 시스템입니다.
 
+![](AI_Drug_Discovery_Lab.png)
+
 ---
 
 ## 주요 기능 (Key Features)
