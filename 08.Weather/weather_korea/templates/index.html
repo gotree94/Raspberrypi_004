@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Korea Live Weather Map</title>
+
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<!-- Google Fonts -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;700&display=swap"/>
+
+<style>
+  :root {
+    --bg:       #060d1a;
+    --panel:    #0b1628;
+    --border:   #1a3a5c;
+    --accent:   #00c8ff;
+    --accent2:  #00ff9d;
+    --warn:     #ff6b35;
+    --text:     #c8dff0;
+    --dim:      #4a7a9b;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans KR', sans-serif;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* header */
+  header {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    padding: 12px 28px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(90deg, #060d1a 0%, #0b1e33 50%, #060d1a 100%);
+    flex-shrink: 0; z-index: 1000;
+  }
+  .logo {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px; font-weight: 700;
+    letter-spacing: 3px; color: var(--accent);
+    text-shadow: 0 0 20px rgba(0,200,255,0.4);
+  }
+  .logo span { color: var(--accent2); }
+  #clock {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 17px; color: var(--dim); letter-spacing: 2px;
+  }
+  #refresh-btn {
+    background: transparent; border: 1px solid var(--accent);
+    color: var(--accent); padding: 5px 16px;
+    font-family: 'Rajdhani', sans-serif; font-size: 13px;
+    letter-spacing: 2px; cursor: pointer; transition: all .3s;
+  }
+  #refresh-btn:hover { background: var(--accent); color: var(--bg); }
+  #refresh-btn.loading { opacity: .5; cursor: wait; }
+
+  /* main layout */
+  .main {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    flex: 1; overflow: hidden;
+  }
+
+  /* map */
+  #map { width: 100%; height: 100%; }
+
+  /* Leaflet dark theme */
+  .leaflet-container { background: #04080f !important; }
+  .leaflet-tile-pane {
+    filter: invert(1) hue-rotate(180deg) brightness(0.82) saturate(0.75);
+  }
+
+  /* custom weather marker */
+  .weather-marker { background: transparent; border: none; }
+  .marker-inner {
+    display: flex; flex-direction: column;
+    align-items: center; cursor: pointer;
+  }
+  .marker-dot {
+    width: 13px; height: 13px; border-radius: 50%;
+    border: 2px solid #060d1a;
+    transition: transform .2s;
+  }
+  .marker-inner:hover .marker-dot { transform: scale(1.6); }
+  .marker-bubble {
+    margin-top: 4px;
+    background: rgba(6,13,26,0.9);
+    border: 1px solid rgba(0,200,255,0.3);
+    border-radius: 6px; padding: 5px 10px;
+    white-space: nowrap; backdrop-filter: blur(6px);
+    transition: transform .2s;
+  }
+  .marker-inner:hover .marker-bubble { transform: scale(1.06); }
+  .marker-city {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 11px; font-weight: 700; color: #c8dff0;
+  }
+  .marker-temp {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 19px; font-weight: 700; line-height: 1.1;
+    text-shadow: 0 0 8px currentColor;
+  }
+  .marker-meta {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 11px; color: var(--dim); letter-spacing: .5px;
+  }
+
+  /* side panel */
+  .side-panel {
+    border-left: 1px solid var(--border);
+    background: var(--panel);
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .panel-header {
+    padding: 14px 18px 10px;
+    border-bottom: 1px solid var(--border);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 12px; letter-spacing: 2px;
+    color: var(--dim); text-transform: uppercase; flex-shrink: 0;
+  }
+  #city-list { overflow-y: auto; flex: 1; }
+
+  .city-card {
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(26,58,92,0.4);
+    cursor: pointer; transition: background .2s;
+    animation: slideIn .35s ease both;
+  }
+  .city-card:hover { background: rgba(0,200,255,0.05); }
+  .city-card.active {
+    background: rgba(0,200,255,0.09);
+    border-left: 3px solid var(--accent);
+  }
+  @keyframes slideIn {
+    from { opacity:0; transform:translateX(12px); }
+    to   { opacity:1; transform:translateX(0); }
+  }
+  .card-top {
+    display: flex; justify-content: space-between;
+    align-items: baseline; margin-bottom: 8px;
+  }
+  .card-city-kr { font-size: 17px; font-weight: 700; color: #e0f0ff; }
+  .card-city-en {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 11px; color: var(--dim);
+    letter-spacing: 1px; margin-left: 5px;
+  }
+  .card-temp {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 26px; font-weight: 700;
+  }
+  .card-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+  .metric {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(26,58,92,0.5);
+    border-radius: 4px; padding: 5px 9px;
+  }
+  .metric-lbl {
+    font-size: 9px; color: var(--dim);
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  .metric-val {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 15px; font-weight: 600;
+  }
+  .humi  { color: #4fc3f7; }
+  .feels { color: #ffd54f; }
+
+  .tc-cold  { color: #4fc3f7; }
+  .tc-cool  { color: #81d4fa; }
+  .tc-mild  { color: #00ff9d; }
+  .tc-warm  { color: #ffb74d; }
+  .tc-hot   { color: #ff6b35; }
+
+  #status {
+    padding: 8px 18px; font-size: 11px; color: var(--dim);
+    border-top: 1px solid var(--border);
+    letter-spacing: 1px; flex-shrink: 0;
+  }
+  #status.ok  { color: var(--accent2); }
+  #status.err { color: var(--warn); }
+
+  /* Leaflet popup dark theme */
+  .leaflet-popup-content-wrapper {
+    background: rgba(6,13,26,0.95) !important;
+    border: 1px solid var(--accent) !important;
+    border-radius: 6px !important;
+    color: var(--text) !important;
+    box-shadow: 0 0 20px rgba(0,200,255,0.2) !important;
+  }
+  .leaflet-popup-tip { background: rgba(6,13,26,0.95) !important; }
+  .leaflet-popup-close-button { color: var(--dim) !important; }
+
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">KOREA <span>WEATHER</span> MAP</div>
+  <div id="clock">--:--:--</div>
+  <button id="refresh-btn" onclick="loadWeather()">⟳ REFRESH</button>
+</header>
+
+<div class="main">
+  <div id="map"></div>
+
+  <div class="side-panel">
+    <div class="panel-header">📡 &nbsp; LIVE WEATHER · KOREA</div>
+    <div id="city-list">
+      <div style="padding:20px;color:#4a7a9b;font-size:13px;letter-spacing:1px;">
+        Loading weather data...
+      </div>
+    </div>
+    <div id="status">Initializing...</div>
+  </div>
+</div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ── Map setup ─────────────────────────────────────────────────────────────────
+const map = L.map('map', {
+  center: [36.2, 127.9],
+  zoom: 7,
+  zoomControl: true,
+  attributionControl: true,
+});
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© <a href="https://www.openstreetmap.org/copyright" style="color:#4a7a9b">OpenStreetMap</a> contributors',
+  maxZoom: 18,
+}).addTo(map);
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let leafletMarkers = {};
+let weatherData    = [];
+let activeCity     = null;
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function tempColor(t) {
+  if (t <= 0)  return '#4fc3f7';
+  if (t <= 10) return '#81d4fa';
+  if (t <= 20) return '#00ff9d';
+  if (t <= 28) return '#ffb74d';
+  return '#ff6b35';
+}
+function tempClass(t) {
+  if (t <= 0)  return 'tc-cold';
+  if (t <= 10) return 'tc-cool';
+  if (t <= 20) return 'tc-mild';
+  if (t <= 28) return 'tc-warm';
+  return 'tc-hot';
+}
+function fmt(t) { return (t > 0 ? '+' : '') + t + '°C'; }
+
+// ── Build Leaflet divIcon ─────────────────────────────────────────────────────
+function makeIcon(city) {
+  const c = tempColor(city.temp);
+  const html = `
+    <div class="marker-inner">
+      <div class="marker-dot" style="background:${c};box-shadow:0 0 8px ${c};border-color:#060d1a;"></div>
+      <div class="marker-bubble">
+        <div class="marker-city">${city.name_kr}</div>
+        <div class="marker-temp" style="color:${c}">${fmt(city.temp)}</div>
+        <div class="marker-meta">Humi ${city.humi}% · Feels ${fmt(city.feels)}</div>
+      </div>
+    </div>`;
+  return L.divIcon({
+    className: 'weather-marker',
+    html,
+    iconSize:   [100, 80],
+    iconAnchor: [50, 6],
+    popupAnchor:[0, -10],
+  });
+}
+
+// ── Render markers ────────────────────────────────────────────────────────────
+function renderMarkers(data) {
+  Object.values(leafletMarkers).forEach(m => map.removeLayer(m));
+  leafletMarkers = {};
+
+  data.forEach(city => {
+    if (city.error) return;
+    const m = L.marker([city.lat, city.lon], { icon: makeIcon(city) });
+    m.addTo(map);
+    m.on('click', () => selectCity(city.name));
+    leafletMarkers[city.name] = m;
+  });
+}
+
+// ── Render side panel cards ───────────────────────────────────────────────────
+function renderCards(data) {
+  const list = document.getElementById('city-list');
+  list.innerHTML = '';
+  data.forEach((city, i) => {
+    const card = document.createElement('div');
+    card.className  = 'city-card';
+    card.id         = `card-${city.name}`;
+    card.style.animationDelay = `${i * 0.07}s`;
+    card.onclick    = () => selectCity(city.name);
+
+    if (city.error) {
+      card.innerHTML = `
+        <div class="card-top">
+          <div><span class="card-city-kr">${city.name_kr}</span>
+               <span class="card-city-en">${city.name}</span></div>
+          <span style="color:#ff6b35;font-size:11px">ERROR</span>
+        </div>`;
+    } else {
+      card.innerHTML = `
+        <div class="card-top">
+          <div>
+            <span class="card-city-kr">${city.name_kr}</span>
+            <span class="card-city-en">${city.name.toUpperCase()}</span>
+          </div>
+          <span class="card-temp ${tempClass(city.temp)}">${fmt(city.temp)}</span>
+        </div>
+        <div class="card-metrics">
+          <div class="metric">
+            <div class="metric-lbl">Humidity</div>
+            <div class="metric-val humi">${city.humi}%</div>
+          </div>
+          <div class="metric">
+            <div class="metric-lbl">Feels Like</div>
+            <div class="metric-val feels">${fmt(city.feels)}</div>
+          </div>
+        </div>`;
+    }
+    list.appendChild(card);
+  });
+}
+
+// ── Select city ───────────────────────────────────────────────────────────────
+function selectCity(name) {
+  if (activeCity) {
+    document.getElementById(`card-${activeCity}`)?.classList.remove('active');
+  }
+  activeCity = name;
+  document.getElementById(`card-${name}`)?.classList.add('active');
+  document.getElementById(`card-${name}`)
+    ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+  const city = weatherData.find(c => c.name === name);
+  if (city) map.flyTo([city.lat, city.lon], 9, { duration: 1.2 });
+}
+
+// ── Fetch weather from Flask API ──────────────────────────────────────────────
+async function loadWeather() {
+  const btn    = document.getElementById('refresh-btn');
+  const status = document.getElementById('status');
+  btn.classList.add('loading');
+  btn.textContent = '⟳ LOADING...';
+  status.className = '';
+  status.textContent = 'Fetching from Open-Meteo...';
+
+  try {
+    const res  = await fetch('/api/weather');
+    weatherData = await res.json();
+    renderMarkers(weatherData);
+    renderCards(weatherData);
+
+    const now  = new Date().toLocaleTimeString('ko-KR', { hour12: false });
+    const errs = weatherData.filter(c => c.error).length;
+    status.className   = errs ? 'err' : 'ok';
+    status.textContent = errs
+      ? `⚠  Updated ${now}  ·  ${errs} error(s)`
+      : `✓  Updated ${now}  ·  ${weatherData.length} cities loaded`;
+  } catch(e) {
+    status.className   = 'err';
+    status.textContent = `✗  Network error: ${e.message}`;
+  } finally {
+    btn.classList.remove('loading');
+    btn.textContent = '⟳ REFRESH';
+  }
+}
+
+// ── Clock ─────────────────────────────────────────────────────────────────────
+setInterval(() => {
+  document.getElementById('clock').textContent =
+    new Date().toLocaleTimeString('ko-KR', { hour12: false });
+}, 1000);
+document.getElementById('clock').textContent =
+  new Date().toLocaleTimeString('ko-KR', { hour12: false });
+
+// ── Boot ──────────────────────────────────────────────────────────────────────
+loadWeather();
+setInterval(loadWeather, 300000);  // auto-refresh 5 min
+</script>
+</body>
+</html>
