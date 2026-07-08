@@ -1,6 +1,6 @@
 # 🍓 라즈베리파이4 부팅 시 자동실행 설정 가이드
 
-부팅이 완료되면 Python 프로그램(`python main27-2.py` 등)을 자동으로 실행하는 4가지 방법을 정리합니다.
+부팅이 완료되면 Python 프로그램(`python test.py` 등)을 자동으로 실행하는 4가지 방법을 정리합니다.
 
 ---
 
@@ -49,7 +49,7 @@ Description=MAI27 Python Service
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/python3 /home/admin/src/project_27/main27-2.py
+ExecStart=/usr/bin/python3 /home/admin/src/project_27/test.py
 WorkingDirectory=/home/admin/src/project_27
 StandardOutput=journal
 StandardError=journal
@@ -112,7 +112,7 @@ crontab -e
 ### 2-2. 맨 아래에 추가
 
 ```cron
-@reboot sleep 10 && /usr/bin/python3 /home/admin/src/project_27/main27-2.py >> /home/admin/src/project_27/mai27.log 2>&1
+@reboot sleep 10 && /usr/bin/python3 /home/admin/src/project_27/test.py >> /home/admin/src/project_27/mai27.log 2>&1
 ```
 
 > **`sleep 10`** : 부팅 직후 네트워크, GPIO 등 주변 장치가 준비될 때까지 10초 대기  
@@ -157,7 +157,7 @@ touch rc.local
 #
 # rc.local
 
-sleep 30 && /usr/bin/python3 /home/admin/src/project_27/main27-2.py &
+sleep 30 && /usr/bin/python3 /home/admin/src/project_27/test.py &
 
 exit 0
 ```
@@ -189,19 +189,19 @@ sudo systemctl status rc-local
 1. Python 프로그램이 실행 중인지 확인 (가장 확실)
 
 ```
-ps -ef | grep main27-2.py
+ps -ef | grep test.py
 ```
 
 또는
 
 ```
-pgrep -af main27-2.py
+pgrep -af test.py
 ```
 
 실행 중이라면 예를 들어
 
 ```
-1234 python3 /home/admin/src/project_27/main27-2.py
+1234 python3 /home/gotree94/test.py
 ```
 처럼 PID와 함께 표시됩니다.
 
@@ -217,7 +217,7 @@ top
 htop
 ```
 
-에서 python3 또는 main27-2.py를 검색합니다.
+에서 python3 또는 test.py를 검색합니다.
 
 3. rc.local에서 로그 남기기 (추천)
 
@@ -231,7 +231,7 @@ sleep 30
 
 echo "$(date) starting python" >> /home/admin/rc.local.log
 
-/usr/bin/python3 /home/admin/src/project_27/main27-2.py >> /home/admin/main27.log 2>&1 &
+/usr/bin/python3 /home/admin/src/project_27/test.py >> /home/admin/main27.log 2>&1 &
 
 exit 0
 ```
@@ -277,7 +277,7 @@ nano ~/.config/autostart/mai27.desktop
 [Desktop Entry]
 Type=Application
 Name=MAI27
-Exec=/usr/bin/python3 /home/admin/src/project_27/main27-2.py
+Exec=/usr/bin/python3 /home/admin/src/project_27/test.py
 X-GNOME-Autostart-enabled=true
 ```
 
@@ -331,4 +331,4 @@ OpenCV/Tkinter/PyQt5 GUI 앱    →  ④ autostart
 
 - Raspberry Pi OS Bookworm 기준 작성
 - 테스트 환경: Raspberry Pi 4B
-- Python 실행 파일 예시: `main27-2.py`
+- Python 실행 파일 예시: `test.py`
