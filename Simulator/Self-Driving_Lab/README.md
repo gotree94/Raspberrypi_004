@@ -45,7 +45,66 @@
 
 ---
 
-## 2. 핵심 기능 및 특징
+## 2. 장비별 시뮬레이터 사양 및 실제 장비 매핑
+
+각 시뮬레이터는 실제 연구용 자동화 장비의 핵심 동작을 추상화하여 TCP/IP 명령어 기반으로 구현되었습니다.
+
+### 💧 리퀴드 핸들러 (Liquid Handler Simulator)
+
+| 항목 | 사양 |
+| :--- | :--- |
+| **실행 파일** | `liquid_handler.py` |
+| **네트워크 포트** | `50051` |
+| **원격 명령어** | `DISPENSE:[Volume]` (Volume: uL, integer) |
+| **응답 신호** | `DISPENSE_SUCCESS` |
+| **GUI 구성** | 피펫 헤드 상태 표시 (Position / Volume), 수평 진행 바 (분주 애니메이션) |
+| **시뮬레이션 방식** | TCP 수신 → 1초간 진행 바 애니메이션 → 완료 응답 반환 |
+
+**대응 실제 장비:** **Hamilton Microlab STAR** (Hamilton, Switzerland) — 96/384 채널 피펫 헤드, 1~1000 µL 분주 범위의 자동 액체 처리 워크스테이션. 또는 **Tecan Fluent** (Tecan, Switzerland) — 고속 병렬 분주 기능을 갖춘 액체 처리 자동화 플랫폼.
+
+### 🏨 플레이트 호텔 (Plate Hotel Simulator)
+
+| 항목 | 사양 |
+| :--- | :--- |
+| **실행 파일** | `plate_hotel.py` |
+| **네트워크 포트** | `50052` |
+| **원격 명령어** | `EJECT:[Slot_Num]` (Slot: 1~4) |
+| **응답 신호** | `SUCCESS` |
+| **GUI 구성** | 4개 슬롯 라벨 (PLATE / EMPTY 상태 색상 전환) |
+| **시뮬레이션 방식** | 지정 슬롯의 플레이트를 외부로 반출(Eject) 처리 |
+
+**대응 실제 장비:** **Liconic STX Series** (Liconic, Liechtenstein) — 최대 수백 장의 마이크로플레이트를 자동 보관/인출하는 고용량 플레이트 호텔/인큐베이터. 또는 **Thermo Scientific Cytomat** (Thermo Fisher Scientific, USA) — 자동화된 플레이트 보관 및 반출 시스템.
+
+### 🌀 원심분리기 (Centrifuge Simulator)
+
+| 항목 | 사양 |
+| :--- | :--- |
+| **실행 파일** | `centrifuge.py` |
+| **네트워크 포트** | `50054` |
+| **원격 명령어** | `SPIN:[RPM_Value]` (RPM: 1000~4000) |
+| **응답 신호** | `SPIN_SUCCESS` |
+| **GUI 구성** | 로터 RPM 게이지 (Current/Target), 수직 진행 바, 도어 인터록 상태, 챔버 온도 |
+| **시뮬레이션 방식** | 가속(+500 RPM / 50ms) → 목표 RPM 유지(1s) → 감속(-500 RPM / 50ms) → 완료 응답. 도어 인터록 자동 잠금/해제 |
+
+**대응 실제 장비:** **Eppendorf 5810R** (Eppendorf, Germany) — 최대 14,000 RPM, 4×400 mL 로터, 냉장 기능을 갖춘 연구용 고속 원심분리기. 또는 **Thermo Scientific Sorvall ST 40R** (Thermo Fisher Scientific, USA) — 자동 로터 인식, 도어 인터록 안전 시스템 탑재.
+
+### 🔬 플레이트 리더기 (Microplate Reader Simulator)
+
+| 항목 | 사양 |
+| :--- | :--- |
+| **실행 파일** | `plate_reader.py` |
+| **네트워크 포트** | `50053` |
+| **원격 명령어** | `SCAN:[RPM_Feedback]` (RPM: centrifuge 피드백 값) |
+| **응답 신호** | 최대 흡광도 값 (float, 예: `0.723`) |
+| **물리 모델** | `max_absorbance = (RPM / 4000.0) × 1.1 + noise(±0.04)` |
+| **GUI 구성** | 96-well 플레이트 히트맵 (8행×12열), 측정 데이터 스트림 로그, 상태 표시줄 |
+| **시뮬레이션 방식** | 원심분리기 RPM 입력 → 96 well 각각에 물리 모델 기반 흡광도 계산 → 히트맵 시각화 → 최대 흡광도 반환 |
+
+**대응 실제 장비:** **BioTek Synergy H1** (Agilent BioTek, USA) — 흡광도/형광/발광 검출 가능, 200~999 nm 파장 범위, 96/384-well 대응의 멀티모드 마이크로플레이트 리더기. 또는 **Tecan Spark** (Tecan, Switzerland) — 고감도 흡광도 측정 및 온도 제어 인큐베이션 기능 탑재.
+
+---
+
+## 3. 핵심 기능 및 특징
 
 1. **완전 자율 워크플로우 (Closed-Loop Optimization)**
    - 호텔 샘플 반출 ➡️ 시약 분주 ➡️ 고속 원심 분리 ➡️ 흡광도 스캔 프로세스를 반복 가동합니다.
@@ -59,7 +118,7 @@
 
 ---
 
-## 3. 데이터 구조 설계 (`experiment_plan.json`)
+## 4. 데이터 구조 설계 (`experiment_plan.json`)
 
 ```json
 {
@@ -80,16 +139,16 @@
 
 ---
 
-## 4. 소프트웨어 소스코드
+## 5. 소프트웨어 소스코드
 
-### 💻 4.1 중앙 제어 오케스트레이터 GUI (orchestrator.py)
+### 💻 5.1 중앙 제어 오케스트레이터 GUI (orchestrator.py)
 
 ```python
 # [위에서 완성한 공백 정렬 버전 orchestrator.py 전체 코드가 들어가는 자리입니다]
 # Tkinter 기반 UI 디자인, JSON 파싱엔진, 예외처리가 완비된 다중 스레드 연동 스크립트.
 ```
 
-### 💧 4.2 리퀴드 핸들러 시뮬레이터 (liquid_handler.py)
+### 💧 5.2 리퀴드 핸들러 시뮬레이터 (liquid_handler.py)
 
 ```python
 # 네트워크 수신 및 시약 분주 애니메이션 게이지바가 탑재된 GUI 디바이스 시뮬레이터 소스코드.
@@ -97,7 +156,7 @@
 
 ---
 
-## 5. 실행 및 사용 방법
+## 6. 실행 및 사용 방법
 
 ### ⚙️ 환경 조건
 
