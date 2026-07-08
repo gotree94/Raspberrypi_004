@@ -2,6 +2,8 @@
 
 **AI 기반 신약 개발 자동화 시스템**: AlphaFold 단백질 구조 예측부터 가상 스크리닝, ADMET 예측, 분자 생성까지 Closed-Loop 자동화
 
+![](AI_Drug_Discovery_Lab.png)
+
 ## 개요
 
 본 프로젝트는 Self-Driving Lab 개념을 AI 기반 신약 개발 파이프라인에 적용한 시스템입니다. 각각의 AI 에이전트가 독립적인 TCP 서버로 동작하며, 오케스트레이터가 이들을 조율하여 Closed-Loop 약물 발견 워크플로우를 자동으로 실행합니다.
