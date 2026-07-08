@@ -2,16 +2,6 @@
 
 본 프로젝트는 실험실 내 핵심 장비 4대를 네트워크(TCP/IP 소켓)로 결합하여, 사람이 개입하지 않고 목표 데이터(흡광도)에 도달할 때까지 실시간으로 하드웨어 제어 변수를 수정하며 자율 최적화를 수행하는 **Closed-Loop 자율 실험 오케스트레이터 시스템**입니다.
 
-![](001.png)
-
-![](002.png)
-
-![](003.png)
-
-![](004.png)
-
-![](005.png)
-
 ---
 
 ## 1. 시스템 아키텍처 개요
@@ -51,6 +41,8 @@
 
 ### 💧 리퀴드 핸들러 (Liquid Handler Simulator)
 
+![](003.png)
+
 | 항목 | 사양 |
 | :--- | :--- |
 | **실행 파일** | `liquid_handler.py` |
@@ -63,6 +55,8 @@
 **대응 실제 장비:** **Hamilton Microlab STAR** (Hamilton, Switzerland) — 96/384 채널 피펫 헤드, 1~1000 µL 분주 범위의 자동 액체 처리 워크스테이션. 또는 **Tecan Fluent** (Tecan, Switzerland) — 고속 병렬 분주 기능을 갖춘 액체 처리 자동화 플랫폼.
 
 ### 🏨 플레이트 호텔 (Plate Hotel Simulator)
+
+![](001.png)
 
 | 항목 | 사양 |
 | :--- | :--- |
@@ -77,6 +71,8 @@
 
 ### 🌀 원심분리기 (Centrifuge Simulator)
 
+![](002.png)
+
 | 항목 | 사양 |
 | :--- | :--- |
 | **실행 파일** | `centrifuge.py` |
@@ -89,6 +85,8 @@
 **대응 실제 장비:** **Eppendorf 5810R** (Eppendorf, Germany) — 최대 14,000 RPM, 4×400 mL 로터, 냉장 기능을 갖춘 연구용 고속 원심분리기. 또는 **Thermo Scientific Sorvall ST 40R** (Thermo Fisher Scientific, USA) — 자동 로터 인식, 도어 인터록 안전 시스템 탑재.
 
 ### 🔬 플레이트 리더기 (Microplate Reader Simulator)
+
+![](004.png)
 
 | 항목 | 사양 |
 | :--- | :--- |
@@ -179,6 +177,9 @@ start python centrifuge.py
 ```bash
 python orchestrator.py
 ```
+
+![](005.png)
+
 
 제어 센터 창에서 **[▶️ 실험 시퀀스 가동 시작]** 버튼을 누르면 자율 사이클이 구동됩니다. 실험 조건 수정이 필요할 경우 `experiment_plan.json` 수정 후 **[⚙️ JSON 계획서 다시 불러오기]** 를 클릭합니다.
 
