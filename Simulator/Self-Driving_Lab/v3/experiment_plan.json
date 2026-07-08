@@ -1,0 +1,14 @@
+{
+    "experiment_name": "Full_Automated_Protein_Isolation",
+    "target": {
+        "metric": "max_absorbance",
+        "value": 0.8,
+        "tolerance": 0.05
+    },
+    "sequence": [
+        {"step": 1, "device": "plate_hotel", "port": 50052, "cmd": "EJECT:3"},
+        {"step": 2, "device": "liquid_handler", "port": 50051, "cmd": "DISPENSE:50"},
+        {"step": 3, "device": "centrifuge", "port": 50054, "cmd": "SPIN:"},
+        {"step": 4, "device": "plate_reader", "port": 50053, "cmd": "SCAN:"}
+    ]
+}
