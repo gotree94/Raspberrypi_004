@@ -183,6 +183,58 @@ sudo chmod +x /etc/rc.local
 sudo systemctl start rc-local
 sudo systemctl status rc-local
 ```
+
+### 3.3 확인방법
+
+2. Python 프로그램이 실행 중인지 확인 (가장 확실)
+ps -ef | grep main27-2.py
+
+또는
+
+pgrep -af main27-2.py
+
+실행 중이라면 예를 들어
+
+1234 python3 /home/admin/src/project_27/main27-2.py
+
+처럼 PID와 함께 표시됩니다.
+
+3. 프로세스 목록 확인
+top
+
+또는
+
+htop
+
+에서 python3 또는 main27-2.py를 검색합니다.
+
+4. rc.local에서 로그 남기기 (추천)
+
+rc.local을 다음처럼 수정하면 실제 실행 여부를 쉽게 확인할 수 있습니다.
+
+#!/bin/sh -e
+
+echo "$(date) rc.local started" >> /home/admin/rc.local.log
+
+sleep 30
+
+echo "$(date) starting python" >> /home/admin/rc.local.log
+
+/usr/bin/python3 /home/admin/src/project_27/main27-2.py >> /home/admin/main27.log 2>&1 &
+
+exit 0
+
+확인:
+
+cat /home/admin/rc.local.log
+5. systemd 로그 확인
+journalctl -u rc-local.service
+
+또는
+
+journalctl -b | grep rc.local
+
+
 ---
 
 ## ④ autostart (GUI 창이 있는 프로그램 전용)
