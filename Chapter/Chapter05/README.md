@@ -66,7 +66,7 @@
 | 3	| JAX	Google|  DeepMind	| 급성장 중, TPU 최적화	| 고성능 연구·함수형 | 
 | 4	| scikit-learn	| 커뮤니티	| 전통 ML 표준 라이브러리	| 쉬운 사용성·전통 ML | 
 | 5	| Keras 3	| Google	| 멀티백엔드 (PT/TF/JAX)	| 로우코드 프로토타이핑 | 
-| 6	| ONNX Runtime	| Microsoft	n| pm 다운로드 560만/월	| 크로스플랫폼 추론 | 
+| 6	| ONNX Runtime	| Microsoft	| npm 다운로드 560만/월	| 크로스플랫폼 추론 | 
 | 7	| Apache Spark MLlib	| Apache	| 빅데이터 ML 표준	| 분산 처리·대용량 데이터 | 
 | 8	| XGBoost / LightGBM	| 커뮤니티	| 테이블 데이터 최강	| 그래디언트 부스팅 | 
 | 9	| Hugging Face Transformers	| Hugging Face	| 허브 모델 87% PyTorch 기반	| NLP/멀티모달 최신 모델 | 
