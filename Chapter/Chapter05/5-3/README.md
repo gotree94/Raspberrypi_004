@@ -66,7 +66,7 @@ dy/dz: 20.0
 ```python
 import torch
 
-x = torch.tenso(2. 0, requires_grad=True)
+x = torch.tensor(2.0, requires_grad=True)
 
 Y=x*3
 y.backward()
@@ -74,14 +74,20 @@ print("after first back,.riard, grad:", x.grad.item())
 
 Y=x*3
 y.backward()
-print('after secorrd backrvard (accumulated).  grad:", x.grad.item())
+print("after secorrd backrvard (accumulated).grad:", x.grad.item())
 
 x.grad.zero_()
 Y=x*3
 y.backward()
-print("after zero_0 then backward. grad :", x.grad.item())
+print("after zero_0 then backward.grad :", x.grad.item())
 ```
 
+```
+x: 1.0 z: 2.0
+y: 25.0
+dy/dx: 10.0
+dy/dz: 20.0
+```
 
 
 ## 연산 추적 중단(detech()와 torch.no_grad())
