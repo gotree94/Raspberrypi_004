@@ -15,12 +15,18 @@
 ```python
 import torch
 
-x = torch.tensor(2.0, requires-grad=True)
+x = torch.tensor(2.0, requires_grad=True)
 y = x**3 +2*x
-y.backward0
-print("x:", x.item0)
-print('y:", y.item0)
-print('dy/dx:',  x.grad. itemO)
+y.backward()
+print("x:", x.item())
+print("y:", y.item())
+print("dy/dx:",  x.grad.item())
+```
+
+```
+x: 2.0
+y: 12.0
+dy/dx: 14.0
 ```
 
 ## 여러 변수의 기술기 계산
