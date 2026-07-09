@@ -92,24 +92,33 @@ import torch.nn as nn
 import torch.optim as optim
 
 torch. manual_seed(0)
-x = torch. tensor([[0. 0, 1. 0], [1. 0,0. 0], [1 .0,2.0),12.0,3. 0], [3. 0,4. 0]])
+x = torch. tensor([[0.0, 1.0], [1.0,0.0], [1.0,2.0],[2.0,3.0], [3.0,4.0]])
 y = x.sum(dim=1, keepdim=True)
 
 model = nn.Sequential(
     nn.Linear(2,8),
-    nn. ReLUO,
+    nn. ReLU(),
     nn.Linear(8,1)
 )
+
 criterion = nn.MSELoss()
-optimizer = optim.Adam(model.parametersO,  tr=0.05) for epoch in range(300):
-optimizer. zero_grad()
-pred = model(x)
-loss = criterion(pred, y)
-toss. backward()
+optimizer = optim.Adam(model.parameters(), lr=0.05) 
+
+for epoch in range(300):
+    optimizer. zero_grad()
+    pred = model(x)
+    loss = criterion(pred, y)
+    loss.backward()
 optimizer.step()
-test = torch.tenso([[3.0, 4.0]])
-print('loss:",  loss.item())
-print("predict([3,4]):",  model(test). item())
+
+test = torch.tensor([[3.0, 4.0]])
+print("loss:",  loss.item())
+print("predict([3,4]):",  model(test).item())
+```
+
+```
+loss: 23.432926177978516
+predict([3,4]): -0.6190372705459595
 ```
 
 ## 모델 저장/불러오기(state_dict)와 추론
@@ -124,30 +133,34 @@ print("predict([3,4]):",  model(test). item())
 import torch
 import torch.nn as nn
 import torch.optim as optim
-x = torch. tensor(t[1.0], [2.0], [3.0], [4.0]])
-y = torch. tensor([[3.0],  [5.0], [7.0], [9.0]])
 
-model = nn.Linear(t, 1)
-criterion = nn.MSELosso
-optimizer = optim.SGD(model.parametersO,  1r=0.05)
+x = torch.tensor([[1.0], [2.0], [3.0], [4.0]])
+y = torch.tensor([[3.0], [5.0], [7.0], [9.0]])
+
+model = nn.Linear(1, 1)
+criterion = nn.MSELoss()
+optimizer = optim.SGD(model.parameters(), lr=0.05)
 
 for epoch in range(200):
-    optimizer. zero_grad( )
+    optimizer. zero_grad()
     pred = model(x)
-  loss = criterion(pred, y)
-  loss.backward()
-  optimizer.step()
+loss = criterion(pred, y)
+loss.backward()
+optimizer.step()
 
-before = model(torch.tenso([[5.0]l)).item()
+before = model(torch.tensor([[5.0]])).item()
 torch.save(model.state_dict(),"linear_1x1.pth") 
 
-new_model = nn.Linea(1 ,1)
-new_model.load_state_dict(torch.load("linear_1x1.pth'))
-after = new_model(torch.tenso([[5.0]l)).item()
+new_model = nn.Linear(1 ,1)
+new_model.load_state_dict(torch.load("linear_1x1.pth"))
+after = new_model(torch.tensor([[5.0]])).item()
 
-print("predict before save:', before)
-print("predict af ter load :", after)
+print("predict before save:", before)
+print("predict af ter load:", after)
 ```
 
-
+```
+predict before save: 8.958409309387207
+predict af ter load: 8.958409309387207
+```
 
