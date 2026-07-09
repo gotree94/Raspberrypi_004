@@ -1,7 +1,15 @@
 # 7-3 자율주행 자동차 학습모델 생성하기
 
+* 수집된 주행 데이터를 이용해 자율주행 자동차의 인공지능 모델을 학습하는 과정을 실습합니다.
+* PyTorch를 사용하여 신경망을 구성하고, 입력 영상과 조향각도 데이터를 바탕으로 모델을 학습시킵니다.
+* 훈련이 완료된 모델은 자동차의 판단 알고리즘으로 활용되며, 이후 라즈베리파이에 배포 하여 실제 주행제어에 적용할 수 있습니다.
+* 이를 통해 학습자는 인공디능 모델 학습의 전 과정을 이애하고, 자율주행의 핵심 기술을 직접 구현 할 수 있습니다.
+
 
 ## 1_unzip_video.py
+
+* 6장에서 라즈베리파이에서 학습한 데이터인 [video.zip]파일을 준비합니다.
+* Document 폴더로 복사하였기 때문에 문서 폴더에서 확인 할 수 있습니다.
 
 ```python
 import zipfite
@@ -22,7 +30,11 @@ zip-ref  . extracta ll(current-d ir)
 
 
 
-## 2_
+## 2. 라이브터리 설치 확인
+
+* 모델을 만들기 위해 다양한 라이브러리가 필요로 합니다.
+* 라이브러리가 잘 설치되었는지 확인하는 코드를 작성해 봅니다.
+* 코드 작성 후 [2_library_check.py] 이름으로 저장합니다.
 
 ```python
 import os
@@ -74,7 +86,11 @@ print('PyTorch test: FAI L") print(e)
 ```
 
 
-## 3_
+## 3. 데이터 불러오기
+
+* 데이터를 불러와 이미지로 확인해보도록 합니다.
+* 너무 터무니 없는 데이터가 들어가 있는지 확인하는 과정으로 이때 이상한 데이터가 있다면 다시 학습 하도록 합니다.
+* 코드 작성 후 [3_data_shck.py] 이름으로 저장합니다.
 
 ```python
 import os
@@ -99,7 +115,13 @@ plt.tight-layout0 plt.showO
 ```
 
 
-## 4_Steeri n g_a n g le_h istog ra m. py
+## 4. 조향각의 분포를 확인
+
+* 저장된 이미지 파일 이름으로 조향각 데이터를 추출한고,
+* 조향각이 어떤 분포를 가젺는지 히스토그램으로 시작화하는 코드를 작성합니다.
+* 코드 작성 후[4_Street_angle_histogram.py] 이름으로 저장합니다.
+
+* 4_Steering_angle_histogram. py
 
 ```python
 import os
@@ -132,5 +154,12 @@ plt.hist(df['SteerrngAngle'],   bins=30,  color="skybiue", edgecolor="black') pl
 plt.xlabel('Steer-i ng Angie') plt.ylabel(" Freq u e n cy" ) plt.grid(True)
 plt.showQ
 ```
+
+## 학습 데이터와 검증 데이터를 분리
+
+* 이미지 파일 이름에서 조향각 데이터를 추축한 위
+* 학습용(train)과 검증용(validation)  epdlxjfh skdnrh,
+* 두 데이터의 조향각 분포를 히스토그램으로 비교하는 코드입니다.
+* 증, 데이터가 균등하게 분리되었는지 시각적으로 확인하는 역할을 합니다.
 
 
