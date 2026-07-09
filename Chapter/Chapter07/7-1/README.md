@@ -6,30 +6,10 @@
 
 ```
 
-## thonny 설치
+## thonny 추가설정
 
 ```python
 
 ```
 
-
-## thonny 설치
-
-```python
-
-```
-
-
-## thonny 설치
-
-```python
-
-```
-
-
-## thonny 설치
-
-```python
-
-```
 
