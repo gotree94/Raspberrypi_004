@@ -252,7 +252,8 @@ cv2.destroyAllWindows()
 ## HSV 색 공간(Hue, Saturation, Value)
 
 
-![](001.jpg)  ![](002.jpg)  ![](003.jpg)
+<img src="001.jpg" width="20%"> <img src="002.jpg" width="20%"> <img src="003.jpg" width="20%">
+
 
 > HSV 색 공간(Hue, Saturation, Value)은 색을 색상(H), 채도(S), 명도(V)라는 세 가지 요소로 표현하는 색 공간(Color Space)입니다. >
 > RGB보다 사람이 색을 인식하는 방식에 더 가깝기 때문에 이미지 처리와 컴퓨터 비전에서 널리 사용됩니다.
