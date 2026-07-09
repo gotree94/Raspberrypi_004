@@ -17,21 +17,27 @@
 import torch
 import torch.nn as nn
 
-x = torch.tenso([[1.0], [2.0],[3 0]])
-model = nn.Linear(1, l)
+x = torch.tensor([[1.0],[2.0],[3.0]])
+model = nn.Linear(1, 1)
 
 y = model(x)
-w = list(model. parameters())[0].detach()
+w = list(model.parameters())[0].detach()
 b = list(model.parameters())[1].detach()
 
 print("x shape:",  x.shape)
 print("y shape:",  y.shape)
-
-print("y:", y.detach0.view(-1))
+print("y:", y.detach().view(-1))
 print("weight:",  w.view(-1))
 print("bias:", b.view(-1))
 ```
 
+```
+x shape: torch.Size([3, 1])
+y shape: torch.Size([3, 1])
+y: tensor([-0.1180,  0.2978,  0.7137])
+weight: tensor([0.4158])
+bias: tensor([-0.5339])
+```
 
 ## 손실함수 + 옵티마이저 + 한 사이클 학습
 
