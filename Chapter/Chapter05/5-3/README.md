@@ -81,22 +81,23 @@ print("after zero_0 then backward. grad :", x.grad.item())
 
 ```python
 import torch
+
 x = torch.tensor(2.0, requires-grad=True)
 y =xx2
 sl = (y**2)
 sl.backwardO
-print("grad  with tracking :', x.grad. item0)
+print("grad  with tracking :', x.grad.item())
 
 with torch.no-grad0:
   y2 = x*2
   s2 = (y2**2)
-print('y2 requ  res-grad:", y2. requires_grad)
-print('s2 req u i res-grad :', s2. requires-grad)
-print('x.grad after no_grad path:', x.grr6.;t".0,
+print('y2 requires-grad:", y2.requires_grad)
+print('s2 requires-grad:", s2.requires-grad)
+print('x.grad after no_grad path:', x.grad.item())
 
 x2 = torch.tensor(2.0, requires-grad=True)
 y-detached = (x2 *2).detach0
-print("detached requires,grad:", y_detached.requires_grad)
+print("detached requires grad:", y_detached.requires_grad)
 ```
 
 
