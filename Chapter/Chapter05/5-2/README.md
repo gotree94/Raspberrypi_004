@@ -14,7 +14,7 @@ Tensor의 생성, 형태 변환, 수학 연산 등을 실습하며 데이터 처
 ```python
 import torch
 
-torch. manua 1_seed (0)
+torch. manual_seed (0)
 a = torch.tensor([[1.0, 2.0], [3.0, 4.0]])
 b = torch.zeros((2,  2))
 c = torch.rand((2,  2))
@@ -22,9 +22,21 @@ c = torch.rand((2,  2))
 print("a:", a)
 print("b:", b)
 print("c:", c)
-print("a shape :", a.shape,  "dtype :', a.dtype)
-print("b shape:", b.shape, "dtype:-, b.dtype)
-print('c shape :", c.shape, "dtype:", c.dtype)
+print("a shape:", a.shape, "dtype:", a.dtype)
+print("b shape:", b.shape, "dtype:", b.dtype)
+print("c shape:", c.shape, "dtype:", c.dtype)
+```
+
+```
+a: tensor([[1., 2.],
+        [3., 4.]])
+b: tensor([[0., 0.],
+        [0., 0.]])
+c: tensor([[0.4963, 0.7682],
+        [0.0885, 0.1320]])
+a shape: torch.Size([2, 2]) dtype: torch.float32
+b shape: torch.Size([2, 2]) dtype: torch.float32
+c shape: torch.Size([2, 2]) dtype: torch.float32
 ```
 
 
