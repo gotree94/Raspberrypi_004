@@ -2,7 +2,7 @@
 
 ```
 사용자 / 비즈니스 레이어
-    ├── ChatGPT, Claude, Gemini 등 (완성된 AI 서비스)
+    └── ChatGPT, Claude, Gemini 등 (완성된 AI 서비스)
 
 AI 플랫폼 / MLOps 레이어 (모델 개발~배포 통합 관리)
     ├── AWS SageMaker           — AWS의 완전관리형 ML 플랫폼
