@@ -76,19 +76,31 @@ max(a): tensor(4.)
 * 5_2_3.py
 
 ```python
-import torch x = torch.arange(6)
+import torch 
+
+x = torch.arange(6)
 y = x.view(2, 3)
 z = y.unsqueeze(0)
-z2 = z.squeeze0
+z2 = z.squeeze()
 
 r = y.reshape(3,  2)
-print("x:', x)
+print("x:", x)
 print("v:", y)
 print("2 shape:",  z.shape)
 print("22 shape:",  z2.shape)
-print('r:', r)
+print("r:", r)
 ```
 
+```
+x: tensor([0, 1, 2, 3, 4, 5])
+v: tensor([[0, 1, 2],
+        [3, 4, 5]])
+2 shape: torch.Size([1, 2, 3])
+22 shape: torch.Size([2, 3])
+r: tensor([[0, 1],
+        [2, 3],
+        [4, 5]])
+```
 
 ## Numpy <-> Tensor 변환과 메모리 공유
 
@@ -101,14 +113,21 @@ print('r:', r)
 import torch
 import numpy as np
 
-n = np.array(1E0, 20), [30, 40]l)
+n = np.array([[10, 20], [30, 40]])
 t = torch.from_numpy(n)
-t[0, o] =ee
+t[0, 0] = 99
 print("n after t edit:", n)
 
 back = t.numpy()
-back[l, t] =zz
+back[1, 1] =77
 print("t after back edit;", t)
+```
+
+```
+n after t edit: [[99 20]
+ [30 40]]
+t after back edit; tensor([[99, 20],
+        [30, 77]], dtype=torch.int32)
 ```
 
 
