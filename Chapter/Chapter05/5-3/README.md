@@ -100,24 +100,31 @@ dy/dz: 20.0
 ```python
 import torch
 
-x = torch.tensor(2.0, requires-grad=True)
-y =xx2
+x = torch.tensor(2.0, requires_grad=True)
+y =x*2
 sl = (y**2)
-sl.backwardO
-print("grad  with tracking :', x.grad.item())
+sl.backward()
+print("grad with tracking :", x.grad.item())
 
-with torch.no-grad0:
+with torch.no_grad():
   y2 = x*2
   s2 = (y2**2)
-print('y2 requires-grad:", y2.requires_grad)
-print('s2 requires-grad:", s2.requires-grad)
-print('x.grad after no_grad path:', x.grad.item())
+print("y2 requires-grad:", y2.requires_grad)
+print("s2 requires-grad:", s2.requires_grad)
+print("x.grad after no_grad path:", x.grad.item())
 
-x2 = torch.tensor(2.0, requires-grad=True)
-y-detached = (x2 *2).detach0
+x2 = torch.tensor(2.0, requires_grad=True)
+y_detached = (x2 *2).detach()
 print("detached requires grad:", y_detached.requires_grad)
 ```
 
+```
+grad with tracking : 16.0
+y2 requires-grad: False
+s2 requires-grad: False
+x.grad after no_grad path: 16.0
+detached requires grad: False
+```
 
 
 
