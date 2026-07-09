@@ -50,25 +50,31 @@ bias: tensor([-0.5339])
 
 ```python
 import torch
-import torch.nn as nn import torch.optim as optim
+import torch.nn as nn 
+import torch.optim as optim
 
-x = torch.tenso([[1.0],[2.0],[3.0],[4.0]])
-y = torch.tenso([[3.0],[5.0],[7.0],[9.0]])
+x = torch.tensor([[1.0],[2.0],[3.0],[4.0]])
+y = torch.tensor([[3.0],[5.0],[7.0],[9.0]])
 
-model = nn.Linea(1  ,1)
+model = nn.Linear(1,1)
 criterion = nn.MSELoss()
-optim izer = optim.SGD(model.parametep5Q,  lr=0.05)
+optimizer = optim.SGD(model.parameters(), lr=0.05)
 
 for epoch in range(200):
   optimizer.zero_grad()
   pred = model(x)
   loss = criterion(pred, y)
   loss.backward()
-  optimizer.stepQ
+  optimizer.step()
 
-test = torch.tenso([[5.0]])
-print("loss:", loss. item())
-print("predict(5):", model(test). item())
+test = torch.tensor([[5.0]])
+print("loss:", loss.item())
+print("predict(5):", model(test).item())
+```
+
+```
+loss: 1.6655063518555835e-05
+predict(5): 10.993108749389648
 ```
 
 ## ReLu를 포함한 간단 MLP학습
