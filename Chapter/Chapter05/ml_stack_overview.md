@@ -1,5 +1,9 @@
 ## ML 도구의 전체 계층 구조
 
+
+![](Pytorch_005.png)
+
+
 ```
 사용자 / 비즈니스 레이어
     ├── ChatGPT, Claude, Gemini 등 (완성된 AI 서비스)
