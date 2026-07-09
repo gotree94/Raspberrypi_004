@@ -4,6 +4,12 @@ PyTorch의 핵심 데이터 구조인 Tensor를 다루는 방법을 학습합니
 Tensor의 생성, 형태 변환, 수학 연산 등을 실습하며 데이터 처리의 기본 대념을 익힙니다. <br>
 이를 통해 신경망 연상의 기초가 되는 Tensor의 개념을 명확히 이해할 수 있습니다. <br>
 
+<br>
+
+---
+
+<br>
+
 ## Tensor 만들기와 기본 성질 확인
 
 * Tensor를 생성하고, 값/shape/dtype을 확인합니다.  <br>
@@ -39,6 +45,11 @@ b shape: torch.Size([2, 2]) dtype: torch.float32
 c shape: torch.Size([2, 2]) dtype: torch.float32
 ```
 
+<br>
+
+---
+
+<br>
 
 ## 연산과 축(reduction) 다루기
 
@@ -68,6 +79,12 @@ mean(a): tensor(2.5000)
 sum(a, dim=0): tensor([4., 6.])
 max(a): tensor(4.)
 ```
+
+<br>
+
+---
+
+<br>
 
 ## 모양 바꾸기(reshape/view), 차원추가/제거
 
@@ -101,6 +118,13 @@ r: tensor([[0, 1],
         [2, 3],
         [4, 5]])
 ```
+
+<br>
+
+---
+
+<br>
+
 
 ## Numpy <-> Tensor 변환과 메모리 공유
 
