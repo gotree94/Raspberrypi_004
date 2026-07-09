@@ -57,3 +57,41 @@
 
 ![](Pytorch_005.png)
 
+
+### 1. AI 모델 개발/배포 플랫폼 (PeerSpot 기준, 2026년 6월)
+| 순위	| 플랫폼	| 마인드쉐어	| 평점	| 설명 | 
+|:-----------:|:-----------:|:-----------:|:-----------:|:-----------:|
+| 1	Gemini Enterprise Agent Platform (Google)	 | 8.1%	 | 8.1	 | 엔터프라이즈 AI 에이전트 개발  |
+| 2	Azure OpenAI (Microsoft)	 |7.1%	 |7.4	 | GPT 모델 기반 AI 앱 개발  |
+| 3	Hugging Face	 |4.7%	 |7.9	 |오픈소스 모델 허브 & ML 플랫폼  |
+| 4	Amazon SageMaker (AWS)	 |-	 |8.2	 |ML 모델 학습/배포  |
+| 5	Azure AI Foundry (Microsoft)	 |-	 |8.0	 |통합 AI 개발 스튜디오  |
+| 6	TensorFlow (Google)	 |-	 |7.8	 |오픈소스 ML 프레임워크  |
+| 7	Microsoft Azure ML Studio	 |-	 |7.8	 |노코드/로우코드 ML  |
+| 8	PyTorch (Meta)	 |-	 |8.7	 |오픈소스 딥러닝 프레임워크  |
+| 9	IBM Watson Studio	 |-	 |7.5	 |엔드투엔드 ML 플랫폼  |
+| 10	Google Cloud AI Platform	 |-	 |8.0 |	GCP 기반 AI/ML 플랫폼  |
+
+### 2. AI 코딩 도구 (Vibe Coding, 웹 방문수 기준, 2026년 6월)
+| 순위	 |플랫폼	 |월간 방문수 |	설명 |
+|:-----------:|:-----------:|:-----------:|:-----------:|
+| 1	GitHub Copilot	3.71억 (371M)	AI 페어 프로그래머 (VS Code, JetBrains)
+| 2	Hostinger	5,026만 (50.26M)	AI 웹사이트 빌더
+| 3	Lovable.dev	3,483만 (34.83M)	AI 앱 빌더 (React + Tailwind + Supabase)
+| 4	Supabase	2,973만 (29.73M)	오픈소스 Firebase 대안 (AI 백엔드)
+| 5	Vercel	2,968만 (29.68M)	AI 프론트엔드 배포 플랫폼 (v0)
+| 6	Airtable	2,769만 (27.69M)	AI 기반 데이터베이스/스프레드시트
+| 7	Cursor	2,318만 (23.18M)	AI 네이티브 코드 에디터 ▲7.22%
+| 8	BASE44 2.0	1,716만 (17.16M)	노코드 AI 앱 빌더
+| 9	Replit	1,328만 (13.28M)	AI 온라인 IDE
+| 10	Ollama	1,207만 (12.07M)	로컬 LLM 실행 도구 ▲4.77%
+
+### AI Cloud 플랫폼 (웹 방문수, 2026년 6월)
+| 순위| 	| 플랫폼	| 월간 방문수 | 
+|:-----------:|:-----------:|:-----------:|
+| 1	| 阿里云 (Alibaba Cloud)	| 2,848만 (28.48M)| 
+| 2	| 腾讯云 (Tencent Cloud)	| 1,748만 (17.48M)| 
+| 3	| 火山引擎 (Volcengine/ByteDance)	| 838만 (8.38M)| 
+| 4	| 讯飞开放平台 (iFlytek)	| 182만 (1.82M)| 
+| 5	| 硅基流动 (SiliconFlow)	| 157만 (1.57M)| 
+| 6	| 百度智能云 (Baidu AI Cloud)	| 142만 (1.42M)| 
