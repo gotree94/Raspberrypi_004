@@ -60,17 +60,17 @@
 
 ### 1. AI 모델 개발/배포 플랫폼 (PeerSpot 기준, 2026년 6월)
 | 순위	| 플랫폼	| 마인드쉐어	| 평점	| 설명 | 
-|:-----------:|:-----------:|:-----------:|:-----------:|:-----------:|
+|:------:|:------:|:---------:|:------:|:-----:|
 | 1 |	Gemini Enterprise Agent Platform (Google)	 | 8.1%	 | 8.1	 | 엔터프라이즈 AI 에이전트 개발  |
-| 2 |	Azure OpenAI (Microsoft)	 |7.1%	 |7.4	 | GPT 모델 기반 AI 앱 개발  |
-| 3 |	Hugging Face	 |4.7%	 |7.9	 |오픈소스 모델 허브 & ML 플랫폼  |
-| 4 |	Amazon SageMaker (AWS)	 |-	 |8.2	 |ML 모델 학습/배포  |
-| 5 |	Azure AI Foundry (Microsoft)	 |-	 |8.0	 |통합 AI 개발 스튜디오  |
-| 6 |	TensorFlow (Google)	 |-	 |7.8	 |오픈소스 ML 프레임워크  |
-| 7 |	Microsoft Azure ML Studio	 |-	 |7.8	 |노코드/로우코드 ML  |
-| 8 |	PyTorch (Meta)	 |-	 |8.7	 |오픈소스 딥러닝 프레임워크  |
-| 9 |	IBM Watson Studio	 |-	 |7.5	 |엔드투엔드 ML 플랫폼  |
-| 10 |	Google Cloud AI Platform	 |-	 |8.0 |	GCP 기반 AI/ML 플랫폼  |
+| 2 |	Azure OpenAI (Microsoft)	 | 7.1%	 | 7.4	 | GPT 모델 기반 AI 앱 개발  |
+| 3 |	Hugging Face	 | 4.7%	 | 7.9	 | 오픈소스 모델 허브 & ML 플랫폼  |
+| 4 |	Amazon SageMaker (AWS)	 |-	 | 8.2	 | ML 모델 학습/배포  |
+| 5 |	Azure AI Foundry (Microsoft)	 |-	 | 8.0	| 통합 AI 개발 스튜디오  |
+| 6 |	TensorFlow (Google)	 |-	 | 7.8	 | 오픈소스 ML 프레임워크  |
+| 7 |	Microsoft Azure ML Studio	 |-	 | 7.8	 | 노코드/로우코드 ML  |
+| 8 |	PyTorch (Meta)	 |-	 | 8.7	 | 오픈소스 딥러닝 프레임워크  |
+| 9 |	IBM Watson Studio	 |-	 | 7.5	 | 엔드투엔드 ML 플랫폼  |
+| 10 | Google Cloud AI Platform	 |-	| 8.0 |	GCP 기반 AI/ML 플랫폼  |
 
 ### 2. AI 코딩 도구 (Vibe Coding, 웹 방문수 기준, 2026년 6월)
 | 순위	 |플랫폼	 |월간 방문수 |	설명 |
