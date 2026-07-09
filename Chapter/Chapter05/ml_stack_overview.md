@@ -38,6 +38,9 @@ AI 플랫폼 / MLOps 레이어 (모델 개발~배포 통합 관리)
 
 ---
 
+<br>
+<br>
+
 ### JAX
 
 ```
@@ -61,6 +64,9 @@ JAX = Google DeepMind의 고성능 수치 연산 라이브러리
 | 코드 실행 | 즉시 실행 (eager) | JIT 컴파일 (jit 데코레이터) |
 | 학습 곡선 | 중간 | 높음 |
 | TPU 지원 | 제한적 | **최적** |
+
+<br>
+<br>
 
 ### scikit-learn
 
@@ -86,6 +92,9 @@ scikit-learn = 전통적인 머신러닝의 표준 라이브러리
 4. 결과가 나쁘면 → PyTorch/TensorFlow 딥러닝 시도
 ```
 
+<br>
+<br>
+
 ### Apache Spark MLlib
 
 ```
@@ -106,6 +115,9 @@ Spark MLlib = 대용량 데이터 분산 머신러닝
 | 데이터 크기 | TB 단위 | GB 단위 (GPU 메모리 한계) |
 | 실행 환경 | CPU 클러스터 (수십~수백 대) | 단일 GPU 머신 |
 | 주 용도 | 빅데이터 ETL + 전통 ML | 딥러닝 모델 학습 |
+
+<br>
+<br>
 
 ### ONNX (Open Neural Network Exchange)
 
@@ -131,6 +143,9 @@ PyTorch 학습 → torch.onnx.export() → .onnx 파일
                          스마트폰에서 즉시 추론
 ```
 
+<br>
+<br>
+
 ### AWS SageMaker
 
 ```
@@ -145,7 +160,11 @@ SageMaker = AWS의 완전관리형 ML 플랫폼
 - 코드 없이 AutoML 가능 (SageMaker Autopilot)
 - 주로 **기업 프로덕션 환경**에서 사용
 
+<br>
+<br>
+
 ### Microsoft Azure AI
+
 
 ```
 Azure AI = Microsoft의 AI 플랫폼 스택
@@ -158,6 +177,9 @@ Azure AI = Microsoft의 AI 플랫폼 스택
 - **OpenAI 모델을 Azure에서 독점 제공** (기업용)
 - Copilot 생태계와 통합
 - 주로 **Microsoft 기반 기업**에서 사용
+
+<br>
+<br>
 
 ### Databricks
 
@@ -172,6 +194,10 @@ Databricks = "데이터 + AI 통합 플랫폼"
 - **원래는 빅데이터 플랫폼**이었으나, AI 기능을 통합
 - MLflow가 사실상 **ML 실험 추적의 표준**
 - 데이터 엔지니어링 + ML을 한 곳에서
+
+
+<br>
+<br>
 
 ### NVIDIA AI Enterprise
 
@@ -189,6 +215,9 @@ NVIDIA AI Enterprise = GPU 인프라 + AI 소프트웨어 묶음
 - 주로 **자체 GPU 인프라를 운영하는 기업** 대상
 
 ---
+
+<br>
+<br>
 
 ## 전체 흐름 예시
 
