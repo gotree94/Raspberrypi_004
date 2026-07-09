@@ -120,10 +120,15 @@ y1 grad_fn: <MulBackward0 object at 0x0000020782A01000>
 ```Python
 import torch
 
-x = torch.tenso(2.0, requires-grad=True)
-y=x**2+3*X+1
+x = torch.tensor(2.0, requires_grad=True)
+y=x**2+3*x+1
 y.backward()
-print("dy/dx :', x.grad)
+print("dy/dx:", x.grad)
+```
+
+```
+(base) C:\Users\Administrator>python 5_1_4.py
+dy/dx: tensor(7.)
 ```
 
 ## 여러 변수의 자동 미분
@@ -134,14 +139,19 @@ print("dy/dx :', x.grad)
 
 ```Python
 import torch
-x = torch.tensor(1.0,  requires_grad=True)
-z = torch.tensor(2.0,  requires_grad=True)
+x = torch.tensor(1.0, requires_grad=True)
+z = torch.tensor(2.0, requires_grad=True)
 
-y =3*X +4*Z**2
+y =3*x+4*z**2
 y.backward()
 
-print("dyldx: ", x.grad)
-print("dyldz:  ", z. grad)
+print("dyldx:", x.grad)
+print("dyldz:", z.grad)
+```
+
+```
+dyldx: tensor(3.)
+dyldz: tensor(16.)
 ```
 
 ## 기울기를 이용해 오차를 줄이는 방향으로 이동
@@ -155,12 +165,19 @@ print("dyldz:  ", z. grad)
 ```Python
 import torch
 
-x = torch.tenso(1 .0, requires-grad=True)
+x = torch.tensor(1.0, requires_grad=True)
 
 for step in range(3):
     y = (x -3)**2
-    y.backward0
-    print(f'Step {sleprl} | x={x item0. 4fi l y={y rtem0 4f} l grad={x grad.item(): 4f}")
-    x=x-0.1 *x.grad
-    x = x.detach0.clone0.requires-grad_(True)
+    y.backward()
+    print(f"Step{step+1} | x={x.item():.4f} | y={y.item():.4f} | grad={x.grad.item():.4f}")
+    x = x - 0.1*x.grad
+    x = x.detach().clone().requires_grad_(True)
+```
+
+```
+(base) C:\Users\Administrator>python 5_1_6.py
+Step1 | x=1.0000 | y=4.0000 | grad=-4.0000
+Step2 | x=1.4000 | y=2.5600 | grad=-3.2000
+Step3 | x=1.7200 | y=1.6384 | grad=-2.5600
 ```
