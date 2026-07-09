@@ -156,7 +156,7 @@ new_model.load_state_dict(torch.load("linear_1x1.pth"))
 after = new_model(torch.tensor([[5.0]])).item()
 
 print("predict before save:", before)
-print("predict af ter load:", after)
+print("predict after load:", after)
 ```
 
 ```
