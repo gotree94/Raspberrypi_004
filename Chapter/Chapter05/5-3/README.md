@@ -38,17 +38,23 @@ dy/dx: 14.0
 
 ```python
 import torch
+
 x = torch.tensor(1.0,  requires_grad=True)
-z = torch.tensor(2,0,  requires_grad=True)
-y = (x +2tz)**2
+z = torch.tensor(2.0,  requires_grad=True)
+y = (x +2*z)**2
 y. backward()
-print("x:", x.itemo, "z:", z.itemo)
-print('y:', y.item0)
-print("dy/dx: ", x.grad. item0)
-print('dyldz:", z.grad. item0)
+print("x:", x.item(), "z:", z.item())
+print("y:", y.item())
+print("dy/dx:", x.grad.item())
+print("dy/dz:", z.grad.item())
 ```
 
-
+```
+x: 1.0 z: 2.0
+y: 25.0
+dy/dx: 10.0
+dy/dz: 20.0
+```
 
 ## 기울기 누적과 초기화(zero_() 사용)
 
