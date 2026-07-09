@@ -50,7 +50,7 @@ print("PyTorch version: ", torch.__version__)
 print("Tensor test: ", torch.tensor([1, 2, 3]))
 ```
 
-```
+```Bash
 PyTorch version:  2.6.0+cu124
 Tensor test:  tensor([1, 2, 3])
 ```
@@ -70,7 +70,7 @@ result=a*b+5
 print("Result:",  result)
 ```
 
-```
+```Bash
 Result: tensor(11.)
 ```
 
@@ -99,7 +99,7 @@ print("y2 grad_fn:", y2.grad_fn)
 print("y1 grad_fn:", y1.grad_fn)
 ```
 
-```
+```Bash
 (base) C:\Users\Administrator>python 5_1_3.py
 x:  tensor(2., requires_grad=True)
 y1:  tensor(4., grad_fn=<MulBackward0>)
@@ -126,7 +126,7 @@ y.backward()
 print("dy/dx:", x.grad)
 ```
 
-```
+```Bash
 (base) C:\Users\Administrator>python 5_1_4.py
 dy/dx: tensor(7.)
 ```
@@ -149,7 +149,7 @@ print("dyldx:", x.grad)
 print("dyldz:", z.grad)
 ```
 
-```
+```Bash
 dyldx: tensor(3.)
 dyldz: tensor(16.)
 ```
@@ -175,7 +175,7 @@ for step in range(3):
     x = x.detach().clone().requires_grad_(True)
 ```
 
-```
+```Bash
 (base) C:\Users\Administrator>python 5_1_6.py
 Step1 | x=1.0000 | y=4.0000 | grad=-4.0000
 Step2 | x=1.4000 | y=2.5600 | grad=-3.2000
