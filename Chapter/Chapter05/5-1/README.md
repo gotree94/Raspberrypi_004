@@ -56,9 +56,12 @@ PyTorch는 딥러닝을 쉽게 구현하기 위한 파이썬 기반 라이브러
 * 5_1_1.py
 
 ```Python
+# PyTorch 라이브러리를 불러옴 (딥러닝 및 텐서 연산용)
 import torch
 
+# 현재 설치된 PyTorch의 버전을 출력
 print("PyTorch version: ", torch.__version__)
+# [1,2,3] 값으로 구성된 텐서를 생성하고 "Tensor test:"라는 문구와 함께 출력
 print("Tensor test: ", torch.tensor([1, 2, 3]))
 ```
 
