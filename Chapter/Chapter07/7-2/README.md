@@ -7,9 +7,15 @@
 
 ## 가상환경 구성
 
+   * thonny를 이요해서 모델과 코드를 저장할 폴더를 생성합니다.
+   * C또는 D 드라이브에[torch_at_model] 폴더를 생성합니다.
 
 
 ## 라이브러리 설치
+
+```
+python.exe -m pip install --upgrade pip
+```
 
 
 ```
@@ -18,7 +24,7 @@ pip install torch opencv-python  numpy
 
 
 ```
-pip install matplotlib pandas scikit-learn rillow
+pip install matplotlib pandas scikit-learn pillow
 ```
 
 
