@@ -1,9 +1,5 @@
 ## ML 도구의 전체 계층 구조
 
-
-![](Pytorch_005.png)
-
-
 ```
 사용자 / 비즈니스 레이어
     ├── ChatGPT, Claude, Gemini 등 (완성된 AI 서비스)
@@ -41,6 +37,105 @@ AI 플랫폼 / MLOps 레이어 (모델 개발~배포 통합 관리)
 ```
 
 ---
+
+## 기존 항목 설명
+
+### JAX
+
+```
+JAX = Google DeepMind의 고성능 수치 연산 라이브러리
+    ├── NumPy 호환 API (jax.numpy)
+    ├── 자동미분 (grad, jacfwd, jacrev)
+    ├── XLA JIT 컴파일 (즉시 최적화)
+    ├── vmap (자동 벡터화)
+    └── pmap (분산 병렬화)
+```
+
+- PyTorch/TensorFlow보다 **한 단계 낮은 수준**의 함수형 프레임워크
+- **TPU에서 가장 빠른 성능** (Google TPU 전용)
+- 주로 **고성능 연구, 대규모 모델 학습**에 사용
+- Flax, Haiku, Elegy 등 상위 래퍼 라이브러리와 함께 사용
+- 2026년 기준 급성장 중이지만 생태계는 PyTorch보다 작음
+
+| 비교 | PyTorch | JAX |
+|:---|:---|:---|
+| 스타일 | 객체지향 (class, nn.Module) | 함수형 (순수 함수) |
+| 코드 실행 | 즉시 실행 (eager) | JIT 컴파일 (jit 데코레이터) |
+| 학습 곡선 | 중간 | 높음 |
+| TPU 지원 | 제한적 | **최적** |
+
+### scikit-learn
+
+```
+scikit-learn = 전통적인 머신러닝의 표준 라이브러리
+    ├── 분류 (SVM, RandomForest, LogisticRegression)
+    ├── 회귀 (LinearRegression, Ridge, Lasso)
+    ├── 군집 (KMeans, DBSCAN)
+    ├── 차원 축소 (PCA, t-SNE)
+    └── 전처리 (StandardScaler, OneHotEncoder)
+```
+
+- **딥러닝을 하지 않음** — 신경망 기능 없음
+- 데이터가 적거나(수천~수만 개) 테이블 형태일 때 가장 강력
+- 사이킷런 → 결과가 안 좋으면 → 딥러닝(PyTorch)으로 넘어감
+- 대부분의 ML 프로젝트에서 **데이터 전처리용으로 항상 먼저 사용됨**
+
+```
+[실제 워크플로우]
+1. scikit-learn으로 데이터 전처리 (StandardScaler, PCA)
+2. scikit-learn으로 빠른 테스트 (LogisticRegression 등)
+3. 결과가 좋으면 → 배포 (사이킷런으로 충분)
+4. 결과가 나쁘면 → PyTorch/TensorFlow 딥러닝 시도
+```
+
+### Apache Spark MLlib
+
+```
+Spark MLlib = 대용량 데이터 분산 머신러닝
+    ├── 클러스터(여러 대의 서버)에서 작동
+    ├── 수백 GB ~ TB 단위 데이터 처리
+    ├── 분류/회귀/군집/추천 시스템 지원
+    └── Spark ML Pipeline API 제공
+```
+
+- **딥러닝이 아니라 빅데이터용 ML**
+- 한 대의 PC 메모리에 데이터가 안 들어갈 때 사용
+- PyTorch/TensorFlow는 단일 GPU 머신에 최적화
+- Spark MLlib는 **수백 대 서버에 분산**해서 데이터 처리 + ML
+
+| 구분 | Spark MLlib | PyTorch |
+|:---|:---|:---|
+| 데이터 크기 | TB 단위 | GB 단위 (GPU 메모리 한계) |
+| 실행 환경 | CPU 클러스터 (수십~수백 대) | 단일 GPU 머신 |
+| 주 용도 | 빅데이터 ETL + 전통 ML | 딥러닝 모델 학습 |
+
+### ONNX (Open Neural Network Exchange)
+
+```
+ONNX = 프레임워크 간 모델 교환 표준 포맷
+    ├── PyTorch → ONNX → TensorFlow Lite (모바일)
+    ├── PyTorch → ONNX → NVIDIA Triton (GPU 서빙)
+    ├── TensorFlow → ONNX → ONNX Runtime (어디서든)
+    └── 어떤 프레임워크든 → ONNX → 어떤 환경이든
+```
+
+- **모델을 학습하는 도구가 아님** — 학습된 모델을 변환하고 추론만 함
+- 한 번 `.onnx` 파일로 저장하면 프레임워크 종속성에서 해방
+- ONNX Runtime (Microsoft)이 가장 널리 쓰이는 추론 엔진
+- 양자화(INT8, FP16) 등 최적화 기능 내장 → 모바일/엣지에 필수
+
+```
+[실전 예: PyTorch 모델 → 모바일 배포]
+PyTorch 학습 → torch.onnx.export() → .onnx 파일
+                                    ↓
+                     onnxruntime-mobile (Android/iOS)
+                                    ↓
+                         스마트폰에서 즉시 추론
+```
+
+---
+
+## 추가된 항목 설명
 
 ### AWS SageMaker
 
