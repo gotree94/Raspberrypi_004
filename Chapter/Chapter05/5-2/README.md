@@ -27,7 +27,7 @@ print("b shape:", b.shape, "dtype:", b.dtype)
 print("c shape:", c.shape, "dtype:", c.dtype)
 ```
 
-```
+```Bash
 a: tensor([[1., 2.],
         [3., 4.]])
 b: tensor([[0., 0.],
@@ -49,16 +49,25 @@ c shape: torch.Size([2, 2]) dtype: torch.float32
 ```python
 import torch
 
-a = torch.tenso(t[1.0, 2.01, t3.0, 4.011)
+a = torch.tensor([[1.0, 2.0], [3.0, 4.0]])
 b = torch.ones((2, 2))
 
-print('a+b:',a+b)
-print("a * b:", a'b)
-print("mean(a):", a.meanO)
-print("sum(a, dim=0):', a.sum(dim=0))
-print("max(a) :", a.max0)
+print("a+b:",a+b)
+print("a * b:", a*b)
+print("mean(a):", a.mean())
+print("sum(a, dim=0):", a.sum(dim=0))
+print("max(a):", a.max())
 ```
 
+```Bash
+a+b: tensor([[2., 3.],
+        [4., 5.]])
+a * b: tensor([[1., 2.],
+        [3., 4.]])
+mean(a): tensor(2.5000)
+sum(a, dim=0): tensor([4., 6.])
+max(a): tensor(4.)
+```
 
 ## 모양 바꾸기(reshape/view), 차원추가/제거
 
