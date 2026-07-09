@@ -94,10 +94,20 @@ print("y1: ", y1)
 print("y2: ", y2)
 print("y3: ", y3)
 
-print("y3 grad-f n : ", y3.grad-fn)
-print('y2 grad-f n :", y2. grad-fn)
-print("y1 grad-fn:", yl.grad-fn)
+print("y3 grad_fn:", y3.grad_fn)
+print("y2 grad_fn:", y2.grad_fn)
+print("y1 grad_fn:", y1.grad_fn)
+```
 
+```
+(base) C:\Users\Administrator>python 5_1_3.py
+x:  tensor(2., requires_grad=True)
+y1:  tensor(4., grad_fn=<MulBackward0>)
+y2:  tensor(7., grad_fn=<AddBackward0>)
+y3:  tensor(49., grad_fn=<PowBackward0>)
+y3 grad_fn: <PowBackward0 object at 0x0000020782A01000>
+y2 grad_fn: <AddBackward0 object at 0x0000020782A01000>
+y1 grad_fn: <MulBackward0 object at 0x0000020782A01000>
 ```
 
 ## 자동미분으로 기울기 구하기
