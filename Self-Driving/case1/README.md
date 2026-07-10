@@ -1,5 +1,10 @@
 # Case1: LiDAR + IMU + Wheel Sensor 데이터 분석
 
+![](odometry_analysis.png)
+
+![](steering_gt_comparison.png)
+
+
 ## 파일
 
 - `slam_data_20260629_124940.csv` — 4051행, 8열
