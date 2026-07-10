@@ -1,4 +1,4 @@
-⚠️ 🚨 (반드시 PC에서 작업할것)❗⛔
+# ⚠️ 🚨 <span style="color:#ff0000">반드시 PC에서 작업할것</span>❗⛔
 
 # 5-1 PyTorch란 무엇인가?
 
