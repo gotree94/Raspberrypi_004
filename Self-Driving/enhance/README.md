@@ -1,5 +1,8 @@
 # Self-Driving 모델 개선 전략
 
+
+![](training_history.png)
+
 Val MAE 0.205 → 목표: 0.05~0.08 이하
 
 ---
