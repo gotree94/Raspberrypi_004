@@ -16,9 +16,10 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import tensorflow as tf
 
 # ===================== 설정 =====================
-VIDEO_PATH = r"Self-driving.mp4"
-MODEL_PATH = r"steering_model.keras"
-DATA_DIR = r"training_data"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+VIDEO_PATH = os.path.join(BASE_DIR, "Self-driving.mp4")
+MODEL_PATH = os.path.join(BASE_DIR, "steering_model.keras")
+DATA_DIR = os.path.join(BASE_DIR, "training_data")
 IMG_WIDTH, IMG_HEIGHT = 160, 80
 
 
@@ -220,7 +221,7 @@ class SelfDrivingSimulator:
             print(f"  GT vs Pred MSE: {mse:.6f}")
 
         # 저장
-        save_img = os.path.join(r"C:\Users\Administrator\Desktop\Self-Driving", "simulator_result.png")
+        save_img = os.path.join(BASE_DIR, "simulator_result.png")
         print(f"  결과 저장 완료")
 
 

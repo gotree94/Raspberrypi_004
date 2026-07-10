@@ -14,8 +14,9 @@ import tensorflow as tf
 from tensorflow import keras
 
 # ===================== 설정 =====================
-DATA_DIR = r"training_data"
-MODEL_PATH = r"steering_model.keras"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "training_data")
+MODEL_PATH = os.path.join(BASE_DIR, "steering_model.keras")
 BATCH_SIZE = 16
 EPOCHS = 120
 IMG_WIDTH, IMG_HEIGHT = 160, 80
@@ -166,7 +167,7 @@ def main():
     plt.grid(True)
 
     plt.tight_layout()
-    plt.savefig(os.path.join(r"C:\Users\Administrator\Desktop\Self-Driving", "training_history.png"))
+    plt.savefig("training_history.png")
     print(f"  학습 곡선: training_history.png")
 
 
