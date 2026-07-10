@@ -265,11 +265,11 @@ Requirement already satisfied: libclang>=13.0.0 in c:\programdata\anaconda3\lib\
    * TensorFlow 버전과 CUDA 버전 호환 확인 (예: TF 2.16+는 CUDA 11.8, TF 2.18+는 CUDA 12.x)
    * pip install tensorflow[and-cuda] 또는 pip install tensorflow 후 알아서 GPU 인식
 
-```
+```Bash
 pip install tensorflow
 ```
 
-```
+```Bash
 (base) C:\Users\user>pip install tensorflow
 Defaulting to user installation because normal site-packages is not writeable
 Collecting tensorflow
@@ -357,13 +357,13 @@ Successfully installed absl-py-2.5.0 astunparse-1.6.3 gast-0.7.0 google_pasta-0.
 
 * 간단히 확인:
 
-```
+```python
 import tensorflow as tf
 print(tf.__version__)
 print("GPU:", tf.config.list_physical_devices('GPU'))
 ```
 
-```
+```Bash
 WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
 I0000 00:00:1783644875.252990    9340 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
 WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
