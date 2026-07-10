@@ -1,3 +1,5 @@
+(반드시 PC에서 작업할것)
+
 # 5-2 Tensor 실습 (PyTorch)
 
 PyTorch의 핵심 데이터 구조인 Tensor를 다루는 방법을 학습합니다. <br>
