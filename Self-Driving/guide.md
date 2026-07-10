@@ -273,15 +273,248 @@ pip install opencv-python numpy tensorflow matplotlib
 
 ```bash
 cd C:\Users\Administrator\Desktop\Self-Driving
+```
+
 
 # 1단계: 데이터 준비
+
+```
 python prepare_data.py
+```
 
 # 2단계: 모델 학습
+
+```
 python train_model.py
+```
+
+```
+python train_model.py
+2026-07-10 11:00:53.460757: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-07-10 11:00:54.400263: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+==================================================
+Self-Driving Steering Model Training (CPU)
+==================================================
+
+[1/4] 데이터 로드 중...
+  학습: 278 samples
+  검증: 70 samples
+  이미지 shape: (80, 160, 3)
+
+[2/4] 데이터 증강 설정...
+
+[3/4] 모델 빌드 중...
+C:\ProgramData\anaconda3\Lib\site-packages\keras\src\layers\convolutional\base_conv.py:113: UserWarning: Do not pass an `input_shape`/`input_dim` argument to a layer. When using Sequential models, prefer using an `Input(shape)` object as the first layer in the model instead.
+  super().__init__(activity_regularizer=activity_regularizer, **kwargs)
+2026-07-10 11:00:58.300783: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: SSE3 SSE4.1 SSE4.2 AVX AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Model: "sequential"
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
+┃ Layer (type)                         ┃ Output Shape                ┃         Param # ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
+│ conv2d (Conv2D)                      │ (None, 40, 80, 16)          │           1,216 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dropout (Dropout)                    │ (None, 40, 80, 16)          │               0 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ conv2d_1 (Conv2D)                    │ (None, 20, 40, 24)          │           9,624 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dropout_1 (Dropout)                  │ (None, 20, 40, 24)          │               0 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ conv2d_2 (Conv2D)                    │ (None, 10, 20, 32)          │           6,944 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dropout_2 (Dropout)                  │ (None, 10, 20, 32)          │               0 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ conv2d_3 (Conv2D)                    │ (None, 10, 20, 48)          │          13,872 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dropout_3 (Dropout)                  │ (None, 10, 20, 48)          │               0 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ flatten (Flatten)                    │ (None, 9600)                │               0 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dense (Dense)                        │ (None, 64)                  │         614,464 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dropout_4 (Dropout)                  │ (None, 64)                  │               0 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dense_1 (Dense)                      │ (None, 32)                  │           2,080 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dense_2 (Dense)                      │ (None, 1)                   │              33 │
+└──────────────────────────────────────┴─────────────────────────────┴─────────────────┘
+ Total params: 648,233 (2.47 MB)
+ Trainable params: 648,233 (2.47 MB)
+ Non-trainable params: 0 (0.00 B)
+
+[4/4] 학습 시작 (최대 100 epoch, CPU)...
+==================================================
+C:\ProgramData\anaconda3\Lib\site-packages\keras\src\trainers\data_adapters\py_dataset_adapter.py:121: UserWarning: Your `PyDataset` class should call `super().__init__(**kwargs)` in its constructor. `**kwargs` can include `workers`, `use_multiprocessing`, `max_queue_size`. Do not pass these arguments to `fit()`, as they will be ignored.
+  self._warn_if_super_not_called()
+Epoch 1/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 3s 121ms/step - loss: 0.3165 - mae: 0.4642 - val_loss: 0.2461 - val_mae: 0.3829 - learning_rate: 0.0010
+Epoch 2/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 100ms/step - loss: 0.2398 - mae: 0.3905 - val_loss: 0.2096 - val_mae: 0.3641 - learning_rate: 0.0010
+Epoch 3/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 104ms/step - loss: 0.2147 - mae: 0.3705 - val_loss: 0.1933 - val_mae: 0.3409 - learning_rate: 0.0010
+Epoch 4/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 105ms/step - loss: 0.2001 - mae: 0.3765 - val_loss: 0.1793 - val_mae: 0.3295 - learning_rate: 0.0010
+Epoch 5/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 110ms/step - loss: 0.1729 - mae: 0.3396 - val_loss: 0.1675 - val_mae: 0.3206 - learning_rate: 0.0010
+Epoch 6/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 102ms/step - loss: 0.1808 - mae: 0.3406 - val_loss: 0.1481 - val_mae: 0.2933 - learning_rate: 0.0010
+Epoch 7/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 105ms/step - loss: 0.1481 - mae: 0.2997 - val_loss: 0.1428 - val_mae: 0.2925 - learning_rate: 0.0010
+Epoch 8/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 106ms/step - loss: 0.1538 - mae: 0.3086 - val_loss: 0.1333 - val_mae: 0.2799 - learning_rate: 0.0010
+Epoch 9/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 98ms/step - loss: 0.1409 - mae: 0.2945 - val_loss: 0.1342 - val_mae: 0.2859 - learning_rate: 0.0010
+Epoch 10/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 103ms/step - loss: 0.1699 - mae: 0.3376 - val_loss: 0.1090 - val_mae: 0.2489 - learning_rate: 0.0010
+Epoch 11/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 105ms/step - loss: 0.1709 - mae: 0.3245 - val_loss: 0.1013 - val_mae: 0.2399 - learning_rate: 0.0010
+Epoch 12/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 99ms/step - loss: 0.1245 - mae: 0.2541 - val_loss: 0.1030 - val_mae: 0.2472 - learning_rate: 0.0010
+Epoch 13/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 105ms/step - loss: 0.1314 - mae: 0.2867 - val_loss: 0.0963 - val_mae: 0.2317 - learning_rate: 0.0010
+Epoch 14/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 97ms/step - loss: 0.1220 - mae: 0.2606 - val_loss: 0.0971 - val_mae: 0.2286 - learning_rate: 0.0010
+Epoch 15/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 113ms/step - loss: 0.1511 - mae: 0.2941 - val_loss: 0.0878 - val_mae: 0.2202 - learning_rate: 0.0010
+Epoch 16/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 99ms/step - loss: 0.1246 - mae: 0.2732 - val_loss: 0.0927 - val_mae: 0.2276 - learning_rate: 0.0010
+Epoch 17/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 102ms/step - loss: 0.1189 - mae: 0.2572 - val_loss: 0.0875 - val_mae: 0.2189 - learning_rate: 0.0010
+Epoch 18/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 95ms/step - loss: 0.1105 - mae: 0.2401 - val_loss: 0.0898 - val_mae: 0.2291 - learning_rate: 0.0010
+Epoch 19/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 100ms/step - loss: 0.1349 - mae: 0.2660 - val_loss: 0.0851 - val_mae: 0.2185 - learning_rate: 0.0010
+Epoch 20/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 95ms/step - loss: 0.1211 - mae: 0.2454 - val_loss: 0.0912 - val_mae: 0.2190 - learning_rate: 0.0010
+Epoch 21/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 109ms/step - loss: 0.1132 - mae: 0.2466 - val_loss: 0.0736 - val_mae: 0.2062 - learning_rate: 0.0010
+Epoch 22/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 98ms/step - loss: 0.1225 - mae: 0.2595 - val_loss: 0.0890 - val_mae: 0.2278 - learning_rate: 0.0010
+Epoch 23/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 99ms/step - loss: 0.1071 - mae: 0.2313 - val_loss: 0.0889 - val_mae: 0.2326 - learning_rate: 0.0010
+Epoch 24/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 94ms/step - loss: 0.1006 - mae: 0.2386 - val_loss: 0.0831 - val_mae: 0.2226 - learning_rate: 0.0010
+Epoch 25/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 99ms/step - loss: 0.0932 - mae: 0.2222 - val_loss: 0.0676 - val_mae: 0.1857 - learning_rate: 0.0010
+Epoch 26/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 99ms/step - loss: 0.1127 - mae: 0.2467 - val_loss: 0.0685 - val_mae: 0.1926 - learning_rate: 0.0010
+Epoch 27/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 101ms/step - loss: 0.1158 - mae: 0.2446 - val_loss: 0.0677 - val_mae: 0.1861 - learning_rate: 0.0010
+Epoch 28/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 101ms/step - loss: 0.1082 - mae: 0.2357 - val_loss: 0.0665 - val_mae: 0.1854 - learning_rate: 0.0010
+Epoch 29/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 94ms/step - loss: 0.1035 - mae: 0.2247 - val_loss: 0.0719 - val_mae: 0.1940 - learning_rate: 0.0010
+Epoch 30/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 101ms/step - loss: 0.1000 - mae: 0.2329 - val_loss: 0.0649 - val_mae: 0.1823 - learning_rate: 0.0010
+Epoch 31/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 96ms/step - loss: 0.0912 - mae: 0.2210 - val_loss: 0.0693 - val_mae: 0.1994 - learning_rate: 0.0010
+Epoch 32/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 102ms/step - loss: 0.0866 - mae: 0.2169 - val_loss: 0.0645 - val_mae: 0.1858 - learning_rate: 0.0010
+Epoch 33/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 95ms/step - loss: 0.1155 - mae: 0.2287 - val_loss: 0.0712 - val_mae: 0.2036 - learning_rate: 0.0010
+Epoch 34/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 97ms/step - loss: 0.0892 - mae: 0.2209 - val_loss: 0.0606 - val_mae: 0.1818 - learning_rate: 0.0010
+Epoch 35/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 94ms/step - loss: 0.0789 - mae: 0.2007 - val_loss: 0.0631 - val_mae: 0.1829 - learning_rate: 0.0010
+Epoch 36/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 98ms/step - loss: 0.1185 - mae: 0.2457 - val_loss: 0.0776 - val_mae: 0.2136 - learning_rate: 0.0010
+Epoch 37/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 98ms/step - loss: 0.1085 - mae: 0.2444 - val_loss: 0.0659 - val_mae: 0.1830 - learning_rate: 0.0010
+Epoch 38/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 101ms/step - loss: 0.0910 - mae: 0.2064 - val_loss: 0.0656 - val_mae: 0.1867 - learning_rate: 0.0010
+Epoch 39/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 96ms/step - loss: 0.1239 - mae: 0.2480 - val_loss: 0.0652 - val_mae: 0.1891 - learning_rate: 0.0010
+Epoch 40/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 98ms/step - loss: 0.1013 - mae: 0.2298 - val_loss: 0.0651 - val_mae: 0.1880 - learning_rate: 5.0000e-04
+Epoch 41/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 93ms/step - loss: 0.0952 - mae: 0.2129 - val_loss: 0.0643 - val_mae: 0.1886 - learning_rate: 5.0000e-04
+Epoch 42/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 95ms/step - loss: 0.1036 - mae: 0.2300 - val_loss: 0.0631 - val_mae: 0.1791 - learning_rate: 5.0000e-04
+Epoch 43/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 95ms/step - loss: 0.0904 - mae: 0.2215 - val_loss: 0.0642 - val_mae: 0.1851 - learning_rate: 5.0000e-04
+Epoch 44/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 92ms/step - loss: 0.0865 - mae: 0.1998 - val_loss: 0.0677 - val_mae: 0.1903 - learning_rate: 5.0000e-04
+Epoch 45/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 94ms/step - loss: 0.1065 - mae: 0.2265 - val_loss: 0.0620 - val_mae: 0.1709 - learning_rate: 2.5000e-04
+Epoch 46/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 94ms/step - loss: 0.0901 - mae: 0.2048 - val_loss: 0.0607 - val_mae: 0.1707 - learning_rate: 2.5000e-04
+Epoch 47/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 101ms/step - loss: 0.0838 - mae: 0.2050 - val_loss: 0.0603 - val_mae: 0.1673 - learning_rate: 2.5000e-04
+Epoch 48/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 101ms/step - loss: 0.0840 - mae: 0.1987 - val_loss: 0.0591 - val_mae: 0.1672 - learning_rate: 2.5000e-04
+Epoch 49/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 119ms/step - loss: 0.0766 - mae: 0.1930 - val_loss: 0.0551 - val_mae: 0.1641 - learning_rate: 2.5000e-04
+Epoch 50/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 108ms/step - loss: 0.0788 - mae: 0.1984 - val_loss: 0.0546 - val_mae: 0.1666 - learning_rate: 2.5000e-04
+Epoch 51/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 99ms/step - loss: 0.0909 - mae: 0.2127 - val_loss: 0.0556 - val_mae: 0.1668 - learning_rate: 2.5000e-04
+Epoch 52/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 95ms/step - loss: 0.0876 - mae: 0.2020 - val_loss: 0.0603 - val_mae: 0.1789 - learning_rate: 2.5000e-04
+Epoch 53/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 96ms/step - loss: 0.1019 - mae: 0.2207 - val_loss: 0.0609 - val_mae: 0.1795 - learning_rate: 2.5000e-04
+Epoch 54/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 95ms/step - loss: 0.0855 - mae: 0.2017 - val_loss: 0.0596 - val_mae: 0.1741 - learning_rate: 2.5000e-04
+Epoch 55/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 97ms/step - loss: 0.0847 - mae: 0.2117 - val_loss: 0.0608 - val_mae: 0.1773 - learning_rate: 2.5000e-04
+Epoch 56/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 94ms/step - loss: 0.0769 - mae: 0.2001 - val_loss: 0.0602 - val_mae: 0.1766 - learning_rate: 1.2500e-04
+Epoch 57/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 95ms/step - loss: 0.0845 - mae: 0.2014 - val_loss: 0.0584 - val_mae: 0.1735 - learning_rate: 1.2500e-04
+Epoch 58/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 95ms/step - loss: 0.0830 - mae: 0.2024 - val_loss: 0.0561 - val_mae: 0.1685 - learning_rate: 1.2500e-04
+Epoch 59/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 96ms/step - loss: 0.0977 - mae: 0.2163 - val_loss: 0.0565 - val_mae: 0.1705 - learning_rate: 1.2500e-04
+Epoch 60/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 96ms/step - loss: 0.0987 - mae: 0.2180 - val_loss: 0.0572 - val_mae: 0.1706 - learning_rate: 1.2500e-04
+Epoch 61/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 90ms/step - loss: 0.0828 - mae: 0.2035 - val_loss: 0.0584 - val_mae: 0.1736 - learning_rate: 6.2500e-05
+Epoch 62/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 96ms/step - loss: 0.0750 - mae: 0.1932 - val_loss: 0.0580 - val_mae: 0.1729 - learning_rate: 6.2500e-05
+Epoch 63/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 93ms/step - loss: 0.1001 - mae: 0.2148 - val_loss: 0.0574 - val_mae: 0.1721 - learning_rate: 6.2500e-05
+Epoch 64/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 94ms/step - loss: 0.0914 - mae: 0.2111 - val_loss: 0.0567 - val_mae: 0.1702 - learning_rate: 6.2500e-05
+Epoch 65/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 94ms/step - loss: 0.0801 - mae: 0.2037 - val_loss: 0.0564 - val_mae: 0.1695 - learning_rate: 6.2500e-05
+
+==================================================
+학습 완료!
+  소요 시간: 60.8s
+  최종 Train Loss: 0.085352
+  최종 Val Loss:   0.056408
+  최종 Train MAE:  0.203769
+  최종 Val MAE:    0.169460
+  모델 저장: C:\Users\Administrator\Desktop\Self-Driving\steering_model.keras
+  학습 곡선: training_history.png
+```
+
+![](training_history.png)
 
 # 3단계: 시뮬레이터 실행
+
+```
 python simulator.py
+```
+
+```
+python simulator.py
+모델 로드 완료: C:\Users\Administrator\Desktop\Self-Driving\steering_model.keras
+영상: 1045 프레임, 30.0 FPS
+
+=== Self-Driving Simulator ===
+  SPACE: 일시정지/재개
+  ESC: 종료
+
+
+영상 끝 — 처음으로 돌아갑니다.
+
+==================================================
+시뮬레이션 종료
+  실행 시간: 55.0s
+  예측 프레임: 525
+  GT vs Pred MAE: 0.1678
+  GT vs Pred MSE: 0.065981
+  결과 저장 완료
 ```
 
 ### 6.3 각 단계별 결과 확인
@@ -414,10 +647,4 @@ model = Sequential([
 
 <br>
 
-## 10. 라이선스
 
-이 프로젝트는 학습/교육 목적으로 자유롭게 사용, 수정, 배포할 수 있습니다.
-
----
-
-*문서 생성일: 2026-07-10*
