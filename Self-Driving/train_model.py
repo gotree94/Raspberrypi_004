@@ -51,11 +51,8 @@ def build_model():
     model = keras.Sequential([
         # 입력: (80, 160, 3)
 
-        # Normalization 레이어
-        keras.layers.Normalization(mean=0., variance=1.),
-
         # Conv Block 1
-        keras.layers.Conv2D(16, (5, 5), strides=(2, 2), padding='same', activation='relu'),
+        keras.layers.Conv2D(16, (5, 5), strides=(2, 2), padding='same', activation='relu', input_shape=(IMG_HEIGHT, IMG_WIDTH, 3)),
         keras.layers.Dropout(0.1),
 
         # Conv Block 2
