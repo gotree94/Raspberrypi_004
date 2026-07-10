@@ -492,6 +492,8 @@ Epoch 40/100
   모델 저장: steering_model.keras
 ```
 
+![](training_history.png)
+
 # 3단계: 시뮬레이터 실행
 
 ```bash
@@ -534,7 +536,7 @@ WARNING:tensorflow:TensorFlow GPU support is not available on native Windows for
   결과 저장 완료
 ```
 
-![](training_history.png)
+
 
 
 ### 6.3 각 단계별 결과 확인
