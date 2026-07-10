@@ -410,6 +410,17 @@ To enable the following instructions: SSE3 SSE4.1 SSE4.2 AVX AVX2 AVX_VNNI FMA, 
 Tensor test:  tf.Tensor([1 2 3], shape=(3,), dtype=int32)
 ```
 
+* 경고를 끄려면 코드 상단에 아래를 추가하세요:
+```
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # 0=ALL, 1=INFO, 2=WARNING, 3=ERROR
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'  # oneDNN 메시지 제거
+
+import tensorflow as tf
+print("TensorFlow version: ", tf.__version__)
+print("Tensor test: ", tf.constant([1, 2, 3]))
+```
+
 <br>
 
 ---
