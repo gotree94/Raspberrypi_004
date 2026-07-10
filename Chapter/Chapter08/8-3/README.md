@@ -13,7 +13,7 @@
 ``` python
 import torch
 
-MODEL_PATH = ""
+MODEL_PATH = "/home/pi/AI_CAR/model/lane_navigation_final.torchscript"
 
 def main():
     model = torch.jit.load(MODEL_PATH, map_location="cpu")
