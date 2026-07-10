@@ -17,41 +17,42 @@ import numpy as np
 import time
 import myservo
 from gpiozero import DigitalOutputDevice
-f rom gpiozero import niH0utputDevice
+from gpiozero import PWMOutputDevice
 
 def nothing(x):
     pass
 
 def main():
     pca9685 = myservo.PCA9685()
-    channel =0
+    channel = 0
 
-    cv2 . namedWindow(  ' Cont rots ' )
-    cv2. resizeWindow(' Controls', 500, 100)
+    cv2.namedWindow('Controls')
+    cv2.resizeWindow('Controls', 500, 100)
 
     cv2.createTrackbar('steering','Controls', 90, 180, nothing)
     cv2.createTrackbar('Speed','Controls',  40, 700, nothing)
 
     while True:
-        steering_value = cv2.getTrackbarPos('Steering','Controts')
-        speed-vatue = cv2,getTrackbarPos('Speed','Controls')
+        steering_value = cv2.getTrackbarPos('steering','Controls')
+        speed_value = cv2.getTrackbarPos('Speed','Controls')
 
-        servo_angle = pca9685,set_servo-angle(channe1,  steering-value)
+        servo_angle = pca9685.set_servo_angle(channel, steering_value)
 
-    controls-image = np.zeros((1 00, 500, 3), dtype=np.uint8)
-    cv2.putText(controls-image, f'Steerrng: {servo-angle}', (10, 30), cv2.FONT-HERSHEY-SIMPLEX,   0.7,(255, 255, 255), 2)
-    cv2.putText(controls-image, f'Speed: {speed-value}', (10, 70), cv2.FONT-HERSHEY-SIMPLEX,  0.7, (255 255,255),2)
+        controls_image = np.zeros((100, 500, 3), dtype=np.uint8)
+        cv2.putText(controls_image, f'Steering: {servo_angle}', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
+        cv2.putText(controls_image, f'Speed: {speed_value}', (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
 
-    cv2. imshow('Controls', controls-image)
+        cv2.imshow('Controls', controls_image)
 
-    key = .r2.*u,,*ey(1  0) &OxFF
-    if keY == ord('q'):
-        break
+        key = cv2.waitKey(10) & 0xFF
+        if key == ord('q'):
+            break
 
-    cv2.destroyAllWindows0
+    cv2.destroyAllWindows()
 
-if _name- =="_main_'
-  main()
+if __name__ == "__main__":
+    main()
+
 ```
 
 
@@ -66,56 +67,54 @@ import cv2
 import numpy as np
 import time
 import myservo
-from gpiozero import Digital0utputDevice
+from gpiozero import DigitalOutputDevice
 from gpiozero import PWMOutputDevice
 
 def nothing(x):
     pass
 
 def main():
-        pca9685 = myservo.PCA9685Q
-        channel =0
+    pca9685 = myservo.PCA9685()
+    channel = 0
 
-        space_pressed  =False
+    space_pressed = False
 
-        cv2. namedWindow('  Cont rols' )
-        cv2. resizeWindow('Controls',  500, 100)
+    cv2.namedWindow('Controls')
+    cv2.resizeWindow('Controls', 500, 100)
 
-        cv2.createTrackbar('Steering','Controls',    90, !80, nothing)
-        cv2.createTrackbar('Speed','Controls',  40, 100, nothing)
+    cv2.createTrackbar('Steering','Controls', 90, 180, nothing)
+    cv2.createTrackbar('Speed','Controls', 40, 100, nothing)
 
-        while True:
-                steering_value = cv2.getTrackbarPos('Steering','ControIs'    )
-                speed_value  = cv2.getTrackbarPos('Speed','Controls'   )
+    while True:
+        steering_value = cv2.getTrackbarPos('Steering','Controls')
+        speed_value = cv2.getTrackbarPos('Speed','Controls')
 
-                servo_angIe = pca9685.set_servo_angle(channel,  steering_value)
+        servo_angle = pca9685.set_servo_angle(channel, steering_value)
 
-                controls_image  = np.zeros((100,  500, 3), dtype=np.uint8)
-                cv2.putText(controls_image, f'Steering: {servo_angle}', (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,255),2)
-                cv2.putText(controls_image, f'Speed: {speed_value}', (10,70), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,255),2)
+        controls_image = np.zeros((100, 500, 3), dtype=np.uint8)
+        cv2.putText(controls_image, f'Steering: {servo_angle}', (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,255), 2)
+        cv2.putText(controls_image, f'Speed: {speed_value}', (10,70), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,255), 2)
 
-                if space_pressed:
-                    cv2.circle(controls_image, (250, 30), 15, (0,255,0), -1)
-                    cv2.putText(contros_imag, f'GO', (235, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,255), 2)
-                else:
-                    cv2.circle(controls_image, (250, 30), 15, (0,255,0), -1)
-                    cv2.putText(contros_imag, f'STOP', (235, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,255), 2)
+        if space_pressed:
+            cv2.circle(controls_image, (250, 30), 15, (0,255,0), -1)
+            cv2.putText(controls_image, 'GO', (235, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,255), 2)
+        else:
+            cv2.circle(controls_image, (250, 30), 15, (0,0,255), -1)
+            cv2.putText(controls_image, 'STOP', (235, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,255), 2)
 
-                cv2.imshow('Controls', controls_image)
+        cv2.imshow('Controls', controls_image)
 
-                key = cv2.waitKey(10)&OxFF
-                if  key == ord('q'):
-                    break
-                etif key ==32; # SPace keY
-                if not space_pressed:
-                    space_pressed  =True
-                else:
-                    space_pressed  =False
+        key = cv2.waitKey(10) & 0xFF
+        if key == ord('q'):
+            break
+        elif key == 32:  # Space key
+            space_pressed = not space_pressed
 
-    cv2. destroyAl lWi ndows0
+    cv2.destroyAllWindows()
 
-if __name__ =="__main__":
+if __name__ == "__main__":
     main()
+
 ```
 
 
