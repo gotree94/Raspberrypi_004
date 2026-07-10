@@ -281,6 +281,8 @@ cd C:\Users\Administrator\Desktop\Self-Driving
 python prepare_data.py
 ```
 
+![](Self-001.png)
+
 ```
 (base) C:\Users\user\Desktop\Self-Driving>python prepare_data.py
 총 프레임: 1045, FPS: 30.0
@@ -330,11 +332,15 @@ python prepare_data.py
   이미지 크기: 160x80
 ```
 
+
+
 # 2단계: 모델 학습
 
 ```bash
 python train_model.py
 ```
+
+![](Self-002.png)
 
 ```
 (base) C:\Users\user\Desktop\Self-Driving>python train_model.py
@@ -491,6 +497,8 @@ Epoch 40/100
 ```bash
 python simulator.py
 ```
+
+![](Self-003.png)
 
 ```
 (base) C:\Users\user\Desktop\Self-Driving>python simulator.py
