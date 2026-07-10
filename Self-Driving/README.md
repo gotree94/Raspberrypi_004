@@ -273,16 +273,261 @@ pip install opencv-python numpy tensorflow matplotlib
 
 ```bash
 cd C:\Users\Administrator\Desktop\Self-Driving
+```
 
 # 1단계: 데이터 준비
+
+```bash
 python prepare_data.py
+```
+
+```
+(base) C:\Users\user\Desktop\Self-Driving>python prepare_data.py
+총 프레임: 1045, FPS: 30.0
+
+영상 처리 시작 (ESC 누르면 중단)...
+
+  Frame 0/1045 | Detected: True | Saved: 1
+  Frame 30/1045 | Detected: True | Saved: 11
+  Frame 60/1045 | Detected: True | Saved: 21
+  Frame 90/1045 | Detected: True | Saved: 31
+  Frame 120/1045 | Detected: True | Saved: 41
+  Frame 150/1045 | Detected: True | Saved: 51
+  Frame 180/1045 | Detected: True | Saved: 61
+  Frame 210/1045 | Detected: True | Saved: 71
+  Frame 240/1045 | Detected: True | Saved: 81
+  Frame 270/1045 | Detected: True | Saved: 91
+  Frame 300/1045 | Detected: True | Saved: 101
+  Frame 330/1045 | Detected: True | Saved: 111
+  Frame 360/1045 | Detected: True | Saved: 121
+  Frame 390/1045 | Detected: True | Saved: 131
+  Frame 420/1045 | Detected: True | Saved: 141
+  Frame 450/1045 | Detected: True | Saved: 151
+  Frame 480/1045 | Detected: True | Saved: 161
+  Frame 510/1045 | Detected: True | Saved: 171
+  Frame 540/1045 | Detected: True | Saved: 181
+  Frame 570/1045 | Detected: True | Saved: 191
+  Frame 600/1045 | Detected: True | Saved: 200
+  Frame 630/1045 | Detected: True | Saved: 210
+  Frame 660/1045 | Detected: True | Saved: 220
+  Frame 690/1045 | Detected: True | Saved: 230
+  Frame 720/1045 | Detected: True | Saved: 240
+  Frame 750/1045 | Detected: True | Saved: 250
+  Frame 780/1045 | Detected: True | Saved: 260
+  Frame 810/1045 | Detected: True | Saved: 270
+  Frame 840/1045 | Detected: True | Saved: 280
+  Frame 870/1045 | Detected: True | Saved: 290
+  Frame 900/1045 | Detected: True | Saved: 300
+  Frame 930/1045 | Detected: True | Saved: 310
+  Frame 960/1045 | Detected: True | Saved: 320
+  Frame 990/1045 | Detected: True | Saved: 330
+  Frame 1020/1045 | Detected: True | Saved: 340
+
+완료!
+  전체 프레임: 1045
+  저장된 샘플: 348
+  메타데이터: training_data\metadata.json
+  이미지 크기: 160x80
+```
 
 # 2단계: 모델 학습
+
+```bash
 python train_model.py
+```
+
+```
+(base) C:\Users\user\Desktop\Self-Driving>python train_model.py
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1783649438.124526    5728 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1783649439.718880    5728 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+==================================================
+Self-Driving Steering Model Training (CPU)
+==================================================
+
+[1/4] 데이터 로드 중...
+  학습: 278 samples
+  검증: 70 samples
+  이미지 shape: (80, 160, 3)
+
+[2/4] 데이터 증강 설정...
+
+[3/4] 모델 빌드 중...
+C:\Users\user\AppData\Roaming\Python\Python313\site-packages\keras\src\layers\convolutional\base_conv.py:113: UserWarning: Do not pass an `input_shape`/`input_dim` argument to a layer. When using Sequential models, prefer using an `Input(shape)` object as the first layer in the model instead.
+  super().__init__(activity_regularizer=activity_regularizer, **kwargs)
+I0000 00:00:1783649444.259743    5728 cpu_feature_guard.cc:227] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: SSE3 SSE4.1 SSE4.2 AVX AVX2 AVX_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+WARNING:tensorflow:TensorFlow GPU support is not available on native Windows for TensorFlow >= 2.11. Even if CUDA/cuDNN are installed, GPU will not be used. Please use WSL2 or the TensorFlow-DirectML plugin.
+Model: "sequential"
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
+┃ Layer (type)                         ┃ Output Shape                ┃         Param # ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
+│ conv2d (Conv2D)                      │ (None, 40, 80, 16)          │           1,216 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dropout (Dropout)                    │ (None, 40, 80, 16)          │               0 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ conv2d_1 (Conv2D)                    │ (None, 20, 40, 24)          │           9,624 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dropout_1 (Dropout)                  │ (None, 20, 40, 24)          │               0 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ conv2d_2 (Conv2D)                    │ (None, 10, 20, 32)          │           6,944 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dropout_2 (Dropout)                  │ (None, 10, 20, 32)          │               0 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ conv2d_3 (Conv2D)                    │ (None, 10, 20, 48)          │          13,872 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dropout_3 (Dropout)                  │ (None, 10, 20, 48)          │               0 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ flatten (Flatten)                    │ (None, 9600)                │               0 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dense (Dense)                        │ (None, 64)                  │         614,464 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dropout_4 (Dropout)                  │ (None, 64)                  │               0 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dense_1 (Dense)                      │ (None, 32)                  │           2,080 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dense_2 (Dense)                      │ (None, 1)                   │              33 │
+└──────────────────────────────────────┴─────────────────────────────┴─────────────────┘
+ Total params: 648,233 (2.47 MB)
+ Trainable params: 648,233 (2.47 MB)
+ Non-trainable params: 0 (0.00 B)
+
+[4/4] 학습 시작 (최대 100 epoch, CPU)...
+==================================================
+Epoch 1/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 2s 76ms/step - loss: 0.3095 - mae: 0.4473 - val_loss: 0.2708 - val_mae: 0.4233 - learning_rate: 0.0010
+Epoch 2/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 60ms/step - loss: 0.2578 - mae: 0.4200 - val_loss: 0.2702 - val_mae: 0.4306 - learning_rate: 0.0010
+Epoch 3/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 59ms/step - loss: 0.2365 - mae: 0.4001 - val_loss: 0.2217 - val_mae: 0.3977 - learning_rate: 0.0010
+Epoch 4/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 55ms/step - loss: 0.2195 - mae: 0.3879 - val_loss: 0.2870 - val_mae: 0.4428 - learning_rate: 0.0010
+Epoch 5/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 60ms/step - loss: 0.2082 - mae: 0.3698 - val_loss: 0.1685 - val_mae: 0.3410 - learning_rate: 0.0010
+Epoch 6/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 57ms/step - loss: 0.1822 - mae: 0.3531 - val_loss: 0.1733 - val_mae: 0.3290 - learning_rate: 0.0010
+Epoch 7/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 59ms/step - loss: 0.1526 - mae: 0.3016 - val_loss: 0.1671 - val_mae: 0.3026 - learning_rate: 0.0010
+Epoch 8/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 61ms/step - loss: 0.1360 - mae: 0.2781 - val_loss: 0.1583 - val_mae: 0.2909 - learning_rate: 0.0010
+Epoch 9/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 60ms/step - loss: 0.1428 - mae: 0.2858 - val_loss: 0.1463 - val_mae: 0.2964 - learning_rate: 0.0010
+Epoch 10/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 55ms/step - loss: 0.1452 - mae: 0.2955 - val_loss: 0.1759 - val_mae: 0.3154 - learning_rate: 0.0010
+Epoch 11/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 55ms/step - loss: 0.1342 - mae: 0.2729 - val_loss: 0.1592 - val_mae: 0.2883 - learning_rate: 0.0010
+Epoch 12/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 56ms/step - loss: 0.1233 - mae: 0.2631 - val_loss: 0.1664 - val_mae: 0.2911 - learning_rate: 0.0010
+Epoch 13/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 57ms/step - loss: 0.1227 - mae: 0.2566 - val_loss: 0.1598 - val_mae: 0.2881 - learning_rate: 0.0010
+Epoch 14/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 55ms/step - loss: 0.1142 - mae: 0.2513 - val_loss: 0.1540 - val_mae: 0.2901 - learning_rate: 0.0010
+Epoch 15/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 55ms/step - loss: 0.1166 - mae: 0.2477 - val_loss: 0.1470 - val_mae: 0.2700 - learning_rate: 5.0000e-04
+Epoch 16/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 60ms/step - loss: 0.1225 - mae: 0.2592 - val_loss: 0.1366 - val_mae: 0.2650 - learning_rate: 5.0000e-04
+Epoch 17/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 54ms/step - loss: 0.1061 - mae: 0.2391 - val_loss: 0.1417 - val_mae: 0.2660 - learning_rate: 5.0000e-04
+Epoch 18/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 55ms/step - loss: 0.1071 - mae: 0.2398 - val_loss: 0.1399 - val_mae: 0.2647 - learning_rate: 5.0000e-04
+Epoch 19/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 60ms/step - loss: 0.1101 - mae: 0.2413 - val_loss: 0.1330 - val_mae: 0.2497 - learning_rate: 5.0000e-04
+Epoch 20/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 57ms/step - loss: 0.1137 - mae: 0.2395 - val_loss: 0.1430 - val_mae: 0.2631 - learning_rate: 5.0000e-04
+Epoch 21/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 55ms/step - loss: 0.1141 - mae: 0.2478 - val_loss: 0.1342 - val_mae: 0.2562 - learning_rate: 5.0000e-04
+Epoch 22/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 60ms/step - loss: 0.1089 - mae: 0.2342 - val_loss: 0.1272 - val_mae: 0.2415 - learning_rate: 5.0000e-04
+Epoch 23/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 59ms/step - loss: 0.1077 - mae: 0.2332 - val_loss: 0.1214 - val_mae: 0.2364 - learning_rate: 5.0000e-04
+Epoch 24/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 56ms/step - loss: 0.1099 - mae: 0.2384 - val_loss: 0.1383 - val_mae: 0.2507 - learning_rate: 5.0000e-04
+Epoch 25/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 60ms/step - loss: 0.1000 - mae: 0.2234 - val_loss: 0.1161 - val_mae: 0.2346 - learning_rate: 5.0000e-04
+Epoch 26/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 57ms/step - loss: 0.1031 - mae: 0.2309 - val_loss: 0.1267 - val_mae: 0.2406 - learning_rate: 5.0000e-04
+Epoch 27/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 56ms/step - loss: 0.0980 - mae: 0.2221 - val_loss: 0.1310 - val_mae: 0.2518 - learning_rate: 5.0000e-04
+Epoch 28/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 55ms/step - loss: 0.1027 - mae: 0.2324 - val_loss: 0.1365 - val_mae: 0.2423 - learning_rate: 5.0000e-04
+Epoch 29/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 55ms/step - loss: 0.1075 - mae: 0.2316 - val_loss: 0.1305 - val_mae: 0.2489 - learning_rate: 5.0000e-04
+Epoch 30/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 55ms/step - loss: 0.1016 - mae: 0.2288 - val_loss: 0.1383 - val_mae: 0.2391 - learning_rate: 5.0000e-04
+Epoch 31/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 56ms/step - loss: 0.1031 - mae: 0.2243 - val_loss: 0.1389 - val_mae: 0.2437 - learning_rate: 2.5000e-04
+Epoch 32/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 54ms/step - loss: 0.0994 - mae: 0.2285 - val_loss: 0.1283 - val_mae: 0.2414 - learning_rate: 2.5000e-04
+Epoch 33/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 54ms/step - loss: 0.0978 - mae: 0.2239 - val_loss: 0.1324 - val_mae: 0.2444 - learning_rate: 2.5000e-04
+Epoch 34/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 55ms/step - loss: 0.0932 - mae: 0.2155 - val_loss: 0.1253 - val_mae: 0.2429 - learning_rate: 2.5000e-04
+Epoch 35/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 55ms/step - loss: 0.0948 - mae: 0.2179 - val_loss: 0.1244 - val_mae: 0.2402 - learning_rate: 2.5000e-04
+Epoch 36/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 55ms/step - loss: 0.0945 - mae: 0.2193 - val_loss: 0.1241 - val_mae: 0.2344 - learning_rate: 1.2500e-04
+Epoch 37/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 56ms/step - loss: 0.0908 - mae: 0.2144 - val_loss: 0.1260 - val_mae: 0.2317 - learning_rate: 1.2500e-04
+Epoch 38/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 55ms/step - loss: 0.0933 - mae: 0.2104 - val_loss: 0.1257 - val_mae: 0.2337 - learning_rate: 1.2500e-04
+Epoch 39/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 55ms/step - loss: 0.0873 - mae: 0.2107 - val_loss: 0.1241 - val_mae: 0.2352 - learning_rate: 1.2500e-04
+Epoch 40/100
+9/9 ━━━━━━━━━━━━━━━━━━━━ 1s 55ms/step - loss: 0.0905 - mae: 0.2116 - val_loss: 0.1228 - val_mae: 0.2289 - learning_rate: 1.2500e-04
+
+==================================================
+학습 완료!
+  소요 시간: 22.3s
+  최종 Train Loss: 0.090494
+  최종 Val Loss:   0.122770
+  최종 Train MAE:  0.211587
+  최종 Val MAE:    0.228854
+  모델 저장: steering_model.keras
+```
 
 # 3단계: 시뮬레이터 실행
+
+```bash
 python simulator.py
 ```
+
+```
+(base) C:\Users\user\Desktop\Self-Driving>python simulator.py
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1783649485.703626   14092 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1783649487.190810   14092 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING:tensorflow:TensorFlow GPU support is not available on native Windows for TensorFlow >= 2.11. Even if CUDA/cuDNN are installed, GPU will not be used. Please use WSL2 or the TensorFlow-DirectML plugin.
+모델 로드 완료: steering_model.keras
+영상: 1045 프레임, 30.0 FPS
+
+=== Self-Driving Simulator ===
+  SPACE: 일시정지/재개
+  ESC: 종료
+
+
+영상 끝 — 처음으로 돌아갑니다.
+
+영상 끝 — 처음으로 돌아갑니다.
+
+영상 끝 — 처음으로 돌아갑니다.
+
+영상 끝 — 처음으로 돌아갑니다.
+
+영상 끝 — 처음으로 돌아갑니다.
+
+==================================================
+시뮬레이션 종료
+  실행 시간: 174.6s
+  예측 프레임: 1915
+  GT vs Pred MAE: 0.1991
+  GT vs Pred MSE: 0.087517
+  결과 저장 완료
+```
+
+![](training_history.png)
+
 
 ### 6.3 각 단계별 결과 확인
 
@@ -299,6 +544,7 @@ python simulator.py
 - 모델이 실시간으로 조향각 예측
 - GT와 예측값 비교 그래프 표시
 - ESC 누르면 최종 통계 출력
+
 
 <br>
 
@@ -410,14 +656,4 @@ model = Sequential([
 
 <br>
 
----
 
-<br>
-
-## 10. 라이선스
-
-이 프로젝트는 학습/교육 목적으로 자유롭게 사용, 수정, 배포할 수 있습니다.
-
----
-
-*문서 생성일: 2026-07-10*
