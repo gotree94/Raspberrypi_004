@@ -18,26 +18,24 @@ import mycamera
 import time
 
 def main():
-    cap = 6ys3r..a.l,'tyPiCamera(640,480)
+    cap = mycamera.PiCamera(640, 480)
 
     while True:
         _, frame = cap.read()
-        frame = cv2.flip(frame,  -1)
+        frame = cv2.flip(frame, -1)
 
-        cv2.imshow('  Camera', f rame)
+        cv2.imshow('Camera', frame)
 
-        key = 612.nrttKey(10)  &oxFF
-        if  key == ord('q'):
+        key = cv2.waitKey(10) & 0xFF
+        if key == ord('q'):
             break
 
-    cap.releaseQ
-    cv2.destroyAllWindows0
+    cap.release()
+    cv2.destroyAllWindows()
 
-if _name- =="_main_"
+if __name__ == "__main__":
     main()
 ```
-
-
 
 ## 이미지 자르기
 
@@ -53,28 +51,28 @@ import mycamera
 import time
 
 def main():
-    cap = mycamera.MyPiCamera(640,480)
+    cap = mycamera.MyPiCamera(640, 480)
 
     while True:
-        _, frame = cap.reado
-        frame = cv2.flip(frame,-1)
+        _, frame = cap.read()
+        frame = cv2.flip(frame, -1)
 
-        height, -, - = frame.shape
-        save_image = frame[int(height/2):,  :,:]
+        height, width, channels = frame.shape
+        save_image = frame[int(height/2):, :, :]
 
-    cv2. imshow('Save', save-image)
+        cv2.imshow('Save', save_image)
+        cv2.imshow('Camera', frame)
 
-    cv2. imshow('Camera', f rame)
+        key = cv2.waitKey(10) & 0xFF
+        if key == ord('q'):
+            break
 
-    key = .r2.*.',Key(10) &0xFF
-    if keY == ord('q'):
-      break
+    cap.release()
+    cv2.destroyAllWindows()
 
-  cap.release()
-  cv2. destroyAllWindows()
-
-if __name__ =="__main__"
+if __name__ == "__main__":
     main()
+
 ```
 
 
