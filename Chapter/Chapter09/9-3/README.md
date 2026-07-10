@@ -64,6 +64,135 @@ if __name__ == "__main__":
 * 9_3_2.py
 
 ```python
+import mycamera
+import myservo
+import cv2
+import numpy as np
+import torch
+from ultralytics import YOLO
+from gpiozero import DigitalOutputDevice, PWMOutputDevice
+
+SET_MOTOR_SPEED = 0.2
+DETECT_EVERY_N = 3
+YOLO_IMG_SIZE = 224
+
+PWMA = PWMOutputDevice(18)
+AIN1 = DigitalOutputDevice(22)
+AIN2 = DigitalOutputDevice(27)
+
+PWMB = PWMOutputDevice(23)
+BIN1 = DigitalOutputDevice(25)
+BIN2 = DigitalOutputDevice(24)
+
+def motor_go(speed):
+    AIN1.value = 0
+    AIN2.value = 1
+    PWMA.value = speed
+    BIN1.value = 0
+    BIN2.value = 1
+    PWMB.value = speed
+
+def motor_stop():
+    AIN1.value = 0
+    AIN2.value = 1
+    PWMA.value = 0.0
+    BIN1.value = 1
+    BIN2.value = 0
+    PWMB.value = 0.0
+
+def img_preprocess(image):
+    h, w, c = image.shape
+    image = image[h//2:, :, :]
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2YUV)
+    image = cv2.GaussianBlur(image, (3, 3), 0)
+    image = cv2.resize(image, (200, 66))
+    image = image.astype(np.float32) / 255.0
+    return image
+
+def draw_detections(frame, results, names):
+    if results is None:
+        return frame
+    for b in results.boxes:
+        cls_id = int(b.cls.item())
+        conf = float(b.conf.item())
+        x1, y1, x2, y2 = map(int, b.xyxy[0].tolist())
+        cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+        label = f"{names[cls_id]} {conf:.2f}"
+        cv2.putText(frame, label, (x1, max(10, y1 - 6)),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+    return frame
+
+def main():
+    cv2.setUseOptimized(True)
+    camera = mycamera.MyPiCamera(640, 480)
+    pca9685 = myservo.PCA9685()
+    channel = 0
+
+    model_path = "/home/pi/AI_CAR/model/lane_navigation_final.torchscript"
+    lane_model = torch.jit.load(model_path, map_location="cpu")
+    lane_model.eval()
+    torch.set_num_threads(1)
+
+    det_model = YOLO("ai_car_model.pt")
+    drive = False
+    angle = 90
+    det_results = None
+    frame_count = 0
+
+    try:
+        while camera.isOpened():
+            ok, frame = camera.read()
+            if not ok:
+                continue
+
+            frame = cv2.flip(frame, -1)
+
+            pre = img_preprocess(frame)
+            x = np.transpose(pre, (2, 0, 1))[None, :, :]
+            x_tensor = torch.from_numpy(x).float()
+
+            with torch.no_grad():
+                y = lane_model(x_tensor)
+            angle = int(float(y.view(-1)[0].item()))
+            pca9685.set_servo_angle(channel, angle)
+
+            if frame_count % DETECT_EVERY_N == 0:
+                det_results = det_model(frame, imgsz=YOLO_IMG_SIZE, conf=0.55, iou=0.5,
+                                        device='cpu')[0]
+
+            out = frame
+            out = draw_detections(out, det_results, det_model.names)
+            status = f"DRIVE: {'ON' if drive else 'OFF'} ANGLE: {angle}"
+            cv2.putText(out, status, (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 200, 255), 2)
+            cv2.imshow("camera", out)
+            cv2.imshow("preprocess", pre)
+
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord('q'):
+                break
+            elif key == 32:
+                drive = not drive
+                print("DRIVE:", 'ON' if drive else 'OFF')
+
+            if drive:
+                motor_go(SET_MOTOR_SPEED)
+            else:
+                motor_stop()
+
+            frame_count += 1
+
+    finally:
+        motor_stop()
+        PWMA.value = 0.0
+        PWMB.value = 0.0
+        try:
+            camera.release()
+        except Exception:
+            pass
+        cv2.destroyAllWindows()
+
+if __name__ == "__main__":
+    main()
 
 ```
 
