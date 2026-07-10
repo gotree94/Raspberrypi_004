@@ -18,25 +18,29 @@ import os
 from datetime import datetime
 import cv2
 import mycamera
-SAVE_DIR = os.path. join(os.path.dirname(__fite__), "pi-ctures")
+
+SAVE_DIR = os.path.join(os.path.dirname(__file__), "pictures")
 os.makedirs(SAVE_DIR, exist_ok=True)
-if
-__name-- =="__main-_" :
-camera = mycamera.l,lyPicamera(640, 480)
-while camera. isOpenedO :
-ok, image = camera.reado
-if not ok:
-break
-image = cv2.flip(image, -1)
-cv2. imshow("mycamera", image)
-key = 6v2."ritKey(1) &0xFF
-if keY == ord('s'):
-f ilename = datetime.nowO.strftime("%Y% mohd_okHo/olttlo/oS_%f ") +". png"
-path = os.path.ioin(SAVE_DlR, filename)
-cv2.imwrite(path, image)
-print(f'saved : {path}')
-elif key == ord('q'):
-break
+
+if __name__ == "__main__":
+    camera = mycamera.MyPiCamera(640, 480)
+    while camera.isOpened():
+        ok, image = camera.read()
+        if not ok:
+            break
+        image = cv2.flip(image, -1)
+        cv2.imshow("mycamera", image)
+
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord('s'):
+            filename = datetime.now().strftime("%Y%m%d_%H%M%S_%f") + ".png"
+            path = os.path.join(SAVE_DIR, filename)
+            cv2.imwrite(path, image)
+            print(f'saved: {path}')
+        elif key == ord('q'):
+            break
+
+    cv2.destroyAllWindows()
 ```
 
 
