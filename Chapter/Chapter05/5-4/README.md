@@ -1,4 +1,4 @@
-# ⚠️ 🚨 <p style="color:red">반드시 PC에서 작업할것</p>❗⛔
+# ⚠️ 🚨 <span style="color:#ff0000">반드시 PC에서 작업할것</span>❗⛔
 
 
 # 5-4 신경망 기본 구성 (PyTorch)
