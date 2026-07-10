@@ -4,6 +4,25 @@
 
 - `SLAM_CarA_20260701_203246.xlsx` — 1111행, 8열
 
+
+![](01_trajectory_XY.png)
+
+![](02_gyro_yaw_time.png)
+
+![](03_encoder_dist_time.png)
+
+![](04_sonars_time.png)
+
+![](05_yaw_rate_time.png)
+
+![](06_speed_time.png)
+
+![](07_xy_dist_time.png)
+
+![](08_yaw_vs_path_angle.png)
+
+![](09_sonar_on_trajectory.png)
+
 ---
 
 ## 1. 컬럼 구조
