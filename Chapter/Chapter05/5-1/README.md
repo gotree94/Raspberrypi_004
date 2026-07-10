@@ -349,8 +349,6 @@ Successfully installed absl-py-2.5.0 astunparse-1.6.3 gast-0.7.0 google_pasta-0.
 (base) C:\Users\user>
 ```
 
-
-
 * 스크립트 PATH 누락: C:\Users\user\AppData\Roaming\Python\Python313\Scripts를 환경변수 PATH에 추가해야 saved_model_cli 등을 사용할 수 있습니다.
 * protobuf 충돌: Streamlit이 protobuf<7을 요구하는데 TF가 protobuf 7.35.1을 설치했지만, Streamlit을 안 쓴다면 무시해도 됩니다.
 * GPU 사용하려면: NVIDIA GPU + CUDA Toolkit + cuDNN이 필요합니다. TF 2.21은 CUDA 12.x 대응입니다.
@@ -398,6 +396,17 @@ print("Tensor test: ", tf.constant([1, 2, 3]))
 
 ```bash
 TensorFlow version:  2.18.0
+Tensor test:  tf.Tensor([1 2 3], shape=(3,), dtype=int32)
+```
+
+```
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1783645136.231235    8436 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1783645137.866315    8436 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+TensorFlow version:  2.21.0
+I0000 00:00:1783645139.582911    8436 cpu_feature_guard.cc:227] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: SSE3 SSE4.1 SSE4.2 AVX AVX2 AVX_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
 Tensor test:  tf.Tensor([1 2 3], shape=(3,), dtype=int32)
 ```
 
