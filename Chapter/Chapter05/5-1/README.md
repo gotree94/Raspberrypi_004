@@ -270,7 +270,95 @@ pip install tensorflow
 ```
 
 ```
+(base) C:\Users\user>pip install tensorflow
+Defaulting to user installation because normal site-packages is not writeable
+Collecting tensorflow
+  Downloading tensorflow-2.21.0-cp313-cp313-win_amd64.whl.metadata (4.5 kB)
+Collecting absl-py>=1.0.0 (from tensorflow)
+  Downloading absl_py-2.5.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting astunparse>=1.6.0 (from tensorflow)
+  Downloading astunparse-1.6.3-py2.py3-none-any.whl.metadata (4.4 kB)
+Requirement already satisfied: flatbuffers>=25.9.23 in c:\users\user\appdata\roaming\python\python313\site-packages (from tensorflow) (25.12.19)
+Collecting gast!=0.5.0,!=0.5.1,!=0.5.2,>=0.2.1 (from tensorflow)
+  Downloading gast-0.7.0-py3-none-any.whl.metadata (1.5 kB)
+Collecting google_pasta>=0.1.1 (from tensorflow)
+  Downloading google_pasta-0.2.0-py3-none-any.whl.metadata (814 bytes)
+Collecting libclang>=13.0.0 (from tensorflow)
+  Downloading libclang-18.1.1-py2.py3-none-win_amd64.whl.metadata (5.3 kB)
+Collecting opt_einsum>=2.3.2 (from tensorflow)
+  Downloading opt_einsum-3.4.0-py3-none-any.whl.metadata (6.3 kB)
+Requirement already satisfied: packaging in c:\programdata\anaconda3\lib\site-packages (from tensorflow) (25.0)
+Collecting protobuf<8.0.0,>=6.31.1 (from tensorflow)
+  Downloading protobuf-7.35.1-cp310-abi3-win_amd64.whl.metadata (595 bytes)
+Requirement already satisfied: requests<3,>=2.21.0 in c:\programdata\anaconda3\lib\site-packages (from tensorflow) (2.32.5)
+Requirement already satisfied: setuptools in c:\programdata\anaconda3\lib\site-packages (from tensorflow) (80.9.0)
+Requirement already satisfied: six>=1.12.0 in c:\programdata\anaconda3\lib\site-packages (from tensorflow) (1.17.0)
+Collecting termcolor>=1.1.0 (from tensorflow)
+  Downloading termcolor-3.3.0-py3-none-any.whl.metadata (6.5 kB)
+Requirement already satisfied: typing_extensions>=3.6.6 in c:\programdata\anaconda3\lib\site-packages (from tensorflow) (4.15.0)
+Requirement already satisfied: wrapt>=1.11.0 in c:\programdata\anaconda3\lib\site-packages (from tensorflow) (1.17.0)
+Collecting grpcio<2.0,>=1.24.3 (from tensorflow)
+  Downloading grpcio-1.82.1-cp313-cp313-win_amd64.whl.metadata (3.8 kB)
+Collecting keras>=3.12.0 (from tensorflow)
+  Downloading keras-3.15.0-py3-none-any.whl.metadata (6.3 kB)
+Requirement already satisfied: numpy>=1.26.0 in c:\users\user\appdata\roaming\python\python313\site-packages (from tensorflow) (2.3.5)
+Collecting h5py<3.15.0,>=3.11.0 (from tensorflow)
+  Downloading h5py-3.14.0-cp313-cp313-win_amd64.whl.metadata (2.7 kB)
+Collecting ml_dtypes<1.0.0,>=0.5.1 (from tensorflow)
+  Downloading ml_dtypes-0.5.4-cp313-cp313-win_amd64.whl.metadata (9.2 kB)
+Requirement already satisfied: charset_normalizer<4,>=2 in c:\programdata\anaconda3\lib\site-packages (from requests<3,>=2.21.0->tensorflow) (3.4.4)
+Requirement already satisfied: idna<4,>=2.5 in c:\programdata\anaconda3\lib\site-packages (from requests<3,>=2.21.0->tensorflow) (3.11)
+Requirement already satisfied: urllib3<3,>=1.21.1 in c:\programdata\anaconda3\lib\site-packages (from requests<3,>=2.21.0->tensorflow) (2.5.0)
+Requirement already satisfied: certifi>=2017.4.17 in c:\programdata\anaconda3\lib\site-packages (from requests<3,>=2.21.0->tensorflow) (2025.11.12)
+Requirement already satisfied: wheel<1.0,>=0.23.0 in c:\programdata\anaconda3\lib\site-packages (from astunparse>=1.6.0->tensorflow) (0.45.1)
+Requirement already satisfied: rich in c:\programdata\anaconda3\lib\site-packages (from keras>=3.12.0->tensorflow) (14.2.0)
+Collecting namex (from keras>=3.12.0->tensorflow)
+  Downloading namex-0.1.0-py3-none-any.whl.metadata (322 bytes)
+Collecting optree (from keras>=3.12.0->tensorflow)
+  Downloading optree-0.19.1-cp313-cp313-win_amd64.whl.metadata (32 kB)
+Requirement already satisfied: markdown-it-py>=2.2.0 in c:\programdata\anaconda3\lib\site-packages (from rich->keras>=3.12.0->tensorflow) (2.2.0)
+Requirement already satisfied: pygments<3.0.0,>=2.13.0 in c:\programdata\anaconda3\lib\site-packages (from rich->keras>=3.12.0->tensorflow) (2.19.2)
+Requirement already satisfied: mdurl~=0.1 in c:\programdata\anaconda3\lib\site-packages (from markdown-it-py>=2.2.0->rich->keras>=3.12.0->tensorflow) (0.1.2)
+Downloading tensorflow-2.21.0-cp313-cp313-win_amd64.whl (351.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 351.2/351.2 MB 11.4 MB/s  0:00:31
+Downloading grpcio-1.82.1-cp313-cp313-win_amd64.whl (5.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.0/5.0 MB 11.2 MB/s  0:00:00
+Downloading h5py-3.14.0-cp313-cp313-win_amd64.whl (2.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.9/2.9 MB 8.9 MB/s  0:00:00
+Downloading ml_dtypes-0.5.4-cp313-cp313-win_amd64.whl (212 kB)
+Downloading protobuf-7.35.1-cp310-abi3-win_amd64.whl (439 kB)
+Downloading absl_py-2.5.0-py3-none-any.whl (137 kB)
+Downloading astunparse-1.6.3-py2.py3-none-any.whl (12 kB)
+Downloading gast-0.7.0-py3-none-any.whl (22 kB)
+Downloading google_pasta-0.2.0-py3-none-any.whl (57 kB)
+Downloading keras-3.15.0-py3-none-any.whl (1.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.7/1.7 MB 11.1 MB/s  0:00:00
+Downloading libclang-18.1.1-py2.py3-none-win_amd64.whl (26.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 26.4/26.4 MB 11.1 MB/s  0:00:02
+Downloading opt_einsum-3.4.0-py3-none-any.whl (71 kB)
+Downloading termcolor-3.3.0-py3-none-any.whl (7.7 kB)
+Downloading namex-0.1.0-py3-none-any.whl (5.9 kB)
+Downloading optree-0.19.1-cp313-cp313-win_amd64.whl (343 kB)
+Installing collected packages: namex, libclang, termcolor, protobuf, optree, opt_einsum, ml_dtypes, h5py, grpcio, google_pasta, gast, astunparse, absl-py, keras, tensorflow
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╺━━ 14/15 [tensorflow]  WARNING: The scripts saved_model_cli.exe, tf_upgrade_v2.exe, tflite_convert.exe and toco.exe are installed in 'C:\Users\user\AppData\Roaming\Python\Python313\Scripts' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+streamlit 1.51.0 requires protobuf<7,>=3.20, but you have protobuf 7.35.1 which is incompatible.
+Successfully installed absl-py-2.5.0 astunparse-1.6.3 gast-0.7.0 google_pasta-0.2.0 grpcio-1.82.1 h5py-3.14.0 keras-3.15.0 libclang-18.1.1 ml_dtypes-0.5.4 namex-0.1.0 opt_einsum-3.4.0 optree-0.19.1 protobuf-7.35.1 tensorflow-2.21.0 termcolor-3.3.0
 
+(base) C:\Users\user>
+```
+
+
+```
+스크립트 PATH 누락: C:\Users\user\AppData\Roaming\Python\Python313\Scripts를 환경변수 PATH에 추가해야 saved_model_cli 등을 사용할 수 있습니다.
+protobuf 충돌: Streamlit이 protobuf<7을 요구하는데 TF가 protobuf 7.35.1을 설치했지만, Streamlit을 안 쓴다면 무시해도 됩니다.
+GPU 사용하려면: NVIDIA GPU + CUDA Toolkit + cuDNN이 필요합니다. TF 2.21은 CUDA 12.x 대응입니다.
+간단히 확인:
+
+import tensorflow as tf
+print(tf.__version__)
+print("GPU:", tf.config.list_physical_devices('GPU'))
 ```
 
 ## TensorFlow 불러오기 & 버전 확인
