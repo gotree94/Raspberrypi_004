@@ -10,8 +10,8 @@ import os
 import json
 
 # ===================== 설정 =====================
-VIDEO_PATH = r"C:\Users\Administrator\Desktop\Self-Driving\Self-driving.mp4"
-OUTPUT_DIR = r"C:\Users\Administrator\Desktop\Self-Driving\training_data"
+VIDEO_PATH = r"Self-driving.mp4"
+OUTPUT_DIR = r"training_data"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 FRAME_STEP = 3        # 모든 프레임을 다 쓰면 너무 많음 → 3프레임마다 1개 추출

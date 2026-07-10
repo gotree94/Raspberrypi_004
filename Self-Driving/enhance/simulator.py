@@ -16,9 +16,9 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import tensorflow as tf
 
 # ===================== 설정 =====================
-VIDEO_PATH = r"C:\Users\Administrator\Desktop\Self-Driving\Self-driving.mp4"
-MODEL_PATH = r"C:\Users\Administrator\Desktop\Self-Driving\steering_model.keras"
-DATA_DIR = r"C:\Users\Administrator\Desktop\Self-Driving\training_data"
+VIDEO_PATH = r"Self-driving.mp4"
+MODEL_PATH = r"steering_model.keras"
+DATA_DIR = r"training_data"
 IMG_WIDTH, IMG_HEIGHT = 160, 80
 
 

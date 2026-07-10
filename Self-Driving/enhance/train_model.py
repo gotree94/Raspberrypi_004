@@ -14,8 +14,8 @@ import tensorflow as tf
 from tensorflow import keras
 
 # ===================== 설정 =====================
-DATA_DIR = r"C:\Users\Administrator\Desktop\Self-Driving\training_data"
-MODEL_PATH = r"C:\Users\Administrator\Desktop\Self-Driving\steering_model.keras"
+DATA_DIR = r"training_data"
+MODEL_PATH = r"steering_model.keras"
 BATCH_SIZE = 16
 EPOCHS = 120
 IMG_WIDTH, IMG_HEIGHT = 160, 80
