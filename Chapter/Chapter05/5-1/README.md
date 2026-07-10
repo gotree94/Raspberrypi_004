@@ -253,6 +253,26 @@ Requirement already satisfied: libclang>=13.0.0 in c:\programdata\anaconda3\lib\
 
 <br>
 
+
+# TensorFlow
+
+* CPU만 사용:
+    * pip install tensorflow 한 줄이면 끝
+
+* GPU 가속 사용:
+   * CUDA 지원 GPU 필요 (NVIDIA)
+   * CUDA Toolkit + cuDNN 설치 필요
+   * TensorFlow 버전과 CUDA 버전 호환 확인 (예: TF 2.16+는 CUDA 11.8, TF 2.18+는 CUDA 12.x)
+   * pip install tensorflow[and-cuda] 또는 pip install tensorflow 후 알아서 GPU 인식
+
+```
+pip install tensorflow
+```
+
+```
+
+```
+
 ## TensorFlow 불러오기 & 버전 확인
 
 TensorFlow는 Google이 개발한 딥러닝 프레임워크입니다.<br>
