@@ -361,6 +361,22 @@ print(tf.__version__)
 print("GPU:", tf.config.list_physical_devices('GPU'))
 ```
 
+```
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1783644875.252990    9340 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1783644879.913355    9340 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2.21.0
+WARNING:tensorflow:TensorFlow GPU support is not available on native Windows for TensorFlow >= 2.11. Even if CUDA/cuDNN are installed, GPU will not be used. Please use WSL2 or the TensorFlow-DirectML plugin.
+GPU: []
+```
+
+* TensorFlow 2.21.0 정상 설치 확인 (2.21.0), CPU 모드로 동작 중입니다.
+* 중요: TensorFlow 2.11 이후로 네이티브 Windows에서 GPU 지원이 중단되었습니다. GPU를 사용하려면 두 가지 방법이 있습니다:
+  * WSL2 + CUDA (권장) — WSL2에 Ubuntu 설치 후 그 안에서 TF+GPU 사용
+  * TensorFlow-DirectML plugin — pip install tensorflow-directml-plugin (DirectML 기반, 성능은 WSL2보다 낮음)
+
+
 ## TensorFlow 불러오기 & 버전 확인
 
 TensorFlow는 Google이 개발한 딥러닝 프레임워크입니다.<br>
