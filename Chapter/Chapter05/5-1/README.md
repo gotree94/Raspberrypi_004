@@ -350,12 +350,14 @@ Successfully installed absl-py-2.5.0 astunparse-1.6.3 gast-0.7.0 google_pasta-0.
 ```
 
 
-```
-스크립트 PATH 누락: C:\Users\user\AppData\Roaming\Python\Python313\Scripts를 환경변수 PATH에 추가해야 saved_model_cli 등을 사용할 수 있습니다.
-protobuf 충돌: Streamlit이 protobuf<7을 요구하는데 TF가 protobuf 7.35.1을 설치했지만, Streamlit을 안 쓴다면 무시해도 됩니다.
-GPU 사용하려면: NVIDIA GPU + CUDA Toolkit + cuDNN이 필요합니다. TF 2.21은 CUDA 12.x 대응입니다.
-간단히 확인:
 
+* 스크립트 PATH 누락: C:\Users\user\AppData\Roaming\Python\Python313\Scripts를 환경변수 PATH에 추가해야 saved_model_cli 등을 사용할 수 있습니다.
+* protobuf 충돌: Streamlit이 protobuf<7을 요구하는데 TF가 protobuf 7.35.1을 설치했지만, Streamlit을 안 쓴다면 무시해도 됩니다.
+* GPU 사용하려면: NVIDIA GPU + CUDA Toolkit + cuDNN이 필요합니다. TF 2.21은 CUDA 12.x 대응입니다.
+
+* 간단히 확인:
+
+```
 import tensorflow as tf
 print(tf.__version__)
 print("GPU:", tf.config.list_physical_devices('GPU'))
