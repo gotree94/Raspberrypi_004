@@ -6,7 +6,9 @@
 
 ## 라이브러리 설치하기
 
-
+```
+pip install torch opencv-python numpy
+```
 
 ## 라이브러리 및 파이썬 버전 확인
 
@@ -17,4 +19,8 @@
 
 ```
 
-
+```
+pip install torch==2.8.0
+pip install opencv-python==4.12.0
+PiP install numly==!.26.4
+```
