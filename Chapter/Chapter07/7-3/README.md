@@ -297,62 +297,87 @@ plt.show()
 ```python
 import os
 import fnmatch
-from sklearn.modet_selection import train-test-sptit
+from sklearn.model_selection import train_test_split
 import cv2
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-data-dir = os.path. join(os.path.dirname(--file--), "video")
+
+data_dir = os.path.join(os.path.dirname(__file__), "video")
 image_paths = []
 steering_angles = []
-for fiIename in os.listdir(data_dir)  :
-if  fnmatch. fnmatch(fitename,'+.  png") :
-image_paths.append(os.path.   join(data-dir, filename)) angte =int(filename[-7  : -4])
-steering_angles.  append(angle)
+
+for filename in os.listdir(data_dir):
+    if fnmatch.fnmatch(filename, "*.png"):
+        image_paths.append(os.path.join(data_dir, filename))
+        angle = int(filename[-7:-4])
+        steering_angles.append(angle)
+
 X_train, X_valid, y_train, y_valid = train_test_split(
-image_paths, steering_angles, test-size=O,2, random-state=42 )
-def my_imread(image_path) :
-image = cv2.imread(image_path)
-image = cv2.cvtColor(image,  cv2.C0LOR_BGR2RGB)
-return image
-def img_preprocess (image) :
-image = image.astype(np.float32)  /255.0 image = np.transpose(image,  (2, 0, L)) return image
-class Nvidial{odet(nn.Hodule) :
-def __init__(setf):
-superO . __init__o
-self .features = nn.Sequential(
-nn. Conv2d(3, 24, kernel-size=Sr stride=2), nn. ELU(inplace=True),
-nn.Conv2d(24, 36, kernel-size=5, stride=2), nn.ELU(inplace=True),
-nn.Conv2d(36, 48, kernel_size=S, stride=2), nn.ELIJ(inplace=True), nn.Conv2d(48, 64, kernel_size=3, stride=l),  nn.ELU(inplace=True), nn. Dropout (P=0 . 2) ,
-nn.Conv2d(64, 64, kernel_size=3, stride=l), nn.Elu(inplace=True), )
-self .flatten = nn. Flatteno
-with torch.no_gradO:
-tmp = 1or.6..eros(1,  3, 66, 200)
-f =self.features(tmp)
-flat_dim = f.numeto
-self .mlP = nn.Sequential(
-nn . Dropout (P=0. 2) ,
-nn.Linear(flat_dim,  1.00), nn.ELU(inplace=True), nn.Linear(100, 50), nn.ELU(inplace=True), nn.Linear(50,  r0), nn.ELU(inplace=True), nn.Linear(10,1),
+    image_paths, steering_angles, test_size=0.2, random_state=42
 )
-def forward(self, x): x --self.features(x) x =self.flatten(x)
-x =self.mlp(x) return x
-65    model = NvidiaModel0
-66    criterion = nn.MSELoss0
-67 optimizer = optim.Adam(model.  parameters0, lr= 1 e-3)
-68
-bv
-70
-11
-72
-/3
+
+def my_imread(image_path):
+    image = cv2.imread(image_path)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    return image
+
+def img_preprocess(image):
+    image = image.astype(np.float32) / 255.0
+    image = np.transpose(image, (2, 0, 1))
+    return image
+
+class NvidiaModel(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.features = nn.Sequential(
+            nn.Conv2d(3, 24, kernel_size=5, stride=2),
+            nn.ELU(inplace=True),
+            nn.Conv2d(24, 36, kernel_size=5, stride=2),
+            nn.ELU(inplace=True),
+            nn.Conv2d(36, 48, kernel_size=5, stride=2),
+            nn.ELU(inplace=True),
+            nn.Conv2d(48, 64, kernel_size=3, stride=1),
+            nn.ELU(inplace=True),
+            nn.Dropout(p=0.2),
+            nn.Conv2d(64, 64, kernel_size=3, stride=1),
+            nn.ELU(inplace=True),
+        )
+        self.flatten = nn.Flatten()
+
+        with torch.no_grad():
+            tmp = torch.zeros(1, 3, 66, 200)
+            f = self.features(tmp)
+            flat_dim = f.numel()
+
+        self.mlp = nn.Sequential(
+            nn.Dropout(p=0.2),
+            nn.Linear(flat_dim, 100),
+            nn.ELU(inplace=True),
+            nn.Linear(100, 50),
+            nn.ELU(inplace=True),
+            nn.Linear(50, 10),
+            nn.ELU(inplace=True),
+            nn.Linear(10, 1),
+        )
+
+    def forward(self, x):
+        x = self.features(x)
+        x = self.flatten(x)
+        x = self.mlp(x)
+        return x
+
+model = NvidiaModel()
+criterion = nn.MSELoss()
+optimizer = optim.Adam(model.parameters(), lr=1e-3)
+
 print(model)
-total-params = sum(p.numel0 for p in model.parameters0)
-trainable-params = sum(p.numel0 for p in model.parameters0 if p.requires_grad) print(f" total_params:  itotal_paramsl")
-print(f"trainable-params   : {trainable_params}")
+total_params = sum(p.numel() for p in model.parameters())
+trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+print(f"total_params: {total_params}")
+print(f"trainable_params: {trainable_params}")
 ```
-
-
 
 ##8.학습 데이터와 검증 데이터를 분리
 
