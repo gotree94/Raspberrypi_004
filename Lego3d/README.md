@@ -1,5 +1,5 @@
-# 3D Printing Design Optimization Report
-# : Lego-Compatible Component
+# 3D Printing Design Optimization Report <br>
+ : Lego-Compatible Component
 
 
 ![](001.png)
