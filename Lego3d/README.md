@@ -1,10 +1,15 @@
 # 3D Printing Design Optimization Report <br> : Lego-Compatible Component
 
+<br><br>
 
 ![](001.png)
 
+<br>
+
 ## Overview
 This report outlines design and production strategies for an 119mm x 119mm x 5mm Lego-compatible component. The goal is to maximize structural integrity and printing speed while maintaining compatibility with standard Lego dimensions.
+
+<br><br>
 
 ## 1. Structural Design Strategy
 To optimize performance, the design shifts from circular cutouts to a reinforced honeycomb pattern.
@@ -14,6 +19,8 @@ To optimize performance, the design shifts from circular cutouts to a reinforced
 *   **Uniform Wall Thickness:** The honeycomb design provides consistent rib thickness, eliminating stress concentration points inherent in circular cutouts.
 *   **Fillet Application:** Adding 1-2mm fillets to structural intersections enhances durability and reduces crack propagation.
 
+<br><br>
+
 ## 2. Comparative Analysis
 
 | Metric | Original Design (Circular) | Optimized Design (Honeycomb) | Reasoning |
@@ -22,6 +29,8 @@ To optimize performance, the design shifts from circular cutouts to a reinforced
 | **Structural Strength** | Moderate | ~20-30% Increase | Uniform stress distribution; efficient rib loading. |
 | **Filament Usage** | Base (100%) | ~5-10% Savings | Optimized infill density compensates for wall reinforcement. |
 | **Infill Pattern** | Standard Grid | Gyroid (15-20%) | Superior omnidirectional resistance to stress. |
+
+<br><br>
 
 ## 3. Slicer Settings for Implementation
 To ensure the 5mm thickness delivers maximum strength:
