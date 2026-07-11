@@ -1,5 +1,8 @@
 # 3D Printing Design Optimization Report: Lego-Compatible Component
 
+
+![](001.png)
+
 ## Overview
 This report outlines design and production strategies for an 119mm x 119mm x 5mm Lego-compatible component. The goal is to maximize structural integrity and printing speed while maintaining compatibility with standard Lego dimensions.
 
