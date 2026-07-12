@@ -55,50 +55,6 @@ if __name__ == "__main__":
 
 ```
 
-```python
-import cv2
-import numpy as np
-import time
-#import myservo
-#from gpiozero import DigitalOutputDevice
-#from gpiozero import PWMOutputDevice
-
-def nothing(x):
-    pass
-
-def main():
-    #pca9685 = myservo.PCA9685()
-    channel = 0
-
-    cv2.namedWindow('Controls')
-    cv2.resizeWindow('Controls', 500, 100)
-
-    cv2.createTrackbar('steering','Controls', 90, 180, nothing)
-    cv2.createTrackbar('Speed','Controls',  40, 700, nothing)
-
-    while True:
-        steering_value = cv2.getTrackbarPos('steering','Controls')
-        speed_value = cv2.getTrackbarPos('Speed','Controls')
-
-        servo_angle = pca9685.set_servo_angle(channel, steering_value)
-
-        controls_image = np.zeros((100, 500, 3), dtype=np.uint8)
-        cv2.putText(controls_image, f'Steering: {servo_angle}', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
-        cv2.putText(controls_image, f'Speed: {speed_value}', (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
-
-        cv2.imshow('Controls', controls_image)
-
-        key = cv2.waitKey(10) & 0xFF
-        if key == ord('q'):
-            break
-
-    cv2.destroyAllWindows()
-
-if __name__ == "__main__":
-    main()
-
-```
-
 ## 자동차 이동, 멈춤 기능 구현하기
 
 * 스페이스바를 한번 누르면 Go, 다시 한번 누르면 STOP이 되도록 이동, 멈춤 기능을 구현해 보도록 합니다.
