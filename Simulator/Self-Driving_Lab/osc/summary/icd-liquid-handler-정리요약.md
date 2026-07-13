@@ -3,6 +3,9 @@
 > 원본: `icd-liquid-handler-2-3.md` (DESIGN FINAL) 을 구조 중심으로 재정리한 요약본.  <br>
 > 세부 FDL XML·표는 원본을 참고하고, 이 문서는 "왜 이렇게 설계했는가"의 흐름을 따라가기 위한 지도 역할.
 
+
+![](img/liquid_handler_connection_sequence.png)
+
 ---
 
 ## 0. 이 문서가 규정하는 범위 (한 문장 요약)
