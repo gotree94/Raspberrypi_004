@@ -119,7 +119,7 @@ Adapter → Result(UUID)               → DispensedVolume + PressureQc
 
 ## 5. Domain Feature — `LiquidHandling/v1` 상세 (§6)
 
-
+![](img/08.png)
 
 ### 5.1 명령 단위: pass 1개 = command 1개 (per-well 아님)
 
@@ -185,7 +185,7 @@ Adapter → Result(UUID)               → DispensedVolume + PressureQc
 
 ## 6. 상태 소유권 분리 (§7) — 누가 무엇을 아는가
 
-![](img/08.png)
+![](img/09.png)
 
 | 상태 | 소유자 | 비고 |
 |---|---|---|
@@ -199,8 +199,6 @@ Adapter → Result(UUID)               → DispensedVolume + PressureQc
 ---
 
 ## 7. Capability → Registry 매핑 (§8) 핵심만
-
-![](img/09.png)
 
 서버가 노출하는 FDL/property가 스케줄러의 매칭·feasibility 판단 입력으로 어떻게 승격되는지 보여주는 표입니다. 핵심 흐름만 요약하면:
 
