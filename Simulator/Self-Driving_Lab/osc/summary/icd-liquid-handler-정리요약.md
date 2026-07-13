@@ -5,18 +5,6 @@
 
 ---
 
-![](img/01.png)
-![](img/02.png)
-![](img/03.png)
-![](img/04.png)
-![](img/05.png)
-![](img/06.png)
-![](img/07.png)
-![](img/08.png)
-![](img/09.png)
-![](img/10.png)
-
-
 ## 0. 이 문서가 규정하는 범위 (한 문장 요약)
 
 **오케스트레이터(②)와 리퀴드 핸들러 장비(③) 사이, SiLA2/gRPC로 오가는 "바이트 계약"만 규정.**
@@ -29,7 +17,7 @@
 ③ Liquid Handler 서버 ← FDL 선언을 실행, stroke로 분해 ─┘
 ④ 물리 핸들러(헤드·덱·리저버)
 ```
-
+![](img/01.png)
 ---
 
 ## 1. 핵심 설계 축 — 전체를 관통하는 4가지 원칙
@@ -50,6 +38,8 @@
 ## 2. 연결 계층 (§2~3) — "누구인지"와 "지금 쓸 권한이 있는지"의 분리
 
 두 계층이 독립적으로 동작합니다.
+
+![](img/02.png)
 
 | 계층 | 질문 | 메커니즘 |
 |---|---|---|
@@ -85,6 +75,8 @@
 
 ### 4.1 모든 실행 command는 Observable (분주는 수 초~수십 초 걸리므로)
 
+![](img/03.png)
+
 ```
 Adapter → Dispense(...)              → 서버가 구조 검증 후 UUID 반환
 Adapter → Subscribe ExecutionInfo(UUID) → status/progress/remaining time 스트림
@@ -104,6 +96,8 @@ Adapter → Result(UUID)               → DispensedVolume + PressureQc
 
 ### 4.2 Lock = lease (§5.2)
 
+![](img/04.png)
+
 1. `LockServer(LockIdentifier, Timeout)`로 배타 점유 획득
 2. 이후 모든 lock-protected command는 `LockIdentifier`를 메타데이터로 동반해야 함
 3. 완료/실패 시 `UnlockServer`
@@ -111,6 +105,8 @@ Adapter → Result(UUID)               → DispensedVolume + PressureQc
 5. 관리자 break-glass(강제 해제) 절차 존재 — 감사 로그 필수
 
 ### 4.3 취소·오류 회복 (§5.3)
+
+![](img/05.png)
 
 - **취소**: `CancelCommand`/`CancelAll` — 동일 Lock·동일 client에 귀속된 command만 대상. 물리적으로 안전하지 않으면 서버가 `OperationNotSupported`로 거부 가능.
 - **회복 가능 오류**: 즉시 종료 대신 `RecoverableErrors` property에 정지 대기 → 스케줄러가 서버가 광고한 continuation option(`Retry`/`SkipWell`/`Continue`/`Abort`) 중 선택.
@@ -121,10 +117,14 @@ Adapter → Result(UUID)               → DispensedVolume + PressureQc
 
 ### 5.1 명령 단위: pass 1개 = command 1개 (per-well 아님)
 
+![](img/06.png)
+
 - `Dispense` 하나가 볼륨 맵 전체(H×W)를 싣습니다. well 단위로 command를 쪼개지 않습니다.
 - 볼륨 맵 → 실제 stroke(흡입/토출 동작) 분해는 **서버 내부 책임**입니다. 96채널=1 stroke, 8채널=12 stroke, 1채널=96 stroke — 클라이언트는 몰라도 됩니다.
 
 ### 5.2 멀티 헤드 (2026-07-11 개정으로 추가된 부분)
+
+![](img/07.png)
 
 - `HeadSelector`로 어느 헤드(1채널/8채널)를 쓸지 지정합니다.
 - `VolumeMap`의 shape는 헤드와 무관하게 항상 타깃 ware 기하(H×W)입니다 — 헤드는 stroke 분해 방식만 바꿉니다.
@@ -132,10 +132,14 @@ Adapter → Result(UUID)               → DispensedVolume + PressureQc
 
 ### 5.3 볼륨 맵 데이터 타입 (§6.2)
 
+![](img/08.png)
+
 - SiLA2에 2D 배열 타입이 없어서 **행-우선 `List<List<Real>>`**로 표현 (단위 µL, 범위 제약 포함).
 - 크기는 항상 인라인 전송(Binary Transfer 미사용). ragged list 등은 물리 동작 전 오류로 거부.
 
 ### 5.4 주요 Command 요약 (§6.3)
+
+![](img/09.png)
 
 | Command | 역할 |
 |---|---|
@@ -150,6 +154,8 @@ Adapter → Result(UUID)               → DispensedVolume + PressureQc
 - 액체 특성은 별도 ID가 아니라 오케스트레이터가 해석한 numeric `LiquidProfile`을 인라인 전송합니다.
 
 ### 5.5 주요 Property (telemetry, §6.4)
+
+![](img/10.png)
 
 | Property | 용도 |
 |---|---|
