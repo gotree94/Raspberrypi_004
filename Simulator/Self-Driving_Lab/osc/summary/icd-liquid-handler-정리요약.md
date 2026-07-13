@@ -90,6 +90,8 @@ Adapter → Result(UUID)               → DispensedVolume + PressureQc
 - UUID 반환은 "서버가 admission 검증을 통과시켰다"는 뜻이지, 물리 실행이 시작됐다는 뜻이 아닙니다. 실제 실행 durability는 그 뒤 driver accept 시점에 성립합니다.
 - 진행 상황은 3개 채널로 분리되어 있습니다:
 
+![](img/06.png)
+
 | 채널 | 무엇을 알려주나 | 용도 |
 |---|---|---|
 | `ExecutionInfo` | 상태(waiting/running/finished) + 진행률 + 남은 시간 | 실행 UI, UUID 수명 관리 |
@@ -111,11 +113,13 @@ Adapter → Result(UUID)               → DispensedVolume + PressureQc
 - **취소**: `CancelCommand`/`CancelAll` — 동일 Lock·동일 client에 귀속된 command만 대상. 물리적으로 안전하지 않으면 서버가 `OperationNotSupported`로 거부 가능.
 - **회복 가능 오류**: 즉시 종료 대신 `RecoverableErrors` property에 정지 대기 → 스케줄러가 서버가 광고한 continuation option(`Retry`/`SkipWell`/`Continue`/`Abort`) 중 선택.
 
+![](img/07.png)
+
 ---
 
 ## 5. Domain Feature — `LiquidHandling/v1` 상세 (§6)
 
-![](img/06.png)
+
 
 ### 5.1 명령 단위: pass 1개 = command 1개 (per-well 아님)
 
@@ -148,8 +152,6 @@ Adapter → Result(UUID)               → DispensedVolume + PressureQc
 - 액체 특성은 별도 ID가 아니라 오케스트레이터가 해석한 numeric `LiquidProfile`을 인라인 전송합니다.
 
 ### 5.5 주요 Property (telemetry, §6.4)
-
-![](img/07.png)
 
 | Property | 용도 |
 |---|---|
