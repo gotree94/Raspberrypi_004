@@ -1,13 +1,13 @@
 # ICD 정리 요약 — Liquid Handler ↔ Task Scheduler (SiLA2)
 
-> 원본: `icd-liquid-handler-2-3.md` (DESIGN FINAL) 을 구조 중심으로 재정리한 요약본.
+> 원본: `icd-liquid-handler-2-3.md` (DESIGN FINAL) 을 구조 중심으로 재정리한 요약본.  <br>
 > 세부 FDL XML·표는 원본을 참고하고, 이 문서는 "왜 이렇게 설계했는가"의 흐름을 따라가기 위한 지도 역할.
 
 ---
 
 ## 0. 이 문서가 규정하는 범위 (한 문장 요약)
 
-**오케스트레이터(②)와 리퀴드 핸들러 장비(③) 사이, SiLA2/gRPC로 오가는 "바이트 계약"만 규정.**
+**오케스트레이터(②)와 리퀴드 핸들러 장비(③) 사이, SiLA2/gRPC로 오가는 "바이트 계약"만 규정.** <br>
 실험 DSL(①, `exp.Stack`, 텐서 API)은 범위 밖이며, ②의 `DeviceAdapter`가 그것을 SiLA2 command로 번역하는 지점부터가 이 문서의 관할.
 
 ```
