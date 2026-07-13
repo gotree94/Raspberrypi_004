@@ -71,13 +71,15 @@
 | **`LiquidHandling/v1`** | 필수 | **분주 능력의 본체** — `Dispense`/`Mix`/`Wash`/tip + 덱·리저버 telemetry |
 | 벤더 Feature | 선택 | LLD, air-gap 등 벤더 전용 확장 |
 
+![](img/04.png)
+
 ---
 
 ## 4. 공통 상호작용 계약 (§5)
 
 ### 4.1 모든 실행 command는 Observable (분주는 수 초~수십 초 걸리므로)
 
-![](img/04.png)
+
 
 ```
 Adapter → Dispense(...)              → 서버가 구조 검증 후 UUID 반환
