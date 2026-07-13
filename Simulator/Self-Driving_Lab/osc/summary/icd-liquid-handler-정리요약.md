@@ -149,7 +149,7 @@ Adapter → Result(UUID)               → DispensedVolume + PressureQc
 
 ### 5.5 주요 Property (telemetry, §6.4)
 
-![](img/10.png)
+![](img/07.png)
 
 | Property | 용도 |
 |---|---|
@@ -183,7 +183,7 @@ Adapter → Result(UUID)               → DispensedVolume + PressureQc
 
 ## 6. 상태 소유권 분리 (§7) — 누가 무엇을 아는가
 
-![](img/07.png)
+![](img/08.png)
 
 | 상태 | 소유자 | 비고 |
 |---|---|---|
@@ -198,7 +198,7 @@ Adapter → Result(UUID)               → DispensedVolume + PressureQc
 
 ## 7. Capability → Registry 매핑 (§8) 핵심만
 
-![](img/08.png)
+![](img/09.png)
 
 서버가 노출하는 FDL/property가 스케줄러의 매칭·feasibility 판단 입력으로 어떻게 승격되는지 보여주는 표입니다. 핵심 흐름만 요약하면:
 
@@ -211,7 +211,7 @@ Adapter → Result(UUID)               → DispensedVolume + PressureQc
 
 ## 8. 전체 실행 시퀀스 (§9) — 가장 압축된 요약
 
-![](img/09.png)
+![](img/10.png)
 
 ```
 [dry_run — 장비에 실제 명령 없음, read-only 조회만]
