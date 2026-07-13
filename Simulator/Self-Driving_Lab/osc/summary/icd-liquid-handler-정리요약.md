@@ -29,7 +29,7 @@
 | **① 단방향 명령** | 모든 command는 Orchestrator → Device로만 개시. 장비는 telemetry만 push | §2 명령 방향, <br> §5.1 Observable command |
 | **② single-writer** | 한 시점 한 장비에 lease 소유자는 정확히 1개 | `LockController` (§5.2) |
 | **③ 상태 소유권 분리** | "무엇을 아는가"를 물리 장비(Device)와 논리 정체성(Orchestrator)이 절반씩 나눠 가짐 | §7 |
-| **④ 장비는 catalog를 모른다** | 장비는 ware의 의미·내용물·기하 카탈로그를 갖지 않고, 그때그때 인라인으로 전달받은 좌표·profile만 검증 | §6.3, §7, §8 |
+| **④ 장비는 catalog를 모른다** | 장비는 ware의 의미·내용물·기하 카탈로그를 갖지 않고,  <br> 그때그때 인라인으로 전달받은 좌표·profile만 검증 | §6.3, §7, §8 |
 
 이 네 가지를 기억하면 세부 조항들이 "왜 이렇게까지 하나"가 아니라 자연스러운 귀결로 읽힙니다.
 
