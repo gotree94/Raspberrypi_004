@@ -79,7 +79,7 @@
 
 ### 4.1 모든 실행 command는 Observable (분주는 수 초~수십 초 걸리므로)
 
-
+![](img/05.png)
 
 ```
 Adapter → Dispense(...)              → 서버가 구조 검증 후 UUID 반환
@@ -100,8 +100,6 @@ Adapter → Result(UUID)               → DispensedVolume + PressureQc
 
 ### 4.2 Lock = lease (§5.2)
 
-![](img/05.png)
-
 1. `LockServer(LockIdentifier, Timeout)`로 배타 점유 획득
 2. 이후 모든 lock-protected command는 `LockIdentifier`를 메타데이터로 동반해야 함
 3. 완료/실패 시 `UnlockServer`
@@ -110,8 +108,6 @@ Adapter → Result(UUID)               → DispensedVolume + PressureQc
 
 ### 4.3 취소·오류 회복 (§5.3)
 
-
-
 - **취소**: `CancelCommand`/`CancelAll` — 동일 Lock·동일 client에 귀속된 command만 대상. 물리적으로 안전하지 않으면 서버가 `OperationNotSupported`로 거부 가능.
 - **회복 가능 오류**: 즉시 종료 대신 `RecoverableErrors` property에 정지 대기 → 스케줄러가 서버가 광고한 continuation option(`Retry`/`SkipWell`/`Continue`/`Abort`) 중 선택.
 
@@ -119,16 +115,14 @@ Adapter → Result(UUID)               → DispensedVolume + PressureQc
 
 ## 5. Domain Feature — `LiquidHandling/v1` 상세 (§6)
 
-### 5.1 명령 단위: pass 1개 = command 1개 (per-well 아님)
-
 ![](img/06.png)
+
+### 5.1 명령 단위: pass 1개 = command 1개 (per-well 아님)
 
 - `Dispense` 하나가 볼륨 맵 전체(H×W)를 싣습니다. well 단위로 command를 쪼개지 않습니다.
 - 볼륨 맵 → 실제 stroke(흡입/토출 동작) 분해는 **서버 내부 책임**입니다. 96채널=1 stroke, 8채널=12 stroke, 1채널=96 stroke — 클라이언트는 몰라도 됩니다.
 
 ### 5.2 멀티 헤드 (2026-07-11 개정으로 추가된 부분)
-
-![](img/07.png)
 
 - `HeadSelector`로 어느 헤드(1채널/8채널)를 쓸지 지정합니다.
 - `VolumeMap`의 shape는 헤드와 무관하게 항상 타깃 ware 기하(H×W)입니다 — 헤드는 stroke 분해 방식만 바꿉니다.
@@ -136,14 +130,10 @@ Adapter → Result(UUID)               → DispensedVolume + PressureQc
 
 ### 5.3 볼륨 맵 데이터 타입 (§6.2)
 
-![](img/08.png)
-
 - SiLA2에 2D 배열 타입이 없어서 **행-우선 `List<List<Real>>`**로 표현 (단위 µL, 범위 제약 포함).
 - 크기는 항상 인라인 전송(Binary Transfer 미사용). ragged list 등은 물리 동작 전 오류로 거부.
 
 ### 5.4 주요 Command 요약 (§6.3)
-
-![](img/09.png)
 
 | Command | 역할 |
 |---|---|
@@ -193,6 +183,8 @@ Adapter → Result(UUID)               → DispensedVolume + PressureQc
 
 ## 6. 상태 소유권 분리 (§7) — 누가 무엇을 아는가
 
+![](img/07.png)
+
 | 상태 | 소유자 | 비고 |
 |---|---|---|
 | 물리 덱 구성(id·calibration·slot) | **Device** | 장비의 fact |
@@ -206,6 +198,8 @@ Adapter → Result(UUID)               → DispensedVolume + PressureQc
 
 ## 7. Capability → Registry 매핑 (§8) 핵심만
 
+![](img/08.png)
+
 서버가 노출하는 FDL/property가 스케줄러의 매칭·feasibility 판단 입력으로 어떻게 승격되는지 보여주는 표입니다. 핵심 흐름만 요약하면:
 
 - `LiquidHandling/v1` 존재 → `capability="liquid_handling"`으로 장비 매칭
@@ -216,6 +210,8 @@ Adapter → Result(UUID)               → DispensedVolume + PressureQc
 ---
 
 ## 8. 전체 실행 시퀀스 (§9) — 가장 압축된 요약
+
+![](img/09.png)
 
 ```
 [dry_run — 장비에 실제 명령 없음, read-only 조회만]
