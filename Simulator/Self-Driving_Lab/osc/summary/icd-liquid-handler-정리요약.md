@@ -56,6 +56,8 @@
 
 **경계:** 이 절은 오케스트레이터 ↔ 장비 간 인증만 다룹니다. 사용자 레벨 인증(RBAC 등)은 ①↔② 경계의 몫입니다.
 
+![](img/03.png)
+
 ---
 
 ## 3. 서버가 노출하는 Feature 목록 (§4)
@@ -75,7 +77,7 @@
 
 ### 4.1 모든 실행 command는 Observable (분주는 수 초~수십 초 걸리므로)
 
-![](img/03.png)
+![](img/04.png)
 
 ```
 Adapter → Dispense(...)              → 서버가 구조 검증 후 UUID 반환
@@ -96,7 +98,7 @@ Adapter → Result(UUID)               → DispensedVolume + PressureQc
 
 ### 4.2 Lock = lease (§5.2)
 
-![](img/04.png)
+![](img/05.png)
 
 1. `LockServer(LockIdentifier, Timeout)`로 배타 점유 획득
 2. 이후 모든 lock-protected command는 `LockIdentifier`를 메타데이터로 동반해야 함
@@ -106,7 +108,7 @@ Adapter → Result(UUID)               → DispensedVolume + PressureQc
 
 ### 4.3 취소·오류 회복 (§5.3)
 
-![](img/05.png)
+
 
 - **취소**: `CancelCommand`/`CancelAll` — 동일 Lock·동일 client에 귀속된 command만 대상. 물리적으로 안전하지 않으면 서버가 `OperationNotSupported`로 거부 가능.
 - **회복 가능 오류**: 즉시 종료 대신 `RecoverableErrors` property에 정지 대기 → 스케줄러가 서버가 광고한 continuation option(`Retry`/`SkipWell`/`Continue`/`Abort`) 중 선택.
