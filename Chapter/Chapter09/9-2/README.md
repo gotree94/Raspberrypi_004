@@ -124,6 +124,7 @@ traffic_lights_yellow
 traffic-lights-greenl
 ```
 
+---
 
 ## 로컬 학습 방법
 
@@ -179,6 +180,70 @@ dataset/
 
   * ai_car_model.pt 모델 만들기
 
+---
+
+## Google Colab에서 YOLO 학습하기
+
+### 1. Colab 접속
+
+https://colab.research.google.com
+
+### 2. GPU 설정
+
+런타임 → 런타임 유형 변경 → GPU 선택
+
+### 3. 학습 코드
+
+```
+# 1. ultralytics 설치
+!pip install ultralytics
+
+# 2. Google Drive 마운트
+from google.colab import drive
+drive.mount('/content/drive')
+
+# 3. 데이터셋 경로 설정
+%cd /content/drive/MyDrive/yolo_dataset
+
+# 4. 학습 실행
+from ultralytics import YOLO
+
+model = YOLO('yolov8n.pt')
+model.train(
+    data='my_dataset.yaml',
+    epochs=50,
+    imgsz=640,
+    batch=16
+)
+```
+
+### 4. 학습 결과 확인
+
+```
+# 학습 결과 폴더 확인
+!ls runs/detect/train/
+
+# 학습 그래프 보기
+from IPython.display import Image
+Image(filename='runs/detect/train/results.png')
+```
+
+### 5. 모델 다운로드
+
+```
+# Google Drive로 복사
+!cp runs/detect/train/weights/best.pt /content/drive/MyDrive/
+Google Drive 디렉토리 구조
+MyDrive/
+└── yolo_dataset/
+    ├── my_dataset.yaml
+    ├── images/
+    │   ├── train/
+    │   └── val/
+    └── labels/
+        ├── train/
+        └── val/
+```
 
 ---
 
