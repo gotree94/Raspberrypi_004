@@ -811,6 +811,26 @@ if val_mae is not None:
 
 * 예시: python 9_make_model.py otsu
 
+### otsu
+
+![](9002.png)
+
+
+### adaptive
+
+![](9003.png)
+
+
+# invert_clahe
+
+![](9004.png)
+
+
+# resized
+
+![](9005.png)
+
+
 ```
 (base) C:\Users\Administrator\Desktop\recordings>python 9_make_model.py otsu
 Data source : otsu
