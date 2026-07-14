@@ -137,7 +137,7 @@ model = YOLO('yolov8n.pt')
 model.train(data='my_dataset.yaml', epochs=50, imgsz=640)
 ```
 
-* 데이터셋 준비
+* 데이터셋 준비 : /path/to/dataset 업데이트 후 사용
 
 ```
 my_dataset.yaml:
