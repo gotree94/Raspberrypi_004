@@ -134,6 +134,7 @@ def img_preprocess(image):
     blurred = cv2.GaussianBlur(inv_eq, (3, 3), 0)
     resized = cv2.resize(blurred, (200, 66))
     img = resized.astype(np.float32) / 255.0
+    img = np.stack([img, img, img], axis=2)
     return img
 
 def main():
