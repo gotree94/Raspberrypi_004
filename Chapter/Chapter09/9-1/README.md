@@ -82,6 +82,67 @@ if __name__ == "__main__":
         cv2.destroyAllWindows()
 ```
 
+```
+#import mycamera
+import cv2
+from ultralytics import YOLO
+
+def draw_detections(frame, results, names):
+    if results is None:
+        return frame
+    for b in results.boxes:
+        cls_id = int(b.cls.item())
+        conf = float(b.conf.item())
+        x1, y1, x2, y2 = map(int, b.xyxy[0].tolist())
+        cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+        label = f"{names[cls_id]} {conf:.2f}"
+        cv2.putText(frame, label, (x1, max(10, y1 - 6)),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+    return frame
+
+if __name__ == "__main__":
+    model = YOLO("yolov8n.pt")
+    #camera = mycamera.MyPiCamera(640, 480)
+    camera = cv2.VideoCapture(0)
+    camera.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+    camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+    try:
+        while camera.isOpened():
+            ok, frame = camera.read()
+            if not ok:
+                break
+            frame = cv2.flip(frame, -1)
+            results = model(frame, imgsz=320, conf=0.5, iou=0.5, device='cpu')[0]
+            out = draw_detections(frame, results, model.names)
+            cv2.imshow('YOLOv8 (mycamera)', out)
+            if cv2.waitKey(1) == ord('q'):
+                break
+    finally:
+        try:
+            camera.release()
+        except Exception:
+            pass
+        cv2.destroyAllWindows()
+```
+
+```
+Downloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolov8n.pt to 'yolov8n.pt': 100% ━━━━━━━━━━━━ 6.2MB 7.3MB/s 0.9s
+Traceback (most recent call last):
+
+0: 256x320 (no detections), 82.7ms
+Speed: 2.1ms preprocess, 82.7ms inference, 1.0ms postprocess per image at shape (1, 3, 256, 320)
+
+0: 256x320 (no detections), 33.0ms
+Speed: 1.0ms preprocess, 33.0ms inference, 0.5ms postprocess per image at shape (1, 3, 256, 320)
+
+0: 256x320 (no detections), 28.4ms
+Speed: 0.9ms preprocess, 28.4ms inference, 0.6ms postprocess per image at shape (1, 3, 256, 320)
+
+0: 256x320 (no detections), 29.8ms
+Speed: 0.7ms preprocess, 29.8ms inference, 0.6ms postprocess per image at shape (1, 3, 256, 320)
+```
+
+
 ## 검출된 객체로 조건 설정하여 부저 울리기
 
 * 사람이 검출되면 자동차의 부저를 울리는 코드를 작성합니다.
