@@ -821,12 +821,12 @@ if val_mae is not None:
 ![](9003.png)
 
 
-# invert_clahe
+### invert_clahe
 
 ![](9004.png)
 
 
-# resized
+### resized
 
 ![](9005.png)
 
