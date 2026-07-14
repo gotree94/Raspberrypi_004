@@ -111,7 +111,7 @@ if __name__ == "__main__":
             ok, frame = camera.read()
             if not ok:
                 break
-            frame = cv2.flip(frame, -1)
+            #frame = cv2.flip(frame, -1)
             results = model(frame, imgsz=320, conf=0.5, iou=0.5, device='cpu')[0]
             out = draw_detections(frame, results, model.names)
             cv2.imshow('YOLOv8 (mycamera)', out)
