@@ -29,6 +29,25 @@ if __name__ == "__main__":
     main()
 ```
 
+```
+import torch
+
+MODEL_PATH = "model-20260714_231443\\lane_navigation_final.torchscript"
+
+def main():
+    model = torch.jit.load(MODEL_PATH, map_location="cpu")
+    model.eval()
+    torch.set_num_threads(1)
+    x = torch.zeros(1, 3, 66, 200, dtype=torch.float32)
+    with torch.no_grad():
+        y = model(x)
+    print('model_loaded:', type(model).__name__)
+    print("dry_run_output: ", float(y.view(-1)[0].item()))
+
+if __name__ == "__main__":
+    main()
+```
+
 ## 불로온 모델을 이용해서 각도 예측하기
 
 * 8_3_2.py
@@ -88,5 +107,69 @@ def main():
 if __name__ == "__main__":
     main()
 ```
+
+```
+import mycamera
+import torch
+import cv2
+import numpy as np
+
+MODEL_PATH = "model-20260714_231443\\lane_navigation_final.torchscript"
+
+clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+
+def img_preprocess(image):
+    h, w, c = image.shape
+    image = image[:h//2, :, :]
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    gray_eq = clahe.apply(gray)
+    inv = 255 - gray_eq
+    inv_eq = clahe.apply(inv)
+    blurred = cv2.GaussianBlur(inv_eq, (3, 3), 0)
+    resized = cv2.resize(blurred, (200, 66))
+    img = resized.astype(np.float32) / 255.0
+    return img
+
+def main():
+    camera = mycamera.MyPiCamera(640, 480)
+    model = torch.jit.load(MODEL_PATH, map_location="cpu")
+    model.eval()
+    torch.set_num_threads(1)
+
+    try:
+        while camera.isOpened():
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord('q'):
+                break
+
+            ok, image = camera.read()
+            if not ok:
+                continue
+
+            image = cv2.flip(image, -1)
+
+            pre = img_preprocess(image)
+            x = pre.transpose(2, 0, 1)
+            x = np.expand_dims(x, axis=0)
+            x_tensor = torch.from_numpy(x).float()
+
+            with torch.no_grad():
+                y = model(x_tensor)
+
+            angle = int(float(y.item()))
+            print('predict angle:', angle)
+
+            cv2.imshow("camera", image)
+            cv2.imshow('preprocess', (pre * 255).astype(np.uint8))
+
+    finally:
+        cv2.destroyAllWindows()
+
+if __name__ == "__main__":
+    main()
+```
+
+
+
 
 
