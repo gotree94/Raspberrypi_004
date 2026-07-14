@@ -82,7 +82,7 @@ if __name__ == "__main__":
         cv2.destroyAllWindows()
 ```
 
-```
+```python
 #import mycamera
 import cv2
 from ultralytics import YOLO
