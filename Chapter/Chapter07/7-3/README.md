@@ -136,6 +136,7 @@ PyTorch test: OK
 * 코드 작성 후 [3_data_shck.py] 이름으로 저장합니다.
 * 이미지는 "video" 폴더 아래로 이동합니다.
 
+![](001.png)
 
 * 3_data_chck.py
 
@@ -179,6 +180,8 @@ plt.show()
 * 조향각이 어떤 분포를 가젺는지 히스토그램으로 시작화하는 코드를 작성합니다.
 * 코드 작성 후[4_Street_angle_histogram.py] 이름으로 저장합니다.
 
+![](002.png)
+
 * 4_Steering_angle_histogram.py
 
 ```python
@@ -217,6 +220,8 @@ plt.show()
 * 학습용(train)과 검증용(validation)  epdlxjfh skdnrh,
 * 두 데이터의 조향각 분포를 히스토그램으로 비교하는 코드입니다.
 * 증, 데이터가 균등하게 분리되었는지 시각적으로 확인하는 역할을 합니다.
+
+![](003.png)
 
 * 5_Train_validation_split.py
 
@@ -259,6 +264,8 @@ plt.show()
 * 이미지를 정규화하여 학습 효과를 높여보도록 합니다.
 * 정규화 과정은 쉽게 말해 데이터의 스케일을 일정하게 맞추는 작업으로, <br>
   픽셀값의 범위를 조정하여 모델이 이미지의특징을 더 안정적으로 학습할 수 있도록 도와줍니다.
+
+![](004.png)
 
 
 * 6_Image_input_and_normalization_functions.py
@@ -319,6 +326,8 @@ plt.show()
 
 * 그래픽카드 제조회사인 NVIDIA에서 차선 인식을 위한 논문에서 제공된 모델을 이용하여 학습모델을 구성합니다.
 * NVIDIA 자율주행 구조를 따른 딥러닝 모델을 구성하고 모델의 전체 구조를 출력하는기능을 코드를 작성합니다.
+
+![](005.png)
 
 * 7_NVIDIA_model_configuration.py
 
