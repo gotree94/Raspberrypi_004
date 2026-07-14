@@ -56,6 +56,48 @@ if __name__ == "__main__":
         cv2.destroyAllWindows()
 
 ```
+```
+#import mycamera
+import cv2
+from ultralytics import YOLO
+
+def draw_detections(frame, results, names):
+    if results is None:
+        return frame
+    for b in results.boxes:
+        cls_id = int(b.cls.item())
+        conf = float(b.conf.item())
+        x1, y1, x2, y2 = map(int, b.xyxy[0].tolist())
+        cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+        label = f"{names[cls_id]} {conf:.2f}"
+        cv2.putText(frame, label, (x1, max(10, y1 - 6)),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+    return frame
+
+if __name__ == "__main__":
+    model = YOLO("ai_car_model.pt")
+    #camera = mycamera.MyPiCamera(640, 480)
+    camera = cv2.VideoCapture(0)
+    camera.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+    camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)  
+    try:
+        while camera.isOpened():
+            ok, frame = camera.read()
+            if not ok:
+                break
+            frame = cv2.flip(frame, -1)
+            results = model(frame, imgsz=320, conf=0.5, iou=0.5, device='cpu')[0]
+            out = draw_detections(frame, results, model.names)
+            cv2.imshow("YOLOv8 (mycamera)", out)
+            if cv2.waitKey(1) == ord('q'):
+                break
+    finally:
+        try:
+            camera.release()
+        except Exception:
+            pass
+        cv2.destroyAllWindows()
+```
 
 ## 자율주행에 객체 인식 모델 적용해서 주행하기
 
