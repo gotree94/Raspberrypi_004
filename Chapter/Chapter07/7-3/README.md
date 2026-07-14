@@ -812,7 +812,7 @@ if val_mae is not None:
 * 예시: python 9_make_model.py otsu
 
 
-![](Chapter/Chapter07/7-3/recordings/processed/training_comparison.png)
+![](recordings/processed/training_comparison.png)
 
 
 ### otsu : 히스토그램을 분석하여 최적의 임계값을 자동으로 찾는 이진화 기법
