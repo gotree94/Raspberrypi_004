@@ -811,8 +811,16 @@ if val_mae is not None:
 
 * 예시: python 9_make_model.py otsu
 
-
 ![](recordings/processed/training_comparison.png)
+
+* 주요 관찰:
+   * otsu, adaptive: 2epoch 이후 과적합 (train_loss는 떨어지지만 val_loss/MAE 악화)
+   * invert_clahe: 가장 안정적. val_loss가 지속적으로 감소하고 최종 MAE도 9.384deg로 양호
+   * resized: 중간 성능. 4epoch 이후 과적합 경향
+* 추천:
+   * 학습 데이터가 더 필요함 (76장으로는 부족)
+   * invert_clahe 방식으로 학습하는 것이 가장 효과적
+   * 추가 학습 시 epochs를 늘리고 early stopping을 적용하면 더 좋음
 
 
 ### otsu : 히스토그램을 분석하여 최적의 임계값을 자동으로 찾는 이진화 기법
