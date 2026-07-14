@@ -215,7 +215,7 @@ if __name__ == "__main__":
 import cv2
 import torch
 from ultralytics import YOLO
-from gpiozero import PWMOutputDevice
+#from gpiozero import PWMOutputDevice
 import time
 
 def beep_twice(buzzer):
@@ -246,7 +246,7 @@ if __name__ == "__main__":
     camera = cv2.VideoCapture(0)
     camera.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
     camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-    buzzer = PWMOutputDevice(12)
+    #buzzer = PWMOutputDevice(12)
     prev_detected = False
 
     try:
