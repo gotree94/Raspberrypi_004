@@ -9,6 +9,10 @@
 
 * 9_1_1.py
 
+```Bash
+pip install ultralytics
+```
+
 ```python
 import cv2
 import torch
