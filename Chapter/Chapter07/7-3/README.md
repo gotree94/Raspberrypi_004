@@ -797,6 +797,124 @@ if val_mae is not None:
     plt.show()
 ```
 
+---
+
+| 옵션	| 설명 | 
+|:-------:|:-------:|
+| video	| 원본 이미지 (200x66으로 리사이즈 후 학습) | 
+| cropped	| 크롭만 된 이미지 (200x66으로 리사이즈 후 학습) | 
+| invert	| 반전 resized 이미지 | 
+| otsu	| Otsu 이진화 resized 이미지 | 
+| adaptive	| 적응형 이진화 resized 이미지 | 
+| invert_clahe	| 반전+CLAHE resized 이미지 | 
+| resized	| 기존 BGR resized 이미지 | 
+
+* 예시: python 9_make_model.py otsu
+
+```
+(base) C:\Users\Administrator\Desktop\recordings>python 9_make_model.py otsu
+Data source : otsu
+Directory   : C:\Users\Administrator\Desktop\recordings\processed\filter_otsu_resized
+Resize      : False
+Device      : cuda
+Epoch 01/10 | train_loss=863.36552 | val_loss=421.29677 | val_MAE(deg)=17.427
+Saved BEST checkpoint -> C:\Users\Administrator\Desktop\recordings\model-20260714_225933\lane_navigation_best.pt
+Epoch 02/10 | train_loss=311.09979 | val_loss=336.49566 | val_MAE(deg)=13.942
+Saved BEST checkpoint -> C:\Users\Administrator\Desktop\recordings\model-20260714_225933\lane_navigation_best.pt
+Epoch 03/10 | train_loss=11.58982 | val_loss=422.78779 | val_MAE(deg)=15.815
+Epoch 04/10 | train_loss=8.47696 | val_loss=398.29645 | val_MAE(deg)=15.674
+[scheduler] LR reduced: 0.001000 -> 0.000500
+Epoch 05/10 | train_loss=7.51582 | val_loss=379.09842 | val_MAE(deg)=15.472
+Epoch 06/10 | train_loss=6.30847 | val_loss=419.61799 | val_MAE(deg)=16.230
+Epoch 07/10 | train_loss=6.17069 | val_loss=411.89536 | val_MAE(deg)=16.298
+[scheduler] LR reduced: 0.000500 -> 0.000250
+Epoch 08/10 | train_loss=5.86469 | val_loss=422.63263 | val_MAE(deg)=16.519
+Epoch 09/10 | train_loss=5.32162 | val_loss=409.38526 | val_MAE(deg)=16.402
+Epoch 10/10 | train_loss=5.14254 | val_loss=420.05490 | val_MAE(deg)=16.639
+Saved final weights -> C:\Users\Administrator\Desktop\recordings\model-20260714_225933\lane_navigation_final.pt
+Saved TorchScript -> C:\Users\Administrator\Desktop\recordings\model-20260714_225933\lane_navigation_final.torchscript
+Saved history -> C:\Users\Administrator\Desktop\recordings\model-20260714_225933\history.pickle
+Training complete. Model saved to: C:\Users\Administrator\Desktop\recordings\model-20260714_225933
+
+(base) C:\Users\Administrator\Desktop\recordings>python 9_make_model.py adaptive
+Data source : adaptive
+Directory   : C:\Users\Administrator\Desktop\recordings\processed\filter_adaptive_resized
+Resize      : False
+Device      : cuda
+Epoch 01/10 | train_loss=925.41358 | val_loss=456.64700 | val_MAE(deg)=17.817
+Saved BEST checkpoint -> C:\Users\Administrator\Desktop\recordings\model-20260714_230654\lane_navigation_best.pt
+Epoch 02/10 | train_loss=534.52463 | val_loss=420.56408 | val_MAE(deg)=13.759
+Saved BEST checkpoint -> C:\Users\Administrator\Desktop\recordings\model-20260714_230654\lane_navigation_best.pt
+Epoch 03/10 | train_loss=490.11325 | val_loss=466.07512 | val_MAE(deg)=17.613
+Epoch 04/10 | train_loss=32.46892 | val_loss=523.56925 | val_MAE(deg)=18.666
+[scheduler] LR reduced: 0.001000 -> 0.000500
+Epoch 05/10 | train_loss=7.65656 | val_loss=495.20087 | val_MAE(deg)=18.472
+Epoch 06/10 | train_loss=6.23273 | val_loss=515.51006 | val_MAE(deg)=18.799
+Epoch 07/10 | train_loss=6.00619 | val_loss=498.15295 | val_MAE(deg)=18.527
+[scheduler] LR reduced: 0.000500 -> 0.000250
+Epoch 08/10 | train_loss=5.83031 | val_loss=499.60054 | val_MAE(deg)=18.475
+Epoch 09/10 | train_loss=5.34607 | val_loss=485.40133 | val_MAE(deg)=18.304
+Epoch 10/10 | train_loss=5.23970 | val_loss=487.39607 | val_MAE(deg)=18.371
+Saved final weights -> C:\Users\Administrator\Desktop\recordings\model-20260714_230654\lane_navigation_final.pt
+Saved TorchScript -> C:\Users\Administrator\Desktop\recordings\model-20260714_230654\lane_navigation_final.torchscript
+Saved history -> C:\Users\Administrator\Desktop\recordings\model-20260714_230654\history.pickle
+Training complete. Model saved to: C:\Users\Administrator\Desktop\recordings\model-20260714_230654
+
+(base) C:\Users\Administrator\Desktop\recordings>python 9_make_model.py invert_clahe
+Data source : invert_clahe
+Directory   : C:\Users\Administrator\Desktop\recordings\processed\filter_invert_clahe_resized
+Resize      : False
+Device      : cuda
+Epoch 01/10 | train_loss=936.88717 | val_loss=452.02532 | val_MAE(deg)=17.924
+Saved BEST checkpoint -> C:\Users\Administrator\Desktop\recordings\model-20260714_231443\lane_navigation_best.pt
+Epoch 02/10 | train_loss=535.92299 | val_loss=414.64728 | val_MAE(deg)=13.483
+Saved BEST checkpoint -> C:\Users\Administrator\Desktop\recordings\model-20260714_231443\lane_navigation_best.pt
+Epoch 03/10 | train_loss=535.38634 | val_loss=361.89327 | val_MAE(deg)=14.838
+Saved BEST checkpoint -> C:\Users\Administrator\Desktop\recordings\model-20260714_231443\lane_navigation_best.pt
+Epoch 04/10 | train_loss=435.76399 | val_loss=118.43836 | val_MAE(deg)=8.163
+Saved BEST checkpoint -> C:\Users\Administrator\Desktop\recordings\model-20260714_231443\lane_navigation_best.pt
+Epoch 05/10 | train_loss=57.17896 | val_loss=176.96192 | val_MAE(deg)=10.254
+Epoch 06/10 | train_loss=12.35316 | val_loss=177.80597 | val_MAE(deg)=10.996
+[scheduler] LR reduced: 0.001000 -> 0.000500
+Epoch 07/10 | train_loss=9.68888 | val_loss=142.55496 | val_MAE(deg)=10.216
+Epoch 08/10 | train_loss=7.78469 | val_loss=135.34273 | val_MAE(deg)=9.826
+Epoch 09/10 | train_loss=7.11782 | val_loss=130.05678 | val_MAE(deg)=9.866
+[scheduler] LR reduced: 0.000500 -> 0.000250
+Epoch 10/10 | train_loss=6.55198 | val_loss=124.21238 | val_MAE(deg)=9.384
+Saved final weights -> C:\Users\Administrator\Desktop\recordings\model-20260714_231443\lane_navigation_final.pt
+Saved TorchScript -> C:\Users\Administrator\Desktop\recordings\model-20260714_231443\lane_navigation_final.torchscript
+Saved history -> C:\Users\Administrator\Desktop\recordings\model-20260714_231443\history.pickle
+Training complete. Model saved to: C:\Users\Administrator\Desktop\recordings\model-20260714_231443
+
+(base) C:\Users\Administrator\Desktop\recordings>python 9_make_model.py resized
+Data source : resized
+Directory   : C:\Users\Administrator\Desktop\recordings\processed\resized
+Resize      : False
+Device      : cuda
+Epoch 01/10 | train_loss=929.32751 | val_loss=437.17662 | val_MAE(deg)=17.480
+Saved BEST checkpoint -> C:\Users\Administrator\Desktop\recordings\model-20260714_232204\lane_navigation_best.pt
+Epoch 02/10 | train_loss=534.88974 | val_loss=391.72679 | val_MAE(deg)=13.103
+Saved BEST checkpoint -> C:\Users\Administrator\Desktop\recordings\model-20260714_232204\lane_navigation_best.pt
+Epoch 03/10 | train_loss=529.66051 | val_loss=282.73683 | val_MAE(deg)=12.421
+Saved BEST checkpoint -> C:\Users\Administrator\Desktop\recordings\model-20260714_232204\lane_navigation_best.pt
+Epoch 04/10 | train_loss=463.73790 | val_loss=177.86579 | val_MAE(deg)=9.389
+Saved BEST checkpoint -> C:\Users\Administrator\Desktop\recordings\model-20260714_232204\lane_navigation_best.pt
+Epoch 05/10 | train_loss=354.63220 | val_loss=184.35933 | val_MAE(deg)=10.348
+Epoch 06/10 | train_loss=208.61509 | val_loss=223.24591 | val_MAE(deg)=11.358
+[scheduler] LR reduced: 0.001000 -> 0.000500
+Epoch 07/10 | train_loss=54.75690 | val_loss=297.95400 | val_MAE(deg)=14.794
+Epoch 08/10 | train_loss=13.87884 | val_loss=301.51042 | val_MAE(deg)=14.864
+Epoch 09/10 | train_loss=11.15753 | val_loss=308.43822 | val_MAE(deg)=14.409
+[scheduler] LR reduced: 0.000500 -> 0.000250
+Epoch 10/10 | train_loss=9.58223 | val_loss=310.37008 | val_MAE(deg)=14.172
+Saved final weights -> C:\Users\Administrator\Desktop\recordings\model-20260714_232204\lane_navigation_final.pt
+Saved TorchScript -> C:\Users\Administrator\Desktop\recordings\model-20260714_232204\lane_navigation_final.torchscript
+Saved history -> C:\Users\Administrator\Desktop\recordings\model-20260714_232204\history.pickle
+Training complete. Model saved to: C:\Users\Administrator\Desktop\recordings\model-20260714_232204
+
+(base) C:\Users\Administrator\Desktop\recordings>
+```
+
 
 
 
