@@ -48,6 +48,12 @@ if __name__ == "__main__":
     main()
 ```
 
+```
+(base) C:\Users\Administrator\Desktop\recordings>python 8_3_1.py
+model_loaded: RecursiveScriptModule
+dry_run_output:  -35.81206130981445
+```
+
 ## 불로온 모델을 이용해서 각도 예측하기
 
 * 8_3_2.py
