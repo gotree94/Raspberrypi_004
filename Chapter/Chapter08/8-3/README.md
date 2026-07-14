@@ -180,6 +180,15 @@ if __name__ == "__main__":
     main()
 ```
 
+```
+(base) C:\Users\Administrator\Desktop\recordings>python 8_3_2.py
+predict angle: 102
+predict angle: 105
+predict angle: 104
+predict angle: 105
+predict angle: 104
+```
+
 
 
 
