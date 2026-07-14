@@ -23,7 +23,16 @@ print("cv2:", cv2.__version__)
 print("torch:", torch.__version__)
 print("ultralytics:", ultralytics.__version__)
 print("numpy:", numpy.__version__)
+```
 
+```
+Creating new Ultralytics Settings v0.0.6 file
+View Ultralytics Settings with 'yolo settings' or at 'C:\Users\Administrator\AppData\Roaming\Ultralytics\settings.json'
+Update Settings with 'yolo settings key=value', i.e. 'yolo settings runs_dir=path/to/dir'. For help see https://docs.ultralytics.com/quickstart/#ultralytics-settings.
+cv2: 4.11.0
+torch: 2.6.0+cu124
+ultralytics: 8.4.95
+numpy: 1.26.4
 ```
 
 ## 기본 예제로 객체 검출하기
