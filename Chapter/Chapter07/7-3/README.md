@@ -137,7 +137,7 @@ PyTorch test: OK
 * 이미지는 "video" 폴더 아래로 이동합니다.
 
 
-* 3_data_shck.py
+* 3_data_chck.py
 
 ```python
 import os
