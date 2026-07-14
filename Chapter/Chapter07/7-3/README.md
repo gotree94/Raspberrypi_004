@@ -407,6 +407,41 @@ print(f"total_params: {total_params}")
 print(f"trainable_params: {trainable_params}")
 ```
 
+
+* 실행결과
+
+```
+python 7_NVIDIA_model_configuration.py
+NvidiaModel(
+  (features): Sequential(
+    (0): Conv2d(3, 24, kernel_size=(5, 5), stride=(2, 2))
+    (1): ELU(alpha=1.0, inplace=True)
+    (2): Conv2d(24, 36, kernel_size=(5, 5), stride=(2, 2))
+    (3): ELU(alpha=1.0, inplace=True)
+    (4): Conv2d(36, 48, kernel_size=(5, 5), stride=(2, 2))
+    (5): ELU(alpha=1.0, inplace=True)
+    (6): Conv2d(48, 64, kernel_size=(3, 3), stride=(1, 1))
+    (7): ELU(alpha=1.0, inplace=True)
+    (8): Dropout(p=0.2, inplace=False)
+    (9): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1))
+    (10): ELU(alpha=1.0, inplace=True)
+  )
+  (flatten): Flatten(start_dim=1, end_dim=-1)
+  (mlp): Sequential(
+    (0): Dropout(p=0.2, inplace=False)
+    (1): Linear(in_features=1152, out_features=100, bias=True)
+    (2): ELU(alpha=1.0, inplace=True)
+    (3): Linear(in_features=100, out_features=50, bias=True)
+    (4): ELU(alpha=1.0, inplace=True)
+    (5): Linear(in_features=50, out_features=10, bias=True)
+    (6): ELU(alpha=1.0, inplace=True)
+    (7): Linear(in_features=10, out_features=1, bias=True)
+  )
+)
+total_params: 252219
+trainable_params: 252219
+```
+
 ## 8.학습 데이터와 검증 데이터를 분리
 
 * 모든 이미지를 이용하여 삭습하기에는 너무 많은 시간이 소요되므로 학습, <br>
