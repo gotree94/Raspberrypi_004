@@ -175,6 +175,11 @@ dataset/
    * 로컬에서 model.train() 실행
 
 
+## 최종목표
+
+  * ai_car_model.pt 모델 만들기
+
+
 ![](Slide1.PNG)
 
 ![](Slide2.PNG)
