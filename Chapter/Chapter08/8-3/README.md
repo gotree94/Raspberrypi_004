@@ -29,7 +29,7 @@ if __name__ == "__main__":
     main()
 ```
 
-```
+```python
 import torch
 
 MODEL_PATH = "model-20260714_231443\\lane_navigation_final.torchscript"
@@ -114,8 +114,8 @@ if __name__ == "__main__":
     main()
 ```
 
-```
-import mycamera
+```python
+#import mycamera
 import torch
 import cv2
 import numpy as np
@@ -137,7 +137,11 @@ def img_preprocess(image):
     return img
 
 def main():
-    camera = mycamera.MyPiCamera(640, 480)
+    #camera = mycamera.MyPiCamera(640, 480)
+    camera = cv2.VideoCapture(0)
+    camera.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+    camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+        
     model = torch.jit.load(MODEL_PATH, map_location="cpu")
     model.eval()
     torch.set_num_threads(1)
