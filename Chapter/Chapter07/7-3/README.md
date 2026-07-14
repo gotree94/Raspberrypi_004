@@ -811,22 +811,64 @@ if val_mae is not None:
 
 * 예시: python 9_make_model.py otsu
 
-### otsu
+### otsu : 히스토그램을 분석하여 최적의 임계값을 자동으로 찾는 이진화 기법
+
+```
+원본 이미지 → Grayscale → CLAHE(대비강화) → Otsu 이진화 → 흰색(라인) / 검정(배경)
+밝기 분포:  [0___100___200___255]
+             검정   중간    흰색
+
+Otsu가 찾은 임계값: 128 (예시)
+
+결과: 0~127 → 검정(0), 128~255 → 흰색(255)
+```
 
 ![](9002.png)
 
 
 ### adaptive
 
+```
+지역별로 다른 임계값을 적용하는 이진화 기법입니다.
+
+원본 이미지 → Grayscale → CLAHE → Adaptive Threshold → 흰색(라인) / 검정(배경)
+
+```
+
 ![](9003.png)
 
 
 ### invert_clahe
 
+```
+반전 후 대비를 극대화하는 기법입니다.
+
+원본 → Grayscale → CLAHE → 반전(255-gray) → CLAHE → GaussianBlur
+
+Contrast Limited Adaptive Histogram Equalization
+
+일반 히스토그램 평활화:
+- 전체 이미지에 동일한 변환 적용
+- 과도한 대비 증강 가능
+
+CLAHE:
+- 이미지를 8x8 블록으로 분할
+- 각 블록별로 독립적 평활화
+- clipLimit(2.0)로 과도한 대비 증강 방지
+
+반전	라인(검정)→흰색으로 변환하여 CNN이 쉽게 학습
+CLAHE 2회	원본 대비 + 반전 후 대비 = 라인이 극도로 도드라짐
+GaussianBlur	적절한 노이즈 제거
+```
+
 ![](9004.png)
 
 
 ### resized
+
+```
+원본(1280x720) → Crop(상단 절반) → YUV 변환 → CLAHE(Y채널) → GaussianBlur → Resize(200x66)
+```
 
 ![](9005.png)
 
