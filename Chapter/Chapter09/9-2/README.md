@@ -107,13 +107,70 @@ if __name__ == "__main__":
 
 ```
 
-## 데이터 라벨링
+## 데이터 라벨링 : Page 331 ~ 
 
 * 저장된 사진에서 객체를 라벨링 합니다. 라벨링 작업은 객체의 정잡을 부여하는 과정으로 사람이 수작업으로 진행합니다.
+* https://github.com/HumanSignal/labelImg
+* https://github.com/HumanSignal/labelImg/releases
+* https://github.com/HumanSignal/labelImg/archive/refs/tags/v1.8.1.zip
 
-* 9_2_2.py
-
-```python
+* predefined_classes.tx
 
 ```
+person
+crosswalk
+traffic_lights_red
+traffic_lights_yellow
+traffic-lights-greenl
+```
+
+
+## 로컬 학습 방법
+
+```
+from ultralytics import YOLO
+
+# 1. 사전 학습된 모델 로드
+model = YOLO('yolov8n.pt')
+
+# 2. 나만의 데이터셋으로 학습
+model.train(data='my_dataset.yaml', epochs=50, imgsz=640)
+```
+
+* 데이터셋 준비
+
+```
+my_dataset.yaml:
+
+path: /path/to/dataset
+train: images/train
+val: images/val
+names:
+  0: car
+  1: person
+  2: lane
+```
+
+```
+디렉토리 구조:
+
+dataset/
+├── images/
+│   ├── train/
+│   └── val/
+├── labels/
+│   ├── train/
+│   └── val/
+└── my_dataset.yaml
+```
+
+* 라벨링 도구 (무료)
+   * LabelImg	간편, 바운딩박스
+   * CVAT	고급, 다양한 어노테이션
+   * Roboflow	웹에서 라벨링 + 학습
+
+* 추천 순서
+   * 이미지 수집 (200장 이상)
+   * LabelImg으로 라벨링
+   * 로컬에서 model.train() 실행
 
