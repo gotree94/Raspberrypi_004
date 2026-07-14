@@ -102,6 +102,32 @@ except Exception as e:
     print(e)
 ```
 
+* 결과
+
+```
+python 2_library_check.py
+=== Python Environment ===
+python: 3.12.7
+
+=== Library Versions ===
+torch: 2.6.0+cu124
+numpy: 1.26.4
+opencv-python (cv2): 4.11.0
+matplotlib: 3.9.2
+pandas: 2.2.2
+scikit-learn: 1.5.1
+Pillow (PIL): 12.2.0
+
+=== PyTorch System Info ===
+CUDA available: True
+torch.version.cuda: 12.4
+cuDNN version: 90100
+GPU count: 1
+GPU name[0]: NVIDIA GeForce RTX 3070 Laptop GPU
+
+PyTorch test: OK
+```
+
 
 ## 3. 데이터 불러오기
 
