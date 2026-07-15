@@ -315,13 +315,220 @@ python result_analysis.py
    *  코너의 각도가 너무 급격하다
    *  완만한 곡선을 이용해서 좌우로 이동하는 데이터도 필요.
 
-# Q2. **전이 학습**: ImageNet 등 사전 학습 모델 활용
+---
 
-# Q3. **앙상블 방법**: 4개 모델의 예측값 가중 평균
+# Q2. 전이 학습 (Transfer Learning)
 
-# Q4. **데이터 전처리 강화**: 노이즈 제거, 증강 기법 추가
+   * 의미: 이미 대규모 데이터셋(ImageNet)으로 학습된 모델의 가중치를 초기값으로 사용하여, 적은 데이터로도 빠르고 좋은 성능을 내는 기법
 
-# Q5. **모델 구조 개선**: ResNet, MobileNet 등 최신 아키텍처 적용
+* 왜 효과적인가?
+```
+일반 학습:    random 초기값 → 학습 → 수렴 (많은 데이터 필요)
+전이 학습:    ImageNet 가중치 → 미세 조정 → 수렴 (적은 데이터로도 가능)
+```
+   * ImageNet으로 학습된 모델은 가장자리, 질감, 형태 등의 일반적인 특징을 이미 알고 있음
+   * 도로 영상의 특징(차선, 가장자리 등)을 배우는 데 훨씬 적은 데이터와 시간이 필요
+
+* 구현 방안
+```pyton
+import torchvision.models as models
+
+# 사전 학습된 ResNet18 불러오기
+model = models.resnet18(pretrained=True)
+
+# 기존 분류기(1000クラス) 제거
+model.fc = nn.Sequential(
+    nn.Linear(512, 100),
+    nn.ReLU(),
+    nn.Linear(100, 1)
+)
+
+# 처음 few 레이어는 동결(freeze), 뒤쪽만 학습
+for param in list(model.parameters())[:-10]:
+    param.requires_grad = False
+```
+
+* 기대 효과
+
+| 구분	| 일반 학습	| 전이 학습 | 
+|:-------:|:-------:|:-------:|
+| 학습 데이터	| 1000장 이상	| 100~300장으로도 가능 | 
+| 학습 시간	| 김	| 50~70% 단축 | 
+| 성능	| 데이터 부족 시 과적합	| 일반화 성능 향상 | 
+
+---
+
+# Q3. 앙상블 방법 (Ensemble)
+   * 의미: 여러 모델의 예측값을 종합하여 하나의 최종 예측을 만드는 기법. "한 명의 전문가보다 여러 명의 전문가 의견을 모으는 것이 더 정확하다"는 원리
+
+* 왜 효과적인가?
+```
+모델 A: 102° 예측 (otsu 필터에 강함)
+모델 B: 105° 예측 (invert 필터에 강함)
+모델 C: 98° 예측  (adaptive 필터에 강함)
+모델 D: 100° 예측 (invert_clahe 필터에 강함)
+
+앙상블: (102+105+98+100) / 4 = 101.25° → 개별 모델보다 안정적
+```
+
+* **구현 방안**
+
+* 1단계: 가중치 없는 단순 평균
+```
+predictions = [model_a(x), model_b(x), model_c(x), model_d(x)]
+final = torch.mean(torch.stack(predictions))
+```
+
+* 2단계: 성능 기반 가중 평균 (MAE가 낮을수록 높은 가중치)
+```
+weights = {
+    'invert': 1/1.085,       # MAE 역수
+    'otsu': 1/0.988,
+    'adaptive': 1/1.021,
+    'invert_clahe': 1/0.760  # 가장 높은 가중치
+}
+total = sum(weights.values())
+final = sum(w * pred for w, pred in zip(weights.values(), preds)) / total
+```
+
+* 3단계: 검증 데이터로 최적 가중치 학습
+```
+# Ridge Regression으로 최적 가중치 학습
+from sklearn.linear_model import Ridge
+reg = Ridge().fit(val_predictions, val_targets)
+best_weights = reg.coef_
+```
+
+* 기대 효과
+
+| 구분	| 개별 모델	| 앙상블 | 
+|:------:|:------:|:------:|
+| 예측 안정성	모델별 편향 존재	| 편향 상쇄 | 
+| 최대 오차	| 높음	| 20~30% 감소 | 
+| 추론 시간	| 1x	| 4x (모델 수만큼) | 
+
+---
+
+# Q4. 데이터 전처리 강화
+
+* 의미: 학습 데이터의 품질을 높이고 다양성을 확보하는 기법
+
+* 4-1. 노이즈 제거
+
+```
+import cv2
+
+# 가우시안 블러 (간단한 노이즈 제거)
+denoised = cv2.GaussianBlur(image, (5, 5), 0)
+
+# 비선형 필터 (엣지 보존하면서 노이즈 제거)
+denoised = cv2.bilateralFilter(image, 9, 75, 75)
+
+# 중앙값 필터 (소금후추 노이즈에 효과적)
+denoised = cv2.medianBlur(image, 5)
+```
+
+* 4-2. 데이터 증강 (Data Augmentation)
+```
+import albumentations as A
+
+transform = A.Compose([
+    A.RandomBrightnessContrast(brightness_limit=0.2, contrast_limit=0.2, p=0.5),
+    A.GaussNoise(var_limit=(10, 50), p=0.5),
+    A.ShiftScaleRotate(shift_limit=0.05, scale_limit=0.1, rotate_limit=5, p=0.5),
+    A.CLAHE(clip_limit=2.0, p=0.5),
+])
+```
+
+* 증강 기법별 효과
+
+기법	설명	효과
+밝기/대비 조절	조명 변화 대응	야간/실내 주행 대응
+가우시안 노이즈	카메라 노이즈 시뮬레이션	저품질 카메라 대응
+이동/스케일/회전	카메라 위치 변화 시뮬레이션	다양한 설치 환경 대응
+좌우 반전	기존 사용	좌우 대칭 학습
+랜덤 크롭	관심 영역 집중	방해 요소 무시 학습
+기대 효과
+
+구분	현재	강화 후
+데이터 다양성	1690장 (단순 반전)	5000~10000장 ( 다양한 변형)
+환경 대응	특정 조명/조건에만 강함	다양한 조건에 안정적
+과적합	잔존 가능	대폭 감소
+
+---
+
+# Q5. 모델 구조 개선
+
+* 의미: 기존 NVIDIA DAVE-2보다 더 효율적이고 강력한 신경망 구조 사용
+
+* 비교 분석
+
+모델	파라미터	장점	단점	추천 용도
+NVIDIA DAVE-2	~250K	가볍고 빠름	표현력 한계	기본 학습
+ResNet18	~11M	깊은 네트워크, 안정적	약간 무거움	정확도 우선
+MobileNetV2	~3.4M	경량, 실시간 추론	약간의 정확도 손실	실시간 추론
+EfficientNet-B0	~5M	효율적인 구조	복잡한 구현	고성능 필요
+
+* ResNet18 구현
+
+```
+import torchvision.models as models
+
+class ResNetDriving(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.backbone = models.resnet18(pretrained=True)
+        
+        # 입력 채널 변경 (3 -> 3, 그대로 유지)
+        # 출력 레이어 교체
+        self.backbone.fc = nn.Sequential(
+            nn.Linear(512, 100),
+            nn.ReLU(),
+            nn.Dropout(0.2),
+            nn.Linear(100, 1)
+        )
+    
+    def forward(self, x):
+        return self.backbone(x)
+```
+
+* MobileNetV2 구현
+
+```
+import torchvision.models as models
+
+class MobileNetDriving(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.backbone = models.mobilenet_v2(pretrained=True)
+        
+        # 출력 레이어 교체
+        self.backbone.classifier = nn.Sequential(
+            nn.Linear(1280, 100),
+            nn.ReLU(),
+            nn.Dropout(0.2),
+            nn.Linear(100, 1)
+        )
+    
+    def forward(self, x):
+        return self.backbone(x)
+```
+
+* 구조별 성능 비교 (예상)
+
+구분	DAVE-2	ResNet18	MobileNetV2
+추론 속도	5ms	8ms	3ms
+예상 MAE	0.76°	0.5~0.6°	0.6~0.7°
+메모리	1MB	44MB	14MB
+학습 시간	1x	1.5x	1.2x
+
+* 우선순위 추천
+순위	항목	이유
+1	전이 학습 (ResNet18)	적은 노력으로 큰 성능 향상
+2	데이터 증강	과적합 방지, 일반화 성능 향상
+3	앙상블	이미 있는 모델로 성능 추가 향상
+4	모델 구조 변경	정확도가 필요할 때
+권장 접근법: ResNet18 + 전이 학습 + 데이터 증강을 조합하면 현재 대비 30~50% 성능 향상을 기대할 수 있습니다.
 
 
 
