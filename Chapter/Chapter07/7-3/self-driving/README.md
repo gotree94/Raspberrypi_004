@@ -39,7 +39,7 @@
 
 ## 4. 학습 결과
 
-### 4.1 학습 곡선
+### 4.1 학습 곡선 비교
 
 | 모델 | Best Val Loss | Best MAE | Best Epoch | Final MAE |
 |------|--------------|----------|------------|-----------|
@@ -47,6 +47,8 @@
 | otsu | 1.5438 | **0.988°** | 9 | 1.003° |
 | adaptive | 1.6642 | **1.021°** | 10 | 1.021° |
 | **invert_clahe** | **0.9320** | **0.760°** | 10 | 0.760° |
+
+![학습 곡선 비교](test2_results/training_comparison.png)
 
 ### 4.2 에포크별 상세
 
@@ -119,6 +121,12 @@ Epoch 10: train_loss=4.27    val_loss=0.93   val_MAE=0.760
 | adaptive | 104.94° | 3.42° | 95.50° | 110.12° | 14.62° |
 | invert_clahe | 102.84° | 4.18° | 86.84° | 112.67° | 25.83° |
 
+![프레임별 예측 각도](test2_results/prediction_chart.png)
+
+![샘플 프레임 예측](test2_results/prediction_samples.png)
+
+![예측 각도 분포](test2_results/prediction_histogram.png)
+
 ### 5.2 Ground Truth 대비 오차
 
 | 모델 | MAE | RMSE | Max Error |
@@ -127,6 +135,12 @@ Epoch 10: train_loss=4.27    val_loss=0.93   val_MAE=0.760
 | otsu | 15.68° | 19.81° | 46.88° |
 | adaptive | 16.33° | 20.99° | 41.98° |
 | **invert_clahe** | **15.53°** | **19.72°** | **41.59°** |
+
+![예측 vs Ground Truth 비교](test2_results/prediction_vs_gt_chart.png)
+
+![오차 분포](test2_results/error_distribution.png)
+
+![산점도](test2_results/scatter_vs_gt.png)
 
 ---
 
