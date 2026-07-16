@@ -247,7 +247,7 @@ video/
 
 # V2
 
-![](debug_lane_v2.py)
+[](debug_lane_v2.py)
 
 ![](steering_angles_debug_v2.png)
 
