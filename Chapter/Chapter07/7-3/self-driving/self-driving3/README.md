@@ -247,7 +247,11 @@ video/
 
 # V2
 
+* 앞 부분에서 데이터가 튀던 현상들은 라인 이외의 오인식 포인터로 인해서 각도가 잘목 계산된예들임.
+
 [debug_lane.py Version upgrade](debug_lane_v2.py)
+
+![](steering_angles_debug.png)
 
 ![](steering_angles_debug_v2.png)
 
