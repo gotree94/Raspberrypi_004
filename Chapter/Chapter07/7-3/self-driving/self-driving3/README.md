@@ -252,3 +252,11 @@ video/
 ![](steering_angles_debug_v2.png)
 
 
+
+# V2.1
+
+![](train_000002_091.png)
+
+[debug_lane2.py Version upgrade](debug_lane_v2.1.py) : 사다리꼴 확인하기
+
+
