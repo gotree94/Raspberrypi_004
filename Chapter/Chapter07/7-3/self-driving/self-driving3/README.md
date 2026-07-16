@@ -229,3 +229,19 @@ video/
 | `annotate.py` | 수동 어노테이션 도구 |
 | `annotations.json` | 어노테이션 데이터 (5장 라벨링 완료) |
 | `TEST2.mp4` | 소스 비디오 |
+
+
+---
+
+
+![](steering_angles_debug.png)
+
+![](train_000001_088.png)
+
+![](train_000992_070.png)
+
+![](train_000993_123.png)
+
+
+
+
