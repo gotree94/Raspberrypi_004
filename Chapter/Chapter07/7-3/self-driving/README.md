@@ -114,6 +114,229 @@ Epoch 10: train_loss=4.27    val_loss=0.93   val_MAE=0.760
 
 ---
 
+
+# 모델 디렉토리 구조
+
+학습이 완료되면 `model-<YYYYMMDD_HHMMSS>_<filter>/` 폴더가 생성됩니다.
+
+```
+model-20260715_221419_invert/
+├── lane_navigation_best.pt
+├── lane_navigation_final.pt
+├── lane_navigation_final.torchscript
+└── history.pickle
+```
+
+---
+
+## 파일 상세 설명
+
+### 1. `lane_navigation_best.pt`
+
+| 항목 | 내용 |
+|------|------|
+| **형식** | PyTorch checkpoint (dictionary) |
+| **용도** | 추론 및 재학습에 사용하는 **핵심 가중치 파일** |
+| **저장 시점** | Validation Loss가 가장 낮은 에포크의 가중치 |
+
+**포함 데이터:**
+
+```python
+{
+    "model_state": model.state_dict(),  # 모델 가중치 (state dictionary)
+    "val_loss": val_loss                # 해당 에포크의 Validation Loss 값
+}
+```
+
+**사용 예시:**
+
+```python
+import torch
+import torch.nn as nn
+
+# 모델 구조 정의 (학습 시 사용한 것과 동일)
+model = NvidiaModel()
+
+# 가중치 로드
+checkpoint = torch.load("lane_navigation_best.pt", map_location="cuda")
+model.load_state_dict(checkpoint["model_state"])
+model.eval()
+
+# 추론
+input_tensor = torch.randn(1, 3, 66, 200)  # 배치 차원 포함
+with torch.no_grad():
+    predicted_angle = model(input_tensor)
+```
+
+---
+
+### 2. `lane_navigation_final.pt`
+
+| 항목 | 내용 |
+|------|------|
+| **형식** | PyTorch checkpoint (dictionary) |
+| **용도** | **최종 에포크의 가중치** (best 대비 성능이 낮을 수 있음) |
+| **저장 시점** | 학습 완료 시 마지막 에포크 |
+
+**포함 데이터:**
+
+```python
+{
+    "model_state": model.state_dict()  # 모델 가중치만 포함
+}
+```
+
+**`best.pt`와의 차이:**
+
+| 비교 | `best.pt` | `final.pt` |
+|------|-----------|------------|
+| 저장 시점 | Validation Loss 최소 에포크 | 마지막 에포크 |
+| val_loss 포함 | O | X |
+| 추론 성능 | 일반적으로 더 우수 | 과적합(overfitting) 가능성 |
+
+---
+
+### 3. `lane_navigation_final.torchscript`
+
+| 항목 | 내용 |
+|------|------|
+| **형식** | TorchScript (직렬화된 모델) |
+| **용도** | **실제 자율주행 배포용** (Python 없이도 실행 가능) |
+| **생성 방법** | `torch.jit.trace()`로 추적(tracing) |
+
+**특징:**
+
+- PyTorch 의존성 없이 C++ 환경에서도 실행 가능
+- 자율주행 임베디드 시스템에 배포 시 사용
+- `pt` 파일과 동일한 가중치 사용
+
+**사용 예시:**
+
+```python
+# TorchScript 모델 로드 (가중치 재정의 없이 바로 사용 가능)
+model = torch.jit.load("lane_navigation_final.torchscript")
+model.eval()
+
+# 추론
+input_tensor = torch.randn(1, 3, 66, 200)
+with torch.no_grad():
+    predicted_angle = model(input_tensor)
+```
+
+**모델 구조 (참고):**
+
+```
+Input: (batch, 3, 66, 200) - BGR 이미지 (전처리 후)
+
+[Conv2d(3→24, 5×5, stride=2)] → ELU
+[Conv2d(24→36, 5×5, stride=2)] → ELU
+[Conv2d(36→48, 5×5, stride=2)] → ELU
+[Conv2d(48→64, 3×3, stride=1)] → ELU → Dropout(0.2)
+[Conv2d(64→64, 3×3, stride=1)] → ELU
+
+Flatten
+
+[Linear(512→100)] → ELU
+[Linear(100→50)] → ELU
+[Linear(50→10)] → ELU
+[Linear(10→1)]
+
+Output: 예측 핸들링 각도 (0~180도)
+```
+
+---
+
+### 4. `history.pickle`
+
+| 항목 | 내용 |
+|------|------|
+| **형식** | Python pickle 파일 |
+| **용도** | 학습 곡선 시각화 및 분석 |
+
+**포함 데이터:**
+
+```python
+{
+    "train_loss": [에포크별 학습 손실값 리스트],
+    "val_loss":   [에포크별 검증 손실값 리스트],
+    "val_mae":    [에포크별 검증 MAE(도) 리스트]
+}
+```
+
+**사용 예시:**
+
+```python
+import pickle
+import matplotlib.pyplot as plt
+
+with open("history.pickle", "rb") as f:
+    history = pickle.load(f)
+
+# 학습 곡선 시각화
+fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+
+axes[0].plot(history["train_loss"], marker="o")
+axes[0].set_title("Training Loss")
+
+axes[1].plot(history["val_loss"], marker="o")
+axes[1].set_title("Validation Loss")
+
+axes[2].plot(history["val_mae"], marker="o")
+axes[2].set_title("Validation MAE (deg)")
+
+plt.tight_layout()
+plt.savefig("training_curves.png")
+plt.show()
+```
+
+**분석 시 참고사항:**
+
+| 패턴 | 의미 |
+|------|------|
+| train_loss ↓, val_loss ↓ | 정상 학습 |
+| train_loss ↓, val_loss ↑ | 과적합 (overfitting) |
+| train_loss ↓, val_loss → | 학습 완료 또는 학습률 너무 높음 |
+| val_mae < 2.0 | 우수한 성능 |
+
+---
+
+## 파일 용도 요약
+
+| 파일 | 로드 | 추론 | 배포 | 분석 |
+|------|------|------|------|------|
+| `lane_navigation_best.pt` | O | O | O | - |
+| `lane_navigation_final.pt` | O | O | - | - |
+| `lane_navigation_final.torchscript` | - | - | O | - |
+| `history.pickle` | - | - | - | O |
+
+---
+
+## 모델 폴더명 형식
+
+```
+model-<YYYYMMDD>_<HHMMSS>_<filter_name>
+│       │              │          │
+│       │              │          └─ 사용된 필터 (invert, otsu, adaptive, invert_clahe)
+│       │              └─ 학습 시작 시각 (24시간제)
+│       └─ 학습 시작 날짜
+└─ 접두사
+```
+
+**예시:**
+
+```
+model-20260715_221419_invert
+│       │         │        │
+│       │         │        └─ Invert 필터 사용
+│       │         └─ 오후 10시 14분 19초
+│       └─ 2026년 7월 15일
+└─ 모델 폴더
+```
+
+
+
+---
+
 ## 5. TEST2.mp4 추론 결과
 
 ### 5.1 예측 통계
