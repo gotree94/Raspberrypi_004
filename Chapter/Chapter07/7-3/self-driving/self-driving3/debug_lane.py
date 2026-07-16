@@ -3,6 +3,7 @@ import numpy as np
 import os
 import random
 import json
+import matplotlib
 
 VIDEO_DIR = r"video"
 ANNOT_FILE = r"annotations.json"
@@ -208,10 +209,12 @@ def main():
                     cv2.putText(debug_img, labels_dict.get(side, side), (mx - 15, my - 10),
                                 cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
 
-        out_path = os.path.join(out_dir, fname)
+        orig_num = fname.split('_')[1]
+        out_name = f"train_{orig_num}_{int(steer):03d}.png"
+        out_path = os.path.join(out_dir, out_name)
         cv2.imwrite(out_path, debug_img)
-        results.append((fname, steer))
-        print(f"  [{i+1}/{len(samples)}] {fname} -> angle={steer:.1f}")
+        results.append((out_name, steer))
+        print(f"  [{i+1}/{len(samples)}] {fname} -> {out_name} (angle={steer:.1f})")
 
     print(f"\nDone. {len(results)} images saved to {out_dir}")
 
@@ -223,6 +226,37 @@ def main():
         print("  Edge cases:")
         for fname, angle in sorted(bad, key=lambda x: x[1]):
             print(f"    {fname} -> {angle:.1f}")
+
+    if results:
+        angles = [r[1] for r in results]
+
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+
+        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 8))
+        fig.suptitle(f"Steering Angles Debug ({len(results)} frames)", fontsize=14)
+
+        ax1.hist(angles, bins=50, color="steelblue", edgecolor="black", alpha=0.8)
+        ax1.axvline(x=90, color="red", linestyle="--", label="Center (90)")
+        ax1.set_xlabel("Angle (0=Left, 180=Right)")
+        ax1.set_ylabel("Count")
+        ax1.set_title("Angle Distribution")
+        ax1.legend()
+        ax1.grid(True, alpha=0.3)
+
+        ax2.plot(range(len(angles)), angles, color="steelblue", linewidth=0.8, alpha=0.8)
+        ax2.axhline(y=90, color="red", linestyle="--", label="Center (90)")
+        ax2.set_xlabel("Frame")
+        ax2.set_ylabel("Angle")
+        ax2.set_title("Angle over Time")
+        ax2.legend()
+        ax2.grid(True, alpha=0.3)
+
+        plt.tight_layout()
+        chart_path = os.path.join(out_dir, "steering_angles_debug.png")
+        fig.savefig(chart_path, dpi=150, bbox_inches="tight")
+        plt.close(fig)
+        print(f"\nChart saved: {chart_path}")
 
 
 if __name__ == "__main__":
