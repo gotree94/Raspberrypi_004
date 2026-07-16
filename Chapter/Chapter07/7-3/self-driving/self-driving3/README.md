@@ -264,3 +264,17 @@ video/
 [debug_lane2.py Version upgrade](debug_lane_v2.1.py) : 사다리꼴 확인하기
 
 
+# 다른 영상
+
+* TEST3.mp4
+
+![](steering_angles_debug_TEST3.png)
+
+
+* TEST4.mp4
+
+![](steering_angles_debug_TEST4.png)
+
+
+
+
