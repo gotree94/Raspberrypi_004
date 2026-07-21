@@ -24,6 +24,9 @@
 
 ## 2. 시뮬레이터 (`simulator_v2.py`)
 
+![](001.png)
+
+
 ### 2.1 역할
 - 장애물 환경 생성 (우클릭 드래그로 벽 그리기)
 - 물리 시뮬레이션 (위치, 속도, 엔코더)
@@ -69,6 +72,8 @@ def raycast_cone(self, ox, oy, angle_deg, max_dist=200.0, cone_width=5):
 ---
 
 ## 3. 헤드 노드 (`main_head_v3.py`)
+
+![](002.png)
 
 ### 3.1 아키텍처
 
