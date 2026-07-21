@@ -10,9 +10,13 @@
 
 ```
 [시뮬레이터 (TCP Server:9999)]
+
      ↕ (Telemetry 수신/명령 전송)
+
 [UART/TCP 프로세스 (uart_proc.py)]
+
      ↕ (Queue 기반 IPC)
+
 [헤드 노드 (main_head_v3.py)]  ←→  [비전 프로세스 (vision_proc.py)]
 ```
 
