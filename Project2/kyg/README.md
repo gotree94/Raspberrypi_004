@@ -1,14 +1,22 @@
 # Autonomous Rover 알고리즘 분석
 
+
+![](Algorithm_concept.png)
+
 ## 1. 시스템 개요
 
-이 프로그램은 자율 주행 로버(Autonomous Rover)로, 시뮬레이터(`simulator_v2.py`)와 헤드 노드(`main_head_v3.py`)로 구성된다. 시뮬레이터는 장애물 환경을 마우스 오른쪽 드래그로 설정하고, 헤드 노드는 AUTO 모드에서 장애물을 극복하며 웨이포인트까지 이동한다.
+> 이 프로그램은 자율 주행 로버(Autonomous Rover)로, 시뮬레이터(`simulator_v2.py`)와 헤드 노드(`main_head_v3.py`)로 구성된다. <br>
+시뮬레이터는 장애물 환경을 마우스 오른쪽 드래그로 설정하고, 헤드 노드는 AUTO 모드에서 장애물을 극복하며 웨이포인트까지 이동한다.
 
 ```
 [시뮬레이터 (TCP Server:9999)]
+
      ↕ (Telemetry 수신/명령 전송)
+
 [UART/TCP 프로세스 (uart_proc.py)]
+
      ↕ (Queue 기반 IPC)
+
 [헤드 노드 (main_head_v3.py)]  ←→  [비전 프로세스 (vision_proc.py)]
 ```
 
