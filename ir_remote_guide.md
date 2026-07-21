@@ -29,7 +29,7 @@ sudo apt install lirc -y
 ## 3단계: /boot/config.txt 수정
 
 ```bash
-sudo nano /boot/config.txt
+sudo nano /boot/firmware/config.txt
 ```
 
 파일 끝에 다음을 추가하거나 수정:
