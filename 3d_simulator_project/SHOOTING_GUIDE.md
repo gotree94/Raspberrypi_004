@@ -29,7 +29,7 @@ scan_001.jpg, scan_002.jpg, ...
 ```
 
 ## 후처리 순서
-1. 사진 준비 → `C:\simulator_project\photos\`
+1. 사진 준비 → `C:\Users\Administrator\Desktop\3d_simulator_project\photos\`
 2. Meshroom 또는 COLMAP으로 3D 모델 생성
 3. Blender에서 메시 최적화
 4. Unreal Engine으로 임포트

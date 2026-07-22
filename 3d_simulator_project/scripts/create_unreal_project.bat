@@ -14,7 +14,7 @@ echo    - Desktop / Console
 echo    - Maximum Quality
 echo    - No Starter Content
 echo.
-echo 4. 프로젝트 위치: C:\simulator_project\unreal_project
+echo 4. 프로젝트 위치: C:\Users\Administrator\Desktop\3d_simulator_project\unreal_project
 echo.
 echo 5. 프로젝트 생성 후:
 echo    - Content Browser에서 우클릭

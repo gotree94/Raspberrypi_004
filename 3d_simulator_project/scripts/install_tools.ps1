@@ -19,7 +19,7 @@ Write-Host ""
 Write-Host "[2/2] 수동 설치가 필요한 프로그램:" -ForegroundColor Yellow
 Write-Host "  1. Blender: https://www.blender.org/download/" -ForegroundColor White
 Write-Host "  2. Unreal Engine: https://www.unrealengine.com/download" -ForegroundColor White
-Write-Host "  3. Meshroom: https://alicevision.org/meshroom/" -ForegroundColor White
+Write-Host "  3. Meshroom: https://meshroom.org/index.php/download/" -ForegroundColor White
 Write-Host "  4. Polycam: 앱스토어에서 설치" -ForegroundColor White
 Write-Host ""
 

@@ -8,11 +8,11 @@
 
 ## 1단계: 촬영 (내일)
 1. 스마트폰으로 실내 촬영 (20~30장)
-2. `C:\simulator_project\photos\` 에 저장
+2. `C:\Users\Administrator\Desktop\3d_simulator_project\photos\` 에 저장
 
 ## 2단계: 사진 전처리
 ```bash
-cd C:\simulator_project\scripts
+cd C:\Users\Administrator\Desktop\3d_simulator_project\scripts
 python photo_preprocess.py
 ```
 
@@ -21,7 +21,7 @@ python photo_preprocess.py
 ### 방법A: Polycam (쉬움)
 1. Polycam 앱에서 "Capture" → 사진 업로드
 2. 처리 후 .OBJ/.GLB 다운로드
-3. `C:\simulator_project\3d_models\` 에 저장
+3. `C:\Users\Administrator\Desktop\3d_simulator_project\3d_models\` 에 저장
 
 ### 방법B: Meshroom (정확함)
 1. Meshroom 실행
@@ -42,7 +42,7 @@ python photo_preprocess.py
 
 ## 파일 구조
 ```
-C:\simulator_project\
+C:\Users\Administrator\Desktop\3d_simulator_project\
 ├── photos/           # 원본 사진
 │   └── processed/    # 전처리된 사진
 ├── 3d_models/        # 생성된 3D 모델

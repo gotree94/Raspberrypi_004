@@ -16,8 +16,8 @@ except ImportError:
     print("Pillow 설치 필요: pip install Pillow")
     sys.exit(1)
 
-PHOTO_DIR = Path(r"C:\simulator_project\photos")
-OUTPUT_DIR = Path(r"C:\simulator_project\photos\processed")
+PHOTO_DIR = Path(r"C:\Users\Administrator\Desktop\3d_simulator_project\photos")
+OUTPUT_DIR = Path(r"C:\Users\Administrator\Desktop\3d_simulator_project\photos\processed")
 MAX_SIZE = 2048  # 최대 해상도
 
 def get_exif(image):

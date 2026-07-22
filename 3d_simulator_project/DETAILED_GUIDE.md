@@ -8,15 +8,37 @@
 
 ---
 
+## Step 0: 테스트 데이터셋 (선택)
+
+실제 촬영 전에 테스트해보고 싶다면:
+
+### ETH3D 데이터셋 (추천)
+1. https://eth3d.ethz.ch/datasets 접속
+2. **"living_room"** → **"Download all undistorted jpg images"** 클릭 (0.5GB, 65장)
+3. 다운로드 후 압축 해제
+4. `C:\Users\Administrator\Desktop\3d_simulator_project\photos\` 에 복사
+5. 스크립트 실행으로 테스트:
+```bash
+cd C:\Users\Administrator\Desktop\3d_simulator_project\scripts
+python check_photos.py
+python photo_preprocess.py
+```
+
+### 기타 무료 데이터셋
+- **ICL-NUIM Living Room**: https://www.doc.ic.ac.uk/~ahanda/VaFRIC/iclnuim.html
+- **Sketchfab 소스 사진**: https://sketchfab.com/3d-models/example-photogrammetry-datasets-free-ac9c30e8ae8c40da8217981862cc2147
+
+---
+
 ## Step 1: 사진 촬영 및 전처리 (완료)
 
 ```bash
-cd C:\simulator_project\scripts
+cd C:\Users\Administrator\Desktop\3d_simulator_project\scripts
 python check_photos.py          # 사진 상태 확인
 python photo_preprocess.py      # 리사이즈 + 메타데이터 추출
 ```
 
-결과물: `C:\simulator_project\photos\processed\` 폴더에 `scan_001.jpg` ~ `scan_XX.jpg`
+결과물: `C:\Users\Administrator\Desktop\3d_simulator_project\photos\processed\` 폴더에 `scan_001.jpg` ~ `scan_XX.jpg`
 
 ---
 
@@ -36,7 +58,7 @@ python photo_preprocess.py      # 리사이즈 + 메타데이터 추출
    - 또는 **OBJ** (범용)
 
 #### 2-2. 파일 저장
-- 다운로드한 파일을 `C:\simulator_project\3d_models\` 에 저장
+- 다운로드한 파일을 `C:\Users\Administrator\Desktop\3d_simulator_project\3d_models\` 에 저장
 - 파일명: `room_scan.glb` 또는 `room_scan.obj`
 
 #### 2-3. Polycam 웹에서 확인 (선택)
@@ -49,15 +71,16 @@ python photo_preprocess.py      # 리사이즈 + 메타데이터 추출
 ### 방법 B: Meshroom (정확한 결과)
 
 #### 2-1. Meshroom 설치
-- https://alicevision.org/meshroom/download
-- GitHub Releases에서 최신 버전 다운로드
+- https://meshroom.org/index.php/download/ 접속
+- Windows 또는 Linux 선택하여 다운로드
+- 최신 버전: **Meshroom 2025.1** (노드 기반 비주얼 프로그래밍 도구)
 - 압축 해제 후 `Meshroom.exe` 실행
 
 #### 2-2. Meshroom 처리 순서
 1. **File → New** 클릭
 2. 오른쪽 **"Images"** 패널에서:
    - "+" 버튼 클릭
-   - `C:\simulator_project\photos\processed\` 폴더 선택
+   - `C:\Users\Administrator\Desktop\3d_simulator_project\photos\processed\` 폴더 선택
    - 모든 사진 추가
 3. 상단 **"Start"** 버튼 클릭
 4. 처리 파이프라인 (자동 순서):
@@ -89,7 +112,7 @@ Texturing
 
 #### 2-3. 결과물 저장
 - `texturedMesh.obj` + `.mtl` + `.png` (텍스처) 파일을:
-  - `C:\simulator_project\3d_models\` 에 복사
+  - `C:\Users\Administrator\Desktop\3d_simulator_project\3d_models\` 에 복사
 
 ---
 
@@ -108,7 +131,7 @@ choco install colmap
 # 1. 특징 추출
 colmap feature_extractor \
   --database_path db.db \
-  --image_path C:\simulator_project\photos\processed
+  --image_path C:\Users\Administrator\Desktop\3d_simulator_project\photos\processed
 
 # 2. 특징 매칭
 colmap exhaustive_matcher \
@@ -118,13 +141,13 @@ colmap exhaustive_matcher \
 mkdir sparse
 colmap mapper \
   --database_path db.db \
-  --image_path C:\simulator_project\photos\processed \
+  --image_path C:\Users\Administrator\Desktop\3d_simulator_project\photos\processed \
   --output_path sparse
 
 # 4. 메시 생성
 mkdir dense
 colmap image_undistorter \
-  --image_path C:\simulator_project\photos\processed \
+  --image_path C:\Users\Administrator\Desktop\3d_simulator_project\photos\processed \
   --input_path sparse/0 \
   --output_path dense
 
@@ -211,7 +234,7 @@ colmap delaunay_mesher \
 
 ### 3-7. FBX로 내보내기
 1. **File → Export → FBX (.fbx)** 클릭
-2. 경로: `C:\simulator_project\3d_models\room_scan.fbx`
+2. 경로: `C:\Users\Administrator\Desktop\3d_simulator_project\3d_models\room_scan.fbx`
 3. 설정 (오른쪽 패널):
 
 ```
@@ -238,7 +261,7 @@ Animation:
 
 ### 3-8. 텍스처도 함께 내보내기
 - FBX에 텍스처가 포함되지 않을 수 있음
-- 텍스처 PNG 파일을 `C:\simulator_project\3d_models\textures\` 에 별도 저장
+- 텍스처 PNG 파일을 `C:\Users\Administrator\Desktop\3d_simulator_project\3d_models\textures\` 에 별도 저장
 - 또는 Blender에서 **File → External Data → Pack All Into .blend** 사용
 
 ---
@@ -263,7 +286,7 @@ Animation:
    - **Quality Preset**: Maximum
    - **Starter Content**: 체크 해제
    - **Raytracing**: 체크 (있으면)
-5. **Project Location**: `C:\simulator_project\`
+5. **Project Location**: `C:\Users\Administrator\Desktop\3d_simulator_project\`
 6. **Project Name**: `SimulatorProject`
 7. **"Create"** 클릭
 
@@ -272,7 +295,7 @@ Animation:
 #### 방법 1: 직접 임포트
 1. **Content Browser** (하단 패널) 에서 우클릭
 2. **"Import to /Game/..."** → **"Import Asset"**
-3. `C:\simulator_project\3d_models\room_scan.fbx` 선택
+3. `C:\Users\Administrator\Desktop\3d_simulator_project\3d_models\room_scan.fbx` 선택
 4. **Import Options** 팝업:
 
 ```

@@ -6,7 +6,7 @@ import os
 import glob
 from pathlib import Path
 
-PHOTO_DIR = Path(r"C:\simulator_project\photos")
+PHOTO_DIR = Path(r"C:\Users\Administrator\Desktop\3d_simulator_project\photos")
 
 def check_photos():
     photos = list(PHOTO_DIR.glob("*.jpg")) + list(PHOTO_DIR.glob("*.png")) + list(PHOTO_DIR.glob("*.jpeg"))
