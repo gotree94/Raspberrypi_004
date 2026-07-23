@@ -68,51 +68,74 @@ python photo_preprocess.py      # 리사이즈 + 메타데이터 추출
 
 ---
 
-### 방법 B: Meshroom (정확한 결과)
+### 방법 B: Meshroom 2025.1 (정확한 결과)
 
 #### 2-1. Meshroom 설치
 - https://meshroom.org/index.php/download/ 접속
-- Windows 또는 Linux 선택하여 다운로드
-- 최신 버전: **Meshroom 2025.1** (노드 기반 비주얼 프로그래밍 도구)
-- 압축 해제 후 `Meshroom.exe` 실행
+- Windows 또는 Linux 선택하여 다운로드 (현재 최신: **Meshroom 2025.1**)
+- 다운로드 후 압축 해제 → `Meshroom.exe` 실행
+- **필수 조건**: NVIDIA GPU (CUDA Compute Capability 2 이상)
 
-#### 2-2. Meshroom 처리 순서
-1. **File → New** 클릭
-2. 오른쪽 **"Images"** 패널에서:
-   - "+" 버튼 클릭
-   - `C:\Users\Administrator\Desktop\3d_simulator_project\photos\processed\` 폴더 선택
-   - 모든 사진 추가
-3. 상단 **"Start"** 버튼 클릭
-4. 처리 파이프라인 (자동 순서):
+#### 2-2. 프로젝트 생성 및 사진 임포트
+1. Meshroom 실행
+2. **File → New** (또는 시작 시 자동으로 새 프로젝트)
+3. **Template 선택**: **Photogrammetry** 클릭 (가장 일반적인 3D 복원용)
+4. 오른쪽 **"Images"** 패널에서:
+   - `C:\Users\Administrator\Desktop\3d_simulator_project\photos\processed\` 폴더의 사진을 드래그앤드롭
+   - 또는 **"+" 버튼** → 폴더 선택 → 모든 사진 추가
+5. Meshroom이 사진 메타데이터를 자동 분석하여 카메라 파라미터 설정
 
-```
-CameraInit
-    ↓
-FeatureExtraction
-    ↓
-FeatureMatching
-    ↓
-IncrementalSfM
-    ↓
-DepthMap
-    ↓
-DepthMapFilter
-    ↓
-Meshing
-    ↓
-MeshFiltering
-    ↓
-Texturing
-```
+#### 2-3. 처리 실행
+1. 상단 **"Start"** 버튼 클릭
+2. 자동으로 전체 파이프라인이 순차 실행됨:
+   - **진행 상태 표시**: 초록(완료) / 주황(처리중) / 파랑(대기) / 빨강(에러)
+3. 내부 처리 순서:
+   ```
+   CameraInit (카메라 초기화)
+       ↓
+   FeatureExtraction (특징점 추출)
+       ↓
+   ImageMatching (이미지 매칭 후보)
+       ↓
+   FeatureMatching (특징점 매칭)
+       ↓
+   StructureFromMotion (카메라 포즈 + 희소 3D 점 복원)
+       ↓
+   PrepareDenseScene (밀도 복원 준비)
+       ↓
+   DepthMap (깊이 맵 생성)
+       ↓
+   DepthMapFilter (깊이 맵 필터링)
+       ↓
+   Meshing (메시 생성)
+       ↓
+   MeshFiltering (메시 정리)
+       ↓
+   Texturing (텍스처 매핑)
+   ```
+4. 처리 시간: 30분~2시간 (GPU 성능, 사진 수에 따라 다름)
 
-5. 처리 완료 후 (30분~2시간):
-   - 왼쪽 **"Graph Editor"** 에서 **Texturing** 노드 우클릭
-   - **"Open Folder"** → 결과 파일 위치 확인
-   - `texturedMesh.obj` + 텍스처 파일
+#### 2-4. 실내 촬영 사진 처리 시 팁
+실내는 텍스처가 적어 SfM이 실패하기 쉽습니다. 다음 설정을 변경하세요:
+1. **Graph Editor**에서 **FeatureExtraction** 노드 선택
+2. **Attributes** 패널에서:
+   - **Describer Preset**: `normal` → `High` 또는 `Ultra`로 변경
+   - **Describer Type**: `akaze` 추가 체크
+3. 변경 후 **Start** 클릭하면 재처리됨
 
-#### 2-3. 결과물 저장
-- `texturedMesh.obj` + `.mtl` + `.png` (텍스처) 파일을:
-  - `C:\Users\Administrator\Desktop\3d_simulator_project\3d_models\` 에 복사
+#### 2-5. 결과물 확인 및 저장
+1. 처리 완료 후 **Graph Editor**에서 **Texturing** 노드 더블클릭
+   - 3D 뷰어에서 텍스처 적용된 메시 확인
+2. **Texturing** 노드 우클릭 → **"Open Folder"**
+3. 결과 파일:
+   - `texturedMesh.obj` (메시)
+   - `texturedMesh.mtl` (머티리얼)
+   - `texture_*.png` (텍스처 이미지)
+4. 위 파일들을 `C:\Users\Administrator\Desktop\3d_simulator_project\3d_models\` 에 복사
+
+#### 2-6. 캐시 위치
+- 계산 결과는 프로젝트 파일 옆 `MeshroomCache/` 폴더에 저장
+- 프로젝트 이동 시 `.mg` 파일과 `MeshroomCache` 폴더를 함께 이동
 
 ---
 

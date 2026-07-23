@@ -23,10 +23,19 @@ python photo_preprocess.py
 2. 처리 후 .OBJ/.GLB 다운로드
 3. `C:\Users\Administrator\Desktop\3d_simulator_project\3d_models\` 에 저장
 
-### 방법B: Meshroom (정확함)
-1. Meshroom 실행
-2. CameraInit → FeatureExtraction → ... → Texturing 순서로 처리
-3. .OBJ 출력
+### 방법B: Meshroom 2025.1 (정확함)
+1. Meshroom 실행 (`Meshroom.exe`)
+2. **New Project** → **Template: Photogrammetry** 선택
+3. **Images** 영역에 `photos/processed/` 의 사진 드래그앤드롭
+4. 상단 **Start** 클릭 → 자동으로 전체 파이프라인 실행
+5. 내부 처리 순서 (자동):
+   ```
+   CameraInit → FeatureExtraction → ImageMatching → FeatureMatching
+   → StructureFromMotion → PrepareDenseScene → DepthMap → DepthMapFilter
+   → Meshing → MeshFiltering → Texturing
+   ```
+6. **Texturing** 노드 우클릭 → **Open Folder** → `.OBJ` + 텍스처 확인
+7. `3d_models/` 폴더에 복사
 
 ## 4단계: Blender 최적화
 1. .OBJ 파일 Blender에서 열기
