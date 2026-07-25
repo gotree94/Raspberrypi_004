@@ -134,6 +134,67 @@ python3 test_camera.py
 - `test_camera_1.jpg` - 카메라 1번 사진
 - `test_video.h264` - 3초 영상
 
+
+```
+gotree94@nwkim:~ $ python3 test_camera.py
+Raspberry Pi Camera Test Script
+Pi 4 + Camera 1.3 / 2.1
+
+==================================================
+1. Detecting cameras via rpicam-hello --list-cameras
+==================================================
+Available cameras
+-----------------
+0 : imx219 [3280x2464 10-bit RGGB] (/base/soc/i2c0mux/i2c@1/imx219@10)
+    Modes: 'SRGGB10_CSI2P' : 640x480 [200.16 fps - (1000, 752)/1280x960 crop]
+                             1640x1232 [81.07 fps - (0, 0)/3280x2464 crop]
+                             1920x1080 [47.57 fps - (680, 692)/1920x1080 crop]
+                             3280x2464 [21.19 fps - (0, 0)/3280x2464 crop]
+           'SRGGB8' : 640x480 [200.16 fps - (1000, 752)/1280x960 crop]
+                      1640x1232 [81.07 fps - (0, 0)/3280x2464 crop]
+                      1920x1080 [47.57 fps - (680, 692)/1920x1080 crop]
+                      3280x2464 [21.19 fps - (0, 0)/3280x2464 crop]
+
+
+==================================================
+2. Detecting cameras via Picamera2
+==================================================
+[0:05:11.536656029] [3563]  INFO Camera camera_manager.cpp:340 libcamera v0.7.1+rpt20260609
+[0:05:11.554838229] [3573]  INFO RPI pipeline_base.cpp:1133 Using configuration file '/usr/share/libcamera/pipeline/rpi/vc4/rpi_apps.yaml'
+[0:05:11.576258206] [3573]  INFO IPAProxy ipa_proxy.cpp:184 Using tuning file /usr/share/libcamera/ipa/rpi/vc4/imx219.json
+[0:05:11.582167036] [3573]  INFO Camera camera_manager.cpp:223 Adding camera '/base/soc/i2c0mux/i2c@1/imx219@10' for pipeline handler rpi/vc4
+[0:05:11.582233108] [3573]  INFO RPI vc4.cpp:445 Registered camera /base/soc/i2c0mux/i2c@1/imx219@10 to Unicam device /dev/media1 and ISP device /dev/media2
+[OK] Found 1 camera(s):
+  Camera 0: {'Model': 'imx219', 'Location': 2, 'Rotation': 180, 'Id': '/base/soc/i2c0mux/i2c@1/imx219@10', 'Num': 0}
+
+==================================================
+3. Taking test photos from each camera
+==================================================
+
+--- Camera 0 ---
+[0:05:11.589157983] [3563]  INFO Camera camera.cpp:1216 configuring streams: (0) 3280x2464-BGR888/sRGB (1) 3280x2464-SBGGR10_CSI2P/RAW
+[0:05:11.589578971] [3573]  INFO RPI vc4.cpp:620 Sensor: /base/soc/i2c0mux/i2c@1/imx219@10 - Selected sensor format: 3280x2464-SBGGR10_1X10/RAW - Selected unicam format: 3280x2464-pBAA/RAW
+[OK] Photo saved: test_camera_0.jpg
+
+==================================================
+4. Taking 3-second test video from camera 0
+==================================================
+[0:05:14.293648169] [3577]  INFO Camera camera_manager.cpp:340 libcamera v0.7.1+rpt20260609
+[0:05:14.311125459] [3597]  INFO RPI pipeline_base.cpp:1133 Using configuration file '/usr/share/libcamera/pipeline/rpi/vc4/rpi_apps.yaml'
+[0:05:14.317545558] [3597]  INFO IPAProxy ipa_proxy.cpp:184 Using tuning file /usr/share/libcamera/ipa/rpi/vc4/imx219.json
+[0:05:14.322692470] [3597]  INFO Camera camera_manager.cpp:223 Adding camera '/base/soc/i2c0mux/i2c@1/imx219@10' for pipeline handler rpi/vc4
+[0:05:14.322754839] [3597]  INFO RPI vc4.cpp:445 Registered camera /base/soc/i2c0mux/i2c@1/imx219@10 to Unicam device /dev/media1 and ISP device /dev/media2
+[0:05:14.328434125] [3577]  INFO Camera camera.cpp:1216 configuring streams: (0) 1280x720-XBGR8888/Rec709/Rec709/None/Full (1) 1920x1080-SBGGR10_CSI2P/RAW
+[0:05:14.328884038] [3597]  INFO RPI vc4.cpp:620 Sensor: /base/soc/i2c0mux/i2c@1/imx219@10 - Selected sensor format: 1920x1080-SBGGR10_1X10/RAW - Selected unicam format: 1920x1080-pBAA/RAW
+[OK] Video saved: test_video.h264
+
+==================================================
+All tests complete.
+==================================================
+
+```
+
+
 ---
 
 ## 7. rpicam-apps 명령어 참조
