@@ -1,5 +1,9 @@
 # Raspberry Pi 4 Camera Setup Guide
 
+![](V1.3.png)
+
+![](v2.1.png)
+
 Raspberry Pi 4에서 Camera 1.3 / 2.1 연결 및 동작 확인 가이드
 
 > **Camera 1.3(OV5647)**과 **Camera 2.1(IMX219)**은 config.txt 설정이 다르므로,
