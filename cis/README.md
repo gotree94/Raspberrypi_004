@@ -2,30 +2,19 @@
 
 Raspberry Pi 4에서 Camera 1.3 / 2.1 연결 및 동작 확인 가이드
 
----
-
-## V1.3 
-
-![](V1.3.png)
-
-
-## V2.1 
-
-![](v2.1.png)
-
+> **Camera 1.3(OV5647)**과 **Camera 2.1(IMX219)**은 config.txt 설정이 다르므로,
+> 각각 전용 스크립트로 분리되어 있습니다.
 
 ---
 
 ## 1. 호환성
 
-| 카메라 | 센서 | 해상도 | Pi 4 호환 |
-|--------|------|--------|-----------|
-| Camera Module 1.3 | OmniVision OV5647 | 5MP (2592x1944) | OK |
-| Camera Module 2.1 | Sony IMX219 | 8MP (3280x2464) | OK |
+| 카메라 | 센서 | 해상도 | config.txt 설정 |
+|--------|------|--------|----------------|
+| Camera Module 1.3 | OmniVision OV5647 | 5MP (2592x1944) | `dtoverlay=ov5647` |
+| Camera Module 2.1 | Sony IMX219 | 8MP (3280x2464) | `camera_auto_detect=1` |
 
-공식 문서: *"All Raspberry Pi camera modules are compatible with all Raspberry Pi computers with CSI connectors."*
-
-Pi 4는 표준 15핀 CSI 커넥터를 사용하므로, 카메라에 포함된 **표준-표준 리본 케이블**로 바로 연결합니다.
+> 두 카메라는 **동시에 연결 불가**. 각각 단독으로만 사용합니다.
 
 ---
 
@@ -41,108 +30,77 @@ Pi 4는 표준 15핀 CSI 커넥터를 사용하므로, 카메라에 포함된 **
 5. 전원 연결 후 부팅
 ```
 
-> **주의**: Pi 5는 22핀 커넥터를 사용하므로 어댑터 케이블이 필요하지만, Pi 4는 그럴 필요 없습니다.
-
 ---
 
-## 3. 소프트웨어 설치
+## 3. 카메라별 설정 및 테스트
 
-### 방법 A: 자동 설치 스크립트
-
-```bash
-sudo bash setup_camera.sh
-```
-
-### 방법 B: 수동 설치
+### Camera 1.3 (OV5647)
 
 ```bash
-sudo apt update && sudo apt upgrade -y
-sudo apt install -y rpicam-apps libcamera-dev python3-picamera2
+# 1) 설정 적용 (재부팅 필수)
+sudo bash setup_camera_v13.sh
+sudo reboot
+
+# 2) 재부팅 후 테스트
+python3 test_camera_v13.py
+# 또는
+bash quick_test_v13.sh
 ```
 
-### config.txt 설정 (Camera 1.3 OV5647 필수)
-
-Camera 1.3(OV5647)은 `camera_auto_detect`으로는 타임아웃 문제가 발생할 수 있습니다.
-**overlay를 수동 지정**해야 합니다.
-
-`/boot/firmware/config.txt` (또는 `/boot/config.txt`)에:
-
+**config.txt 변경 내용:**
 ```ini
 #camera_auto_detect=1
 dtoverlay=ov5647
 gpu_mem=128
 ```
 
-> **재부팅 필수**: `sudo reboot`
+### Camera 2.1 (IMX219)
+
+```bash
+# 1) 설정 적용 (재부팅 필수)
+sudo bash setup_camera_v21.sh
+sudo reboot
+
+# 2) 재부팅 후 테스트
+python3 test_camera_v21.py
+# 또는
+bash quick_test_v21.sh
+```
+
+**config.txt 변경 내용:**
+```ini
+camera_auto_detect=1
+```
 
 ---
 
-## 4. 카메라 인식 확인
+## 4. 카메라 전환 방법
 
-### CLI 도구
+카메라를 교체할 때마다 **반드시 전원을 끄고** 케이블을 교체한 뒤, 해당 스크립트를 실행하고 재부팅합니다.
+
+```
+Camera 1.3 사용 시 → setup_camera_v13.sh → reboot → test_camera_v13.py
+Camera 2.1 사용 시 → setup_camera_v21.sh → reboot → test_camera_v21.py
+```
+
+---
+
+## 5. CLI 빠른 명령어
 
 ```bash
 # 카메라 목록 확인
 rpicam-hello --list-cameras
 
-# 레거시 (Bookworm 이전)
-libcamera-hello --list-cameras
-```
-
-정상 연결 시 아래와 같은 출력이 나옵니다:
-
-```
-Available cameras
------------------
-0 : imx219 [3280x2464 10-bit RGGB] (/base/soc/i2c0mux/i2c@1/imx219@10)
-    Modes: 'SRGGB10_CSI2P' : 640x480/...
-```
-
-카메라가 2대 연결되어 있으면 `0`, `1` 두 개가 표시됩니다.
-
-### Picamera2 (Python)
-
-```python
-from picamera2 import Picamera2
-cameras = Picamera2.global_camera_info()
-print(f"Found {len(cameras)} camera(s): {cameras}")
-```
-
----
-
-## 5. 빠른 테스트 (CLI)
-
-```bash
 # 사진 촬영
 rpicam-still -o test.jpg
-
-# 5초 프리뷰 후 사진
-rpicam-still -t 5000 -o test.jpg
 
 # 영상 녹화 (3초)
 rpicam-vid -t 3000 -o test.h264
 ```
 
-> Bookworm 이전 OS에서는 `libcamera-still`, `libcamera-vid` 사용
-
 ---
 
-## 6. Python 테스트 코드
-
-`test_camera.py` - 카메라 인식, 사진 촬영, 영상 녹화를 자동으로 수행합니다.
-
-```bash
-python3 test_camera.py
-```
-
-실행 결과:
-- `test_camera_0.jpg` - 카메라 0번 사진
-- `test_camera_1.jpg` - 카메라 1번 사진
-- `test_video.h264` - 3초 영상
-
----
-
-## 7. rpicam-apps 명령어 참조
+## 6. rpicam-apps 명령어 참조
 
 | 명령어 | 기능 |
 |--------|------|
@@ -157,84 +115,35 @@ python3 test_camera.py
 |------|------|
 | `-o file` | 출력 파일명 |
 | `-t ms` | 실행 시간 (밀리초) |
-| `--width N` | 가로 해상도 |
-| `--height N` | 세로 해상도 |
 | `--rotation 0/90/180/270` | 회전 |
-| `--hflip` | 수평 뒤집기 |
-| `--vflip` | 수직 뒤집기 |
+| `--hflip` / `--vflip` | 수평/수직 뒤집기 |
 | `--list-cameras` | 연결된 카메라 목록 |
 
 ---
 
-## 8. Picamera2 Python 라이브러리
-
-### 설치
-
-```bash
-sudo apt install python3-picamera2
-```
-
-### 기본 사용법
-
-```python
-from picamera2 import Picamera2
-import time
-
-# 카메라 초기화 (카메라 0번)
-picam = Picamera2(camera_num=0)
-config = picam.create_still_configuration()
-picam.configure(config)
-picam.start()
-time.sleep(2)
-
-# 사진 촬영
-picam.capture_file("photo.jpg")
-picam.stop()
-```
-
-### 영상 녹화
-
-```python
-from picamera2 import Picamera2
-from picamera2.encoders import H264Encoder
-import time
-
-picam = Picamera2(camera_num=0)
-config = picam.create_video_configuration(
-    main={"size": (1280, 720)}
-)
-picam.configure(config)
-
-encoder = H264Encoder(10000000)
-picam.start_recording(encoder, "output.h264")
-time.sleep(5)
-picam.stop_recording()
-picam.stop()
-picam.close()
-```
-
----
-
-## 9. 트러블슈팅
+## 7. 트러블슈팅
 
 | 증상 | 원인 | 해결 |
 |------|------|------|
 | `no cameras available` | 케이블 연결 불량 | 전원 off 후 케이블 재연결 |
-| `no cameras available` | overlay 미설정 | config.txt에 `dtoverlay=ov5647` 추가 후 재부팅 |
-| `Camera frontend has timed out` | OV5647 타임아웃 | `camera_auto_detect=1` 비활성화 + `dtoverlay=ov5647` 수동 지정 |
+| `Camera frontend has timed out` | OV5647 타임아웃 | `dtoverlay=ov5647` 수동 지정 |
+| overlay 불일치 | 카메라 교체 후 설정 미변경 | 해당 카메라 setup 스크립트 재실행 + 재부팅 |
 | `rpicam-hello: not found` | rpicam-apps 미설치 | `sudo apt install rpicam-apps` |
-| 이미지 회전됨 | 카메라 장착 방향 | `--rotation 180` 또는 `--hflip --vflip` |
+| 이미지 회전됨 | 카메라 장착 방향 | `--rotation 180` |
 | Picamera2 import 에러 | 미설치 | `sudo apt install python3-picamera2` |
 
 ---
 
-## 10. 파일 목록
+## 8. 파일 목록
 
 | 파일 | 설명 |
 |------|------|
-| `setup_camera.sh` | 자동 설치 스크립트 |
-| `quick_test.sh` | 셸 기반 빠른 테스트 |
-| `test_camera.py` | Python 카메라 테스트 코드 |
+| `setup_camera_v13.sh` | Camera 1.3용 설치 스크립트 (OV5647 overlay) |
+| `setup_camera_v21.sh` | Camera 2.1용 설치 스크립트 (auto_detect) |
+| `test_camera_v13.py` | Camera 1.3 Python 테스트 |
+| `test_camera_v21.py` | Camera 2.1 Python 테스트 |
+| `quick_test_v13.sh` | Camera 1.3 셸 빠른 테스트 |
+| `quick_test_v21.sh` | Camera 2.1 셸 빠른 테스트 |
 | `README.md` | 이 문서 |
 
 ---
@@ -243,4 +152,3 @@ picam.close()
 
 - [공식 카메라 문서](https://www.raspberrypi.com/documentation/accessories/camera.html)
 - [카메라 소프트웨어 문서](https://www.raspberrypi.com/documentation/computers/camera_software.html)
-- [rpicam-apps 가이드](https://raspberry.tips/en/raspberrypi-tutorials/set-up-raspberry-pi-camera-photos-videos-2026)
