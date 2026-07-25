@@ -3,7 +3,7 @@
 Raspberry Pi 4에서 Camera 1.3 / 2.1 연결 및 동작 확인 가이드
 
 
-![](v1.3.png)
+![](V1.3.png)
 
 ![](v2.1.png)
 
