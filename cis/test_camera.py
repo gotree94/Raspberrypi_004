@@ -82,18 +82,16 @@ def take_test_video():
     try:
         from picamera2.encoders import H264Encoder
         picam = Picamera2(camera_num=0)
-        config = picam.create_video_configuration(
-            main={"size": (1280, 720)},
-            encode="video"
+        video_config = picam.create_video_configuration(
+            main={"size": (1280, 720)}
         )
-        picam.configure(config)
-        picam.start()
+        picam.configure(video_config)
 
-        encoder = H264Encoder(bitrate=4000000)
+        encoder = H264Encoder(10000000)
         output = "test_video.h264"
-        picam.start_encoder(encoder, output)
+        picam.start_recording(encoder, output)
         time.sleep(3)
-        picam.stop_encoder()
+        picam.stop_recording()
         picam.stop()
         picam.close()
         print(f"[OK] Video saved: {output}")
