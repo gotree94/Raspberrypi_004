@@ -64,6 +64,7 @@ def take_test_photos():
             filename = f"test_camera_{i}.jpg"
             picam.capture_file(filename)
             picam.stop()
+            picam.close()
             print(f"[OK] Photo saved: {filename}")
         except Exception as e:
             print(f"[ERROR] Camera {i}: {e}")
@@ -79,6 +80,7 @@ def take_test_video():
         return
 
     try:
+        from picamera2.encoders import H264Encoder
         picam = Picamera2(camera_num=0)
         config = picam.create_video_configuration(
             main={"size": (1280, 720)},
@@ -87,14 +89,13 @@ def take_test_video():
         picam.configure(config)
         picam.start()
 
-        encoder = picam.encoder
-        from picamera2.encoders import H264Encoder
         encoder = H264Encoder(bitrate=4000000)
         output = "test_video.h264"
         picam.start_encoder(encoder, output)
         time.sleep(3)
         picam.stop_encoder()
         picam.stop()
+        picam.close()
         print(f"[OK] Video saved: {output}")
     except Exception as e:
         print(f"[ERROR] Video capture failed: {e}")
